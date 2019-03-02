@@ -105,7 +105,7 @@ public class ReZip {
             // Unknown compressed size
             entry.setCompressedSize(-1);
 
-            // Copy uncompressed file into destination ZIP
+            // Copy uncompressed entry content into destination ZIP
             zipOut.putNextEntry(entry);
             uncompressedOutRaw.writeTo(zipOut);
             zipOut.closeEntry();
