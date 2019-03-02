@@ -43,31 +43,29 @@ public class ReZip {
      */
     public static void main(final String[] argv) throws IOException {
 
-        int compression = ZipEntry.STORED;
+        boolean compressed = false;
         for (final String arg : argv) {
             if ("--compressed".equals(arg)) {
-                compression = ZipEntry.DEFLATED;
+                compressed = true;
             } else {
                 System.err.printf("Usage: %s [--compressed] <in.zip >out.zip%n", ReZip.class.getSimpleName());
                 System.exit(1);
             }
         }
 
-        reZip(compression);
+        reZip(compressed);
     }
 
     /**
      * Reads a ZIP file from stdin and writes new ZIP content to stdout.
-     * @param compression the compression method to use,
-     *                    either {@link ZipEntry#DEFLATED} (=> compressed)
-     *                    or {@link ZipEntry#STORED} (-> uncompressed)
+     * @param compressed whether the output ZIP is compressed or not
      * @throws IOException if any input or output fails
      */
     @SuppressWarnings("WeakerAccess")
-    public static void reZip(final int compression) throws IOException {
+    public static void reZip(final boolean compressed) throws IOException {
 
         try (ZipInputStream zipIn = new ZipInputStream(System.in); ZipOutputStream zipOut = new ZipOutputStream(System.out)) {
-            reZip(zipIn, zipOut, compression);
+            reZip(zipIn, zipOut, compressed);
         }
     }
 
@@ -75,14 +73,13 @@ public class ReZip {
      * Reads a ZIP and writes to an other ZIP.
      * @param zipIn the source ZIP
      * @param zipOut the destination ZIP
-     * @param compression the compression method to use,
-     *                    either {@link ZipEntry#DEFLATED} (=> compressed)
-     *                    or {@link ZipEntry#STORED} (-> uncompressed)
+     * @param compressed whether the output ZIP is compressed or not
      * @throws IOException if any input or output fails
      */
     @SuppressWarnings("WeakerAccess")
-    public static void reZip(final ZipInputStream zipIn, final ZipOutputStream zipOut, final int compression) throws IOException {
+    public static void reZip(final ZipInputStream zipIn, final ZipOutputStream zipOut, final boolean compressed) throws IOException {
 
+        final int compression = compressed ? ZipEntry.DEFLATED : ZipEntry.STORED;
         final byte[] buffer = new byte[8192];
         final ByteArrayOutputStream uncompressedOutRaw = new ByteArrayOutputStream();
         final CRC32 checksum = new CRC32();
