@@ -55,8 +55,7 @@ public class ZipDoc {
         suffixesXml.add("svg");
         SUFFIXES_XML = suffixesXml;
 
-        final Set<String> suffixesText = new HashSet<>();
-        suffixesText.addAll(suffixesXml);
+        final Set<String> suffixesText = new HashSet<>(suffixesXml);
         suffixesText.add("txt");
         suffixesText.add("md");
         suffixesText.add("markdown");
@@ -76,12 +75,14 @@ public class ZipDoc {
     /**
      * Checks whether a file denotes an XML based file format.
      * @param fileName to be checked for known XML file extensions (for example ".xml" and ".svg")
-     * @param contentBytes length of the content in bytes {@literal "<?xml "}
-     * @param contentIn to be checked for magic file header for XML: {@code "<?xml "}
+     * @param contentBytes length of the content in bytes
+     * @param contentIn to be checked for magic file header
+     * @param magicHeader the magic file header to look for
+     * @param suffixes the file suffixes to look for
      * @return whether the supplied file type is XML based
      */
     @SuppressWarnings("WeakerAccess")
-    public static boolean isXml(final String fileName, final long contentBytes, final InputStream contentIn) {
+    public static boolean isType(final String fileName, final long contentBytes, final InputStream contentIn, final String magicHeader, final Set<String> suffixes) {
 
         if (!contentIn.markSupported()) {
             throw new IllegalStateException();
@@ -92,16 +93,19 @@ public class ZipDoc {
         final String fileNameLower = fileName.toLowerCase();
         if (fileNameLower.contains(".")) {
             final String suffix = fileNameLower.substring(fileNameLower.lastIndexOf('.'));
-            matches = SUFFIXES_XML.contains(suffix);
+            matches = suffixes.contains(suffix);
         }
-        if (!matches && contentBytes >= 7) {
-            contentIn.mark(20);
-            final byte[] buffer = new byte[16];
+        if (!matches && (magicHeader != null) && contentBytes >= magicHeader.length()) {
+            final int maxHeaderBytes = magicHeader.length() * 2 + 2;
+            contentIn.mark(maxHeaderBytes);
+            final byte[] buffer = new byte[maxHeaderBytes];
             try {
-                contentIn.read(buffer);
-                final String magicHeader = new String(buffer);
-                if (magicHeader.toLowerCase().startsWith("<?xml ")) {
-                    matches = true;
+                final int readHeaderBytes = contentIn.read(buffer);
+                if (readHeaderBytes >= magicHeader.length()) {
+                    final String header = new String(buffer);
+                    if (header.toLowerCase().startsWith(magicHeader)) {
+                        matches = true;
+                    }
                 }
             } catch (final IOException ex) {
                 ex.printStackTrace();
@@ -109,6 +113,18 @@ public class ZipDoc {
         }
 
         return matches;
+    }
+
+    /**
+     * Checks whether a file denotes an XML based file format.
+     * @param fileName to be checked for known XML file extensions (for example ".xml" and ".svg")
+     * @param contentBytes length of the content in bytes {@literal "<?xml "} TODO
+     * @param contentIn to be checked for magic file header for XML: {@code "<?xml "} TODO
+     * @return whether the supplied file type is XML based
+     */
+    @SuppressWarnings("WeakerAccess")
+    public static boolean isXml(final String fileName, final long contentBytes, final InputStream contentIn) {
+        return isType(fileName, contentBytes, contentIn, "<?xml ", SUFFIXES_XML);
     }
 
     /**
@@ -120,33 +136,7 @@ public class ZipDoc {
      */
     @SuppressWarnings("WeakerAccess")
     public static boolean isPlainText(final String fileName, final long contentBytes, final InputStream contentIn) {
-
-        if (!contentIn.markSupported()) {
-            throw new IllegalStateException();
-        }
-
-        boolean matches = false;
-
-        final String fileNameLower = fileName.toLowerCase();
-        if (fileNameLower.contains(".")) {
-            final String suffix = fileNameLower.substring(fileNameLower.lastIndexOf('.'));
-            matches = SUFFIXES_TEXT.contains(suffix);
-        }
-        if (!matches && contentBytes >= 7) {
-            contentIn.mark(20);
-            final byte[] buffer = new byte[16];
-            try {
-                contentIn.read(buffer);
-                final String magicHeader = new String(buffer);
-                if (magicHeader.matches("<?xml ")) {
-                    matches = true;
-                }
-            } catch (final IOException ex) {
-                ex.printStackTrace();
-            }
-        }
-
-        return matches;
+        return isType(fileName, contentBytes, contentIn, null, SUFFIXES_TEXT);
     }
 
     /**
