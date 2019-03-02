@@ -66,7 +66,7 @@ public class ZipDoc {
     public static void main(final String[] argv) throws IOException, TransformerException {
 
         if (1 != argv.length) {
-            System.err.printf("Usage: %s infile > text_representation.txt\n", ZipDoc.class.getSimpleName());
+            System.err.printf("Usage: %s infile > text_representation.txt%n", ZipDoc.class.getSimpleName());
             System.exit(1);
         }
 
@@ -158,7 +158,7 @@ public class ZipDoc {
     @SuppressWarnings("WeakerAccess")
     public static void transform(final String zipFilePath) throws IOException, TransformerException {
 
-        try (final ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath))) {
+        try (ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath))) {
             transform(zipIn, System.out);
         }
     }
@@ -198,8 +198,8 @@ public class ZipDoc {
 
             if (isXml(entry.getName(), entry.getSize(), zipIn)) {
                 // XML file: pretty-print the data to stdout
-                InputSource in = new InputSource(new ByteArrayInputStream(uncompressedOutRaw.toByteArray()));
-                serializer.transform(new SAXSource(in), new StreamResult(output));
+                final InputSource inBuffer = new InputSource(new ByteArrayInputStream(uncompressedOutRaw.toByteArray()));
+                serializer.transform(new SAXSource(inBuffer), new StreamResult(output));
             } else if (isPlainText(entry.getName(), entry.getSize(), zipIn)) {
                 // Text file: dump directly to output
                 uncompressedOutRaw.writeTo(output);

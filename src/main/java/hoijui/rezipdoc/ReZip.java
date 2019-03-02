@@ -44,10 +44,10 @@ public class ReZip {
     public static void main(final String[] argv) throws IOException {
         int compression = ZipEntry.DEFLATED;
         for (final String arg : argv) {
-            if (arg.equals("--store")) {
+            if ("--store".equals(arg)) {
                 compression = ZipEntry.STORED;
             } else {
-                System.err.printf("Usage: %s {--store} <in.zip >out.zip\n", ReZip.class.getSimpleName());
+                System.err.printf("Usage: %s {--store} <in.zip >out.zip%n", ReZip.class.getSimpleName());
                 System.exit(1);
             }
         }
@@ -57,7 +57,7 @@ public class ReZip {
         final ByteArrayOutputStream uncompressedOutRaw = new ByteArrayOutputStream();
         final CRC32 checksum = new CRC32();
         final CheckedOutputStream uncompressedOutChecked = new CheckedOutputStream(uncompressedOutRaw, checksum);
-        try (final ZipInputStream zipIn = new ZipInputStream(System.in); final ZipOutputStream zipOut = new ZipOutputStream(System.out)) {
+        try (ZipInputStream zipIn = new ZipInputStream(System.in); ZipOutputStream zipOut = new ZipOutputStream(System.out)) {
             while ((entry = zipIn.getNextEntry()) != null) {
                 uncompressedOutRaw.reset();
                 checksum.reset();
