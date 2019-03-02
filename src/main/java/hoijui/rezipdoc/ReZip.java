@@ -83,17 +83,15 @@ public class ReZip {
     public static void reZip(final ZipInputStream zipIn, final ZipOutputStream zipOut, final int compression) throws IOException {
 
         final byte[] buffer = new byte[8192];
-        ZipEntry entry;
         final ByteArrayOutputStream uncompressedOutRaw = new ByteArrayOutputStream();
         final CRC32 checksum = new CRC32();
         final CheckedOutputStream uncompressedOutChecked = new CheckedOutputStream(uncompressedOutRaw, checksum);
-        while ((entry = zipIn.getNextEntry()) != null) {
+        for (ZipEntry entry = zipIn.getNextEntry(); entry != null; entry = zipIn.getNextEntry()) {
             uncompressedOutRaw.reset();
             checksum.reset();
 
             // Copy file from zipIn into uncompressed, check-summed output stream
-            int len;
-            while ((len = zipIn.read(buffer)) > 0) {
+            for  (int len = zipIn.read(buffer); len > 0; len = zipIn.read(buffer)) {
                 uncompressedOutChecked.write(buffer, 0, len);
             }
             zipIn.closeEntry();
