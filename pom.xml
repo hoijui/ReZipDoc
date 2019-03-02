@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<properties>
+		<project.packageName>${project.groupId}.rezipdoc</project.packageName>
+		<project.mainClass>${project.packageName}.ReZip</project.mainClass>
+		<!--
+			This may get better support in Maven 3, see:
+			http://docs.codehaus.org/display/MAVENUSER/POM+Element+for+Source+File+Encoding
+		-->
+		<project.build.encoding>UTF-8</project.build.encoding>
+		<project.build.sourceEncoding>${project.build.encoding}</project.build.sourceEncoding>
+		<project.build.resourceEncoding>${project.build.encoding}</project.build.resourceEncoding>
+		<java.version>8</java.version>
+	</properties>
+
+	<groupId>hoijui</groupId>
+	<artifactId>rezipdoc</artifactId>
+	<version>0.1-SNAPSHOT</version>
+
+	<packaging>jar</packaging>
+
+	<name>ReZipDoc</name>
+	<description>A Git filter and textconv for textifying ZIP based binary files, which work better for delta-compression and diffs</description>
+	<url>https://gitlab.com/hoijui/ReZipDoc/</url>
+	<inceptionYear>2019</inceptionYear>
+
+	<scm>
+		<connection>scm:git:git@gitlab.com:hoijui/ReZipDoc.git</connection>
+		<developerConnection>scm:git:git@gitlab.com:hoijui/ReZipDoc.git</developerConnection>
+		<url>https://gitlab.com/hoijui/ReZipDoc</url>
+		<tag>HEAD</tag>
+	</scm>
+
+	<licenses>
+		<license>
+			<name>GNU General Public License (GPL), version 3 or later</name>
+			<url>http://www.gnu.org/licenses/gpl-3.0.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<issueManagement>
+		<system>GitLab</system>
+		<url>https://gitlab.com/hoijui/ReZipDoc/issues</url>
+	</issueManagement>
+
+	<developers>
+		<developer>
+			<name>Robin Vobruba</name>
+			<email>hoijui.quaero@gmail.com</email>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.25</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-ext</artifactId>
+			<version>1.7.25</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.25</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+			<scope>runtime</scope>
+		</dependency>
+
+	</dependencies>
+
+	<reporting>
+		<plugins>
+			<!-- NOTE Use the profile "Extensive-Reports" for an extended list of reports. -->
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<inputEncoding>${project.build.sourceEncoding}</inputEncoding>
+					<linkXRef>true</linkXRef>
+					<configLocation>src/main/resources/checkstyle.xml</configLocation>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.11.0</version>
+				<configuration>
+					<aggregate>true</aggregate>
+					<linkXRef>true</linkXRef>
+					<inputEncoding>${project.build.sourceEncoding}</inputEncoding>
+					<targetJdk>1.${java.version}</targetJdk>
+					<rulesets>
+						<ruleset>src/main/resources/pmd.xml</ruleset>
+					</rulesets>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>3.0.5</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>3.0.0-M3</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jdepend-maven-plugin</artifactId>
+				<version>2.0</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>3.0.0</version>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>3.1.1</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-checkstyle-plugin</artifactId>
+					<version>3.0.0</version>
+					<configuration>
+						<inputEncoding>${project.build.sourceEncoding}</inputEncoding>
+						<linkXRef>true</linkXRef>
+						<configLocation>src/main/resources/checkstyle.xml</configLocation>
+						<propertyExpansion>java.header.regex.template.file=src/main/resources/java_header_regex_template.txt</propertyExpansion>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.8.0</version>
+					<configuration>
+						<source>1.${java.version}</source>
+						<target>1.${java.version}</target>
+						<encoding>${project.build.sourceEncoding}</encoding>
+						<showDeprecation>true</showDeprecation>
+						<compilerArgument>-Xlint:unchecked</compilerArgument>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>3.1.0</version>
+					<configuration>
+						<encoding>${project.build.resourceEncoding}</encoding>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>3.0.1</version>
+					<configuration>
+						<charset>${project.build.sourceEncoding}</charset>
+						<encoding>${project.build.sourceEncoding}</encoding>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>3.0.0-M1</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>3.0.1</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>3.1.0</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>3.0.0-M1</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>3.7.1</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.5.3</version>
+					<configuration>
+						<autoVersionSubmodules>true</autoVersionSubmodules>
+						<useReleaseProfile>false</useReleaseProfile>
+						<releaseProfiles>release</releaseProfiles>
+						<goals>deploy</goals>
+						<!--
+							Workaround to prevent the gpg plugin from hanging, see:
+							http://jira.codehaus.org/browse/MGPG-9
+						-->
+						<mavenExecutorId>forked-path</mavenExecutorId>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>3.1.1</version>
+					<configuration>
+						<archive>
+							<manifestEntries>
+								<!-- prevent the local user-name from entering the JAR manifest -->
+								<Built-By />
+							</manifestEntries>
+							<!--
+								We want uncompressed JARs, so they play more nicely with git,
+								as this software is very likely to be stored in a git archive.
+							-->
+							<compression>false</compression>
+						</archive>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>1.6.0</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>java</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<mainClass>${project.mainClass}</mainClass>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>3.0.0-M3</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-enforcer-plugin</artifactId>
+					<version>3.0.0-M2</version>
+					<executions>
+						<execution>
+							<id>enforce-versions</id>
+							<goals>
+								<goal>enforce</goal>
+							</goals>
+							<configuration>
+								<rules>
+									<bannedPlugins>
+										<!-- will only display a warning but does not fail the build. -->
+										<level>WARN</level>
+										<excludes>
+											<exclude>org.apache.maven.plugins:maven-verifier-plugin</exclude>
+										</excludes>
+										<message>Please consider using the maven-invoker-plugin
+											(http://maven.apache.org/plugins/maven-invoker-plugin/)!
+										</message>
+									</bannedPlugins>
+									<requireMavenVersion>
+										<version>3.0.5</version>
+									</requireMavenVersion>
+									<requireJavaVersion>
+										<version>1.${java.version}</version>
+									</requireJavaVersion>
+									<requireSameVersions>
+										<dependencies>
+											<dependency>${project.groupId}
+											</dependency> <!-- All artifacts with this groupID need to have the same version -->
+										</dependencies>
+									</requireSameVersions>
+								</rules>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.felix</groupId>
+					<artifactId>maven-bundle-plugin</artifactId>
+					<version>2.5.4</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-pmd-plugin</artifactId>
+					<version>3.11.0</version>
+					<configuration>
+						<aggregate>true</aggregate>
+						<linkXRef>true</linkXRef>
+						<inputEncoding>${project.build.sourceEncoding}</inputEncoding>
+						<targetJdk>1.${java.version}</targetJdk>
+						<rulesets>
+							<ruleset>src/main/resources/pmd.xml</ruleset>
+						</rulesets>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>findbugs-maven-plugin</artifactId>
+					<version>3.0.5</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+			</plugin>
+		</plugins>
+
+
+	</build>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.12</version>
+				<scope>test</scope>
+			</dependency>
+
+
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.7.25</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-ext</artifactId>
+				<version>1.7.25</version>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
+
+	<profiles>
+		<profile>
+			<id>Extensive-Reports</id>
+			<!--
+				This profile adds additional reports to the site phase.
+				The reports in here create a lot of output (in MB).
+				Thus we do not want to use them to generate the default site,
+				which is uploaded on the web (for potentially many versions).
+			-->
+			<reporting>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jxr-plugin</artifactId>
+						<version>3.0.0</version>
+						<configuration>
+							<inputEncoding>${project.build.sourceEncoding}</inputEncoding>
+						</configuration>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>3.0.1</version>
+						<configuration>
+							<charset>${project.build.sourceEncoding}</charset>
+							<encoding>${project.build.sourceEncoding}</encoding>
+						</configuration>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-changelog-plugin</artifactId>
+						<version>2.3</version>
+					</plugin>
+
+					<!--<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-linkcheck-plugin</artifactId>
+						<version>1.2</version>
+					</plugin>-->
+
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>javancss-maven-plugin</artifactId>
+						<version>2.1</version>
+					</plugin>
+
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>sonar-maven-plugin</artifactId>
+						<version>3.6.0.1398</version>
+					</plugin>
+				</plugins>
+			</reporting>
+		</profile>
+
+		<profile>
+			<id>release</id>
+			<!--
+				This profile is auto-enabled by the maven-release-plugin.
+				It contains stuff that allows us to sync to Maven central.
+			-->
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.6</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+								<configuration>
+									<!--
+										The `gpg.keyname` property is defined in settings.xml,
+										and needs to match the `uid` as displayed by `gpg2 \-\-list-keys`.
+										Example:
+											Firstname Lastname (Comment) &lt;user@email.org&gt;
+									-->
+									<keyname>${gpg.keyname}</keyname>
+									<passphraseServerId>${gpg.keyname}</passphraseServerId>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<version>1.6.8</version>
+						<extensions>true</extensions>
+						<configuration>
+							<serverId>ossrh</serverId>
+							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+						</configuration>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>3.0.1</version>
+						<configuration>
+							<failOnError>false</failOnError>
+							<charset>${project.build.sourceEncoding}</charset>
+							<encoding>${project.build.sourceEncoding}</encoding>
+						</configuration>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>3.0.1</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
+
+</project>
