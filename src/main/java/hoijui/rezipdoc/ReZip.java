@@ -52,34 +52,63 @@ public class ReZip {
             }
         }
 
+        reZip(compression);
+    }
+
+    /**
+     * Reads a ZIP file from stdin and writes new ZIP content to stdout.
+     * @param compression the compression method to use,
+     *                    either {@link ZipEntry#DEFLATED} (=> compressed)
+     *                    or {@link ZipEntry#STORED} (-> uncompressed)
+     * @throws IOException if any input or output fails
+     */
+    @SuppressWarnings("WeakerAccess")
+    public static void reZip(final int compression) throws IOException {
+
+        try (ZipInputStream zipIn = new ZipInputStream(System.in); ZipOutputStream zipOut = new ZipOutputStream(System.out)) {
+            reZip(zipIn, zipOut, compression);
+        }
+    }
+
+    /**
+     * Reads a ZIP and writes to an other ZIP.
+     * @param zipIn the source ZIP
+     * @param zipOut the destination ZIP
+     * @param compression the compression method to use,
+     *                    either {@link ZipEntry#DEFLATED} (=> compressed)
+     *                    or {@link ZipEntry#STORED} (-> uncompressed)
+     * @throws IOException if any input or output fails
+     */
+    @SuppressWarnings("WeakerAccess")
+    public static void reZip(final ZipInputStream zipIn, final ZipOutputStream zipOut, final int compression) throws IOException {
+
         final byte[] buffer = new byte[8192];
         ZipEntry entry;
         final ByteArrayOutputStream uncompressedOutRaw = new ByteArrayOutputStream();
         final CRC32 checksum = new CRC32();
         final CheckedOutputStream uncompressedOutChecked = new CheckedOutputStream(uncompressedOutRaw, checksum);
-        try (ZipInputStream zipIn = new ZipInputStream(System.in); ZipOutputStream zipOut = new ZipOutputStream(System.out)) {
-            while ((entry = zipIn.getNextEntry()) != null) {
-                uncompressedOutRaw.reset();
-                checksum.reset();
+        while ((entry = zipIn.getNextEntry()) != null) {
+            uncompressedOutRaw.reset();
+            checksum.reset();
 
-                // Copy file from zipIn into uncompressed, check-summed output stream
-                int len;
-                while ((len = zipIn.read(buffer)) > 0) {
-                    uncompressedOutChecked.write(buffer, 0, len);
-                }
-                zipIn.closeEntry();
-
-                // Modify ZIP entry for destination ZIP
-                entry.setSize(uncompressedOutRaw.size());
-                entry.setCrc(checksum.getValue());
-                entry.setMethod(compression);
-                entry.setCompressedSize(-1); // Unknown compressed size
-
-                // Copy uncompressed file into destination ZIP
-                zipOut.putNextEntry(entry);
-                uncompressedOutRaw.writeTo(zipOut);
-                zipOut.closeEntry();
+            // Copy file from zipIn into uncompressed, check-summed output stream
+            int len;
+            while ((len = zipIn.read(buffer)) > 0) {
+                uncompressedOutChecked.write(buffer, 0, len);
             }
+            zipIn.closeEntry();
+
+            // Modify ZIP entry for destination ZIP
+            entry.setSize(uncompressedOutRaw.size());
+            entry.setCrc(checksum.getValue());
+            entry.setMethod(compression);
+            // Unknown compressed size
+            entry.setCompressedSize(-1);
+
+            // Copy uncompressed file into destination ZIP
+            zipOut.putNextEntry(entry);
+            uncompressedOutRaw.writeTo(zipOut);
+            zipOut.closeEntry();
         }
     }
 }
