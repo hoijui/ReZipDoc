@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<properties>
-		<project.packageName>${project.groupId}.rezipdoc</project.packageName>
+		<project.packageName>${project.groupId}</project.packageName>
 		<project.mainClass>${project.packageName}.ReZip</project.mainClass>
 		<!--
 			This may get better support in Maven 3, see:
@@ -15,7 +15,7 @@
 		<java.version>8</java.version>
 	</properties>
 
-	<groupId>hoijui</groupId>
+	<groupId>net.rezipdoc</groupId>
 	<artifactId>rezipdoc</artifactId>
 	<version>0.1-SNAPSHOT</version>
 

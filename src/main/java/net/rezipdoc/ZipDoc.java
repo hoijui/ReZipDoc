@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package hoijui.rezipdoc;
+package net.rezipdoc;
 
 import org.xml.sax.InputSource;
 import javax.xml.transform.OutputKeys;
