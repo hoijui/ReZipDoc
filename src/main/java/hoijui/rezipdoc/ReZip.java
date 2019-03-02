@@ -21,6 +21,7 @@ package hoijui.rezipdoc;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.file.attribute.FileTime;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.ZipEntry;
@@ -34,6 +35,35 @@ import java.util.zip.ZipOutputStream;
  */
 public class ReZip {
 
+    public static class Settings {
+
+        private final boolean compression;
+        private final boolean nullifyTimes;
+
+        /**
+         * Stores settings about how to re-zip.
+         * @param compression whether the output ZIP is compressed or not
+         * @param nullifyTimes whether the creation-, last-access- and last-modified-times of the archive entries
+         *   should be set to <code>0</code>
+         */
+        @SuppressWarnings("WeakerAccess")
+        public Settings(final boolean compression, final boolean nullifyTimes) {
+
+            this.compression = compression;
+            this.nullifyTimes = nullifyTimes;
+        }
+
+        @SuppressWarnings("WeakerAccess")
+        public boolean isCompression() {
+            return compression;
+        }
+
+        @SuppressWarnings("WeakerAccess")
+        public boolean isNullifyTimes() {
+            return nullifyTimes;
+        }
+    }
+
     /**
      * Reads a ZIP file from stdin and writes new ZIP content to stdout.
      * With the <code>--compressed</code> command line argument,
@@ -44,28 +74,31 @@ public class ReZip {
     public static void main(final String[] argv) throws IOException {
 
         boolean compressed = false;
+        boolean nullifyTimes = false;
         for (final String arg : argv) {
             if ("--compressed".equals(arg)) {
                 compressed = true;
+            } else if ("--nullify-times".equals(arg)) {
+                nullifyTimes = true;
             } else {
-                System.err.printf("Usage: %s [--compressed] <in.zip >out.zip%n", ReZip.class.getSimpleName());
+                System.err.printf("Usage: %s [--compressed] [--nullify-times] <in.zip >out.zip%n", ReZip.class.getSimpleName());
                 System.exit(1);
             }
         }
 
-        reZip(compressed);
+        reZip(new Settings(compressed, nullifyTimes));
     }
 
     /**
      * Reads a ZIP file from stdin and writes new ZIP content to stdout.
-     * @param compressed whether the output ZIP is compressed or not
+     * @param settings settings concerning the details of how ot re-zip
      * @throws IOException if any input or output fails
      */
     @SuppressWarnings("WeakerAccess")
-    public static void reZip(final boolean compressed) throws IOException {
+    public static void reZip(final Settings settings) throws IOException {
 
         try (ZipInputStream zipIn = new ZipInputStream(System.in); ZipOutputStream zipOut = new ZipOutputStream(System.out)) {
-            reZip(zipIn, zipOut, compressed);
+            reZip(zipIn, zipOut, settings);
         }
     }
 
@@ -73,13 +106,13 @@ public class ReZip {
      * Reads a ZIP and writes to an other ZIP.
      * @param zipIn the source ZIP
      * @param zipOut the destination ZIP
-     * @param compressed whether the output ZIP is compressed or not
+     * @param settings settings concerning the details of how ot re-zip
      * @throws IOException if any input or output fails
      */
     @SuppressWarnings("WeakerAccess")
-    public static void reZip(final ZipInputStream zipIn, final ZipOutputStream zipOut, final boolean compressed) throws IOException {
+    public static void reZip(final ZipInputStream zipIn, final ZipOutputStream zipOut, final Settings settings) throws IOException {
 
-        final int compression = compressed ? ZipEntry.DEFLATED : ZipEntry.STORED;
+        final int compression = settings.isCompression() ? ZipEntry.DEFLATED : ZipEntry.STORED;
         final byte[] buffer = new byte[8192];
         final ByteArrayOutputStream uncompressedOutRaw = new ByteArrayOutputStream();
         final CRC32 checksum = new CRC32();
@@ -100,6 +133,12 @@ public class ReZip {
             entry.setMethod(compression);
             // Unknown compressed size
             entry.setCompressedSize(-1);
+            if (settings.isNullifyTimes()) {
+                entry.setTime(0);
+                entry.setCreationTime(FileTime.fromMillis(0));
+                entry.setLastAccessTime(FileTime.fromMillis(0));
+                entry.setLastModifiedTime(FileTime.fromMillis(0));
+            }
 
             // Copy uncompressed entry content into destination ZIP
             zipOut.putNextEntry(entry);
