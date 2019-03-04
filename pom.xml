@@ -256,7 +256,7 @@
 								We want uncompressed JARs, so they play more nicely with git,
 								as this software is very likely to be stored in a git archive.
 							-->
-							<compression>false</compression>
+							<compress>false</compress>
 						</archive>
 					</configuration>
 				</plugin>
