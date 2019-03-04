@@ -80,6 +80,8 @@ public class ReZip {
                 nullifyTimes = true;
             } else {
                 System.err.printf("Usage: %s [--compressed] [--nullify-times] <in.zip >out.zip%n", ReZip.class.getSimpleName());
+                System.err.println("\t--compressed       re-zip compressed");
+                System.err.println("\t--nullify-times    set creation-, last-access- and last-modified-times of the re-zipped archives entries to 0");
                 System.exit(1);
             }
         }
