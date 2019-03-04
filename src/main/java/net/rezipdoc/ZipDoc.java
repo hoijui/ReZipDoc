@@ -30,10 +30,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.ZipEntry;
@@ -47,22 +44,6 @@ import java.util.zip.ZipInputStream;
 @SuppressWarnings("WeakerAccess")
 public class ZipDoc {
 
-    private static final Set<String> SUFFIXES_XML;
-    private static final Set<String> SUFFIXES_TEXT;
-
-    static {
-        final Set<String> suffixesXml = new HashSet<>();
-        suffixesXml.add("xml");
-        suffixesXml.add("svg");
-        SUFFIXES_XML = suffixesXml;
-
-        final Set<String> suffixesText = new HashSet<>(suffixesXml);
-        suffixesText.add("txt");
-        suffixesText.add("md");
-        suffixesText.add("markdown");
-        SUFFIXES_TEXT = suffixesText;
-    }
-
     public static void main(final String[] argv) throws IOException, TransformerException {
 
         if (1 != argv.length) {
@@ -71,70 +52,6 @@ public class ZipDoc {
         }
 
         transform(argv[0]);
-    }
-
-    /**
-     * Checks whether a file denotes an XML based file format.
-     * @param fileName to be checked for known XML file extensions (for example ".xml" and ".svg")
-     * @param contentBytes length of the content in bytes
-     * @param contentIn to be checked for magic file header
-     * @param magicHeader the magic file header to look for
-     * @param suffixes the file suffixes to look for
-     * @return whether the supplied file type is XML based
-     */
-    public static boolean isType(final String fileName, final long contentBytes, final InputStream contentIn, final String magicHeader, final Set<String> suffixes) {
-
-        if (!contentIn.markSupported()) {
-            throw new IllegalStateException();
-        }
-
-        boolean matches = false;
-
-        final String fileNameLower = fileName.toLowerCase();
-        if (fileNameLower.contains(".")) {
-            final String suffix = fileNameLower.substring(fileNameLower.lastIndexOf('.'));
-            matches = suffixes.contains(suffix);
-        }
-        if (!matches && (magicHeader != null) && contentBytes >= magicHeader.length()) {
-            final int maxHeaderBytes = magicHeader.length() * 2 + 2;
-            contentIn.mark(maxHeaderBytes);
-            final byte[] buffer = new byte[maxHeaderBytes];
-            try {
-                final int readHeaderBytes = contentIn.read(buffer);
-                if (readHeaderBytes >= magicHeader.length()) {
-                    final String header = new String(buffer);
-                    if (header.toLowerCase().startsWith(magicHeader)) {
-                        matches = true;
-                    }
-                }
-            } catch (final IOException ex) {
-                ex.printStackTrace();
-            }
-        }
-
-        return matches;
-    }
-
-    /**
-     * Checks whether a file denotes an XML based file format.
-     * @param fileName to be checked for known XML file extensions (for example ".xml" and ".svg")
-     * @param contentBytes length of the content in bytes
-     * @param contentIn to be checked for magic file header for XML: {@literal "<?xml "}
-     * @return whether the supplied file type is XML based
-     */
-    public static boolean isXml(final String fileName, final long contentBytes, final InputStream contentIn) {
-        return isType(fileName, contentBytes, contentIn, "<?xml ", SUFFIXES_XML);
-    }
-
-    /**
-     * Checks whether a file denotes an plain-text file format.
-     * @param fileName to be checked
-     * @param contentBytes length of the content in bytes
-     * @param contentIn to see if only non-binary data is present
-     * @return whether the supplied file name is text based
-     */
-    public static boolean isPlainText(final String fileName, final long contentBytes, final InputStream contentIn) {
-        return isType(fileName, contentBytes, contentIn, null, SUFFIXES_TEXT);
     }
 
     /**
@@ -182,11 +99,11 @@ public class ZipDoc {
             }
             zipIn.closeEntry();
 
-            if (isXml(entry.getName(), entry.getSize(), zipIn)) {
+            if (Utils.isXml(entry.getName(), entry.getSize(), zipIn)) {
                 // XML file: pretty-print the data to stdout
                 final InputSource inBuffer = new InputSource(new ByteArrayInputStream(uncompressedOutRaw.toByteArray()));
                 serializer.transform(new SAXSource(inBuffer), new StreamResult(output));
-            } else if (isPlainText(entry.getName(), entry.getSize(), zipIn)) {
+            } else if (Utils.isPlainText(entry.getName(), entry.getSize(), zipIn)) {
                 // Text file: dump directly to output
                 uncompressedOutRaw.writeTo(output);
             } else {
