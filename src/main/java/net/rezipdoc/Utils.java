@@ -32,6 +32,7 @@ public final class Utils {
 
     private static final Set<String> SUFFIXES_XML;
     private static final Set<String> SUFFIXES_TEXT;
+    private static final Set<String> SUFFIXES_ZIP;
 
     static {
         final Set<String> suffixesXml = new HashSet<>();
@@ -44,6 +45,11 @@ public final class Utils {
         suffixesText.add("md");
         suffixesText.add("markdown");
         SUFFIXES_TEXT = suffixesText;
+
+        final Set<String> suffixesZip = new HashSet<>();
+        suffixesZip.add("zip");
+        suffixesZip.add("jar");
+        SUFFIXES_ZIP = suffixesZip;
     }
 
     /**
@@ -112,5 +118,9 @@ public final class Utils {
      */
     public static boolean isPlainText(final String fileName, final long contentBytes, final InputStream contentIn) {
         return isType(fileName, contentBytes, contentIn, null, SUFFIXES_TEXT);
+    }
+
+    public static boolean isZip(final String fileName, final long contentBytes, final InputStream contentIn) {
+        return isType(fileName, contentBytes, contentIn, null, SUFFIXES_ZIP);
     }
 }

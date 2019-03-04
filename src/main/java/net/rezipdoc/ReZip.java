@@ -40,17 +40,20 @@ public class ReZip {
 
         private final boolean compression;
         private final boolean nullifyTimes;
+        private final boolean recursive;
 
         /**
          * Stores settings about how to re-zip.
          * @param compression whether the output ZIP is compressed or not
          * @param nullifyTimes whether the creation-, last-access- and last-modified-times of the archive entries
          *   should be set to <code>0</code>
+         * @param recursive whether to re-zip recursively (the ZIPs within ZIPs within ZIPs ...)
          */
-        public Settings(final boolean compression, final boolean nullifyTimes) {
+        public Settings(final boolean compression, final boolean nullifyTimes, final boolean recursive) {
 
             this.compression = compression;
             this.nullifyTimes = nullifyTimes;
+            this.recursive = recursive;
         }
 
         public boolean isCompression() {
@@ -59,6 +62,10 @@ public class ReZip {
 
         public boolean isNullifyTimes() {
             return nullifyTimes;
+        }
+
+        public boolean isRecursive() {
+            return recursive;
         }
     }
 
@@ -73,20 +80,25 @@ public class ReZip {
 
         boolean compressed = false;
         boolean nullifyTimes = false;
+        boolean recursive = true;
         for (final String arg : argv) {
             if ("--compressed".equals(arg)) {
                 compressed = true;
             } else if ("--nullify-times".equals(arg)) {
                 nullifyTimes = true;
+            } else if ("--non-recursive".equals(arg)) {
+                recursive = false;
             } else {
-                System.err.printf("Usage: %s [--compressed] [--nullify-times] <in.zip >out.zip%n", ReZip.class.getSimpleName());
+                System.err.printf("Usage: %s [--compressed] [--nullify-times] [--non-recursive] <in.zip >out.zip%n",
+                        ReZip.class.getSimpleName());
                 System.err.println("\t--compressed       re-zip compressed");
                 System.err.println("\t--nullify-times    set creation-, last-access- and last-modified-times of the re-zipped archives entries to 0");
+                System.err.println("\t--non-recursive    do not re-zip archives within archives");
                 System.exit(1);
             }
         }
 
-        reZip(new Settings(compressed, nullifyTimes));
+        reZip(new Settings(compressed, nullifyTimes, recursive));
     }
 
     /**
@@ -115,6 +127,16 @@ public class ReZip {
         final ByteArrayOutputStream uncompressedOutRaw = new ByteArrayOutputStream();
         final CRC32 checksum = new CRC32();
         final CheckedOutputStream uncompressedOutChecked = new CheckedOutputStream(uncompressedOutRaw, checksum);
+        reZip(zipIn, zipOut, settings, compression, buffer, uncompressedOutRaw, checksum, uncompressedOutChecked);
+    }
+
+    private static void reZip(final ZipInputStream zipIn, final ZipOutputStream zipOut, final Settings settings,
+                             final int compression,
+                             final byte[] buffer,
+                             final ByteArrayOutputStream uncompressedOutRaw,
+                             final CRC32 checksum,
+                             final CheckedOutputStream uncompressedOutChecked) throws IOException
+    {
         for (ZipEntry entry = zipIn.getNextEntry(); entry != null; entry = zipIn.getNextEntry()) {
             uncompressedOutRaw.reset();
             checksum.reset();
@@ -140,7 +162,13 @@ public class ReZip {
 
             // Copy uncompressed entry content into destination ZIP
             zipOut.putNextEntry(entry);
-            uncompressedOutRaw.writeTo(zipOut);
+            if (settings.isRecursive() && Utils.isZip(entry.getName(), entry.getSize(), zipIn)) {
+                try (ZipInputStream zipInRec = new ZipInputStream(zipIn); ZipOutputStream zipOutRec = new ZipOutputStream(zipOut)) {
+                    reZip(zipInRec, zipOutRec, settings, compression, buffer, uncompressedOutRaw,  checksum, uncompressedOutChecked);
+                }
+            } else {
+                uncompressedOutRaw.writeTo(zipOut);
+            }
             zipOut.closeEntry();
         }
     }
