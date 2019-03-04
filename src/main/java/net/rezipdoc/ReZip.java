@@ -33,6 +33,7 @@ import java.util.zip.ZipOutputStream;
  * Uncompressed files are stored more efficiently in Git.
  * @see "https://github.com/costerwi/rezip"
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class ReZip {
 
     public static class Settings {
@@ -46,19 +47,16 @@ public class ReZip {
          * @param nullifyTimes whether the creation-, last-access- and last-modified-times of the archive entries
          *   should be set to <code>0</code>
          */
-        @SuppressWarnings("WeakerAccess")
         public Settings(final boolean compression, final boolean nullifyTimes) {
 
             this.compression = compression;
             this.nullifyTimes = nullifyTimes;
         }
 
-        @SuppressWarnings("WeakerAccess")
         public boolean isCompression() {
             return compression;
         }
 
-        @SuppressWarnings("WeakerAccess")
         public boolean isNullifyTimes() {
             return nullifyTimes;
         }
@@ -94,7 +92,6 @@ public class ReZip {
      * @param settings settings concerning the details of how ot re-zip
      * @throws IOException if any input or output fails
      */
-    @SuppressWarnings("WeakerAccess")
     public static void reZip(final Settings settings) throws IOException {
 
         try (ZipInputStream zipIn = new ZipInputStream(System.in); ZipOutputStream zipOut = new ZipOutputStream(System.out)) {
@@ -109,7 +106,6 @@ public class ReZip {
      * @param settings settings concerning the details of how ot re-zip
      * @throws IOException if any input or output fails
      */
-    @SuppressWarnings("WeakerAccess")
     public static void reZip(final ZipInputStream zipIn, final ZipOutputStream zipOut, final Settings settings) throws IOException {
 
         final int compression = settings.isCompression() ? ZipEntry.DEFLATED : ZipEntry.STORED;

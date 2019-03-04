@@ -44,6 +44,7 @@ import java.util.zip.ZipInputStream;
  * and produces a more human readable, textual representation of its content on stdout.
  * @see "https://github.com/costerwi/zipdoc"
  */
+@SuppressWarnings("WeakerAccess")
 public class ZipDoc {
 
     private static final Set<String> SUFFIXES_XML;
@@ -81,7 +82,6 @@ public class ZipDoc {
      * @param suffixes the file suffixes to look for
      * @return whether the supplied file type is XML based
      */
-    @SuppressWarnings("WeakerAccess")
     public static boolean isType(final String fileName, final long contentBytes, final InputStream contentIn, final String magicHeader, final Set<String> suffixes) {
 
         if (!contentIn.markSupported()) {
@@ -122,7 +122,6 @@ public class ZipDoc {
      * @param contentIn to be checked for magic file header for XML: {@code "<?xml "} TODO
      * @return whether the supplied file type is XML based
      */
-    @SuppressWarnings("WeakerAccess")
     public static boolean isXml(final String fileName, final long contentBytes, final InputStream contentIn) {
         return isType(fileName, contentBytes, contentIn, "<?xml ", SUFFIXES_XML);
     }
@@ -134,7 +133,6 @@ public class ZipDoc {
      * @param contentIn to see if only non-binary data is present
      * @return whether the supplied file name is text based
      */
-    @SuppressWarnings("WeakerAccess")
     public static boolean isPlainText(final String fileName, final long contentBytes, final InputStream contentIn) {
         return isType(fileName, contentBytes, contentIn, null, SUFFIXES_TEXT);
     }
@@ -145,7 +143,6 @@ public class ZipDoc {
      * @throws IOException if any input or output fails
      * @throws TransformerException if XML pretty-printing fails
      */
-    @SuppressWarnings("WeakerAccess")
     public static void transform(final String zipFilePath) throws IOException, TransformerException {
 
         try (ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath))) {
@@ -160,7 +157,6 @@ public class ZipDoc {
      * @throws IOException if any input or output fails
      * @throws TransformerException if XML pretty-printing fails
      */
-    @SuppressWarnings("WeakerAccess")
     public static void transform(final ZipInputStream zipIn, final PrintStream output)
             throws IOException, TransformerException
     {
