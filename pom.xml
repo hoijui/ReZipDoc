@@ -110,6 +110,8 @@
 					<linkXRef>true</linkXRef>
 					<inputEncoding>${project.build.sourceEncoding}</inputEncoding>
 					<targetJdk>1.${java.version}</targetJdk>
+					<!-- The lower this value, the shorter segments CPD detects as duplicate code -->
+					<minimumTokens>50</minimumTokens>
 					<rulesets>
 						<ruleset>src/main/resources/pmd.xml</ruleset>
 					</rulesets>
