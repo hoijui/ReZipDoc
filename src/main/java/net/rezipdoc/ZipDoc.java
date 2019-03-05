@@ -44,6 +44,8 @@ import java.util.zip.ZipInputStream;
 @SuppressWarnings("WeakerAccess")
 public class ZipDoc {
 
+    private ZipDoc() {}
+
     public static void main(final String[] argv) throws IOException, TransformerException {
 
         if (1 != argv.length) {

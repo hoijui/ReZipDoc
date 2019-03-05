@@ -69,6 +69,8 @@ public class ReZip {
         }
     }
 
+    private ReZip() {}
+
     /**
      * Reads a ZIP file from stdin and writes new ZIP content to stdout.
      * With the <code>--compressed</code> command line argument,

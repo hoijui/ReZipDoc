@@ -52,6 +52,8 @@ public final class Utils {
         SUFFIXES_ZIP = suffixesZip;
     }
 
+	private Utils() {}
+
     /**
      * Checks whether a file denotes an XML based file format.
      * @param fileName to be checked for known XML file extensions (for example ".xml" and ".svg")
