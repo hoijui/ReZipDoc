@@ -35,7 +35,7 @@ import java.util.zip.ZipOutputStream;
  * @see "https://github.com/costerwi/rezip"
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class ReZip {
+public final class ReZip {
 
 	public static class Settings {
 

@@ -44,7 +44,7 @@ import java.util.zip.ZipInputStream;
  * @see "https://github.com/costerwi/zipdoc"
  */
 @SuppressWarnings("WeakerAccess")
-public class ZipDoc {
+public final class ZipDoc {
 
 	private ZipDoc() {
 	}
