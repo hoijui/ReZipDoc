@@ -35,44 +35,38 @@ import java.util.zip.ZipOutputStream;
  * @see "https://github.com/costerwi/rezip"
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public final class ReZip {
+public class ReZip {
 
-	public static class Settings {
+	private final boolean compression;
+	private final boolean nullifyTimes;
+	private final boolean recursive;
 
-		private final boolean compression;
-		private final boolean nullifyTimes;
-		private final boolean recursive;
+	/**
+	 * Stores settings about how to re-zip.
+	 *
+	 * @param compression  whether the output ZIP is compressed or not
+	 * @param nullifyTimes whether the creation-, last-access- and last-modified-times of the archive entries
+	 *                     should be set to <code>0</code>
+	 * @param recursive    whether to re-zip recursively (the ZIPs within ZIPs within ZIPs ...)
+	 */
+	public ReZip(final boolean compression, final boolean nullifyTimes, final boolean recursive) {
 
-		/**
-		 * Stores settings about how to re-zip.
-		 *
-		 * @param compression  whether the output ZIP is compressed or not
-		 * @param nullifyTimes whether the creation-, last-access- and last-modified-times of the archive entries
-		 *                     should be set to <code>0</code>
-		 * @param recursive    whether to re-zip recursively (the ZIPs within ZIPs within ZIPs ...)
-		 */
-		public Settings(final boolean compression, final boolean nullifyTimes, final boolean recursive) {
+		this.compression = compression;
+		this.nullifyTimes = nullifyTimes;
+		this.recursive = recursive;
+	}
 
-			this.compression = compression;
-			this.nullifyTimes = nullifyTimes;
-			this.recursive = recursive;
-		}
+	public boolean isCompression() {
+		return compression;
+	}
 
-		public boolean isCompression() {
-			return compression;
-		}
+	public boolean isNullifyTimes() {
+		return nullifyTimes;
+	}
 
-		public boolean isNullifyTimes() {
-			return nullifyTimes;
-		}
-
-		public boolean isRecursive() {
+	public boolean isRecursive() {
 			return recursive;
 		}
-	}
-
-	private ReZip() {
-	}
 
 	/**
 	 * Reads a ZIP file from stdin and writes new ZIP content to stdout.
@@ -104,21 +98,20 @@ public final class ReZip {
 			}
 		}
 
-		reZip(new Settings(compressed, nullifyTimes, recursive));
+		new ReZip(compressed, nullifyTimes, recursive).reZip();
 	}
 
 	/**
 	 * Reads a ZIP file from stdin and writes new ZIP content to stdout.
 	 *
-	 * @param settings settings concerning the details of how ot re-zip
 	 * @throws IOException if any input or output fails
 	 */
-	public static void reZip(final Settings settings) throws IOException {
+	public void reZip() throws IOException {
 
 		try (ZipInputStream zipIn = new ZipInputStream(System.in);
 				ZipOutputStream zipOut = new ZipOutputStream(System.out))
 		{
-			reZip(zipIn, zipOut, settings);
+			reZip(zipIn, zipOut);
 		}
 	}
 
@@ -127,24 +120,22 @@ public final class ReZip {
 	 *
 	 * @param zipIn    the source ZIP
 	 * @param zipOut   the destination ZIP
-	 * @param settings settings concerning the details of how ot re-zip
 	 * @throws IOException if any input or output fails
 	 */
-	public static void reZip(final ZipInputStream zipIn, final ZipOutputStream zipOut, final Settings settings)
+	public void reZip(final ZipInputStream zipIn, final ZipOutputStream zipOut)
 			throws IOException
 	{
-		final int compression = settings.isCompression() ? ZipEntry.DEFLATED : ZipEntry.STORED;
+		final int compression = isCompression() ? ZipEntry.DEFLATED : ZipEntry.STORED;
 		final byte[] buffer = new byte[8192];
 		final ByteArrayOutputStream uncompressedOutRaw = new ByteArrayOutputStream();
 		final CRC32 checksum = new CRC32();
 		final CheckedOutputStream uncompressedOutChecked = new CheckedOutputStream(uncompressedOutRaw, checksum);
-		reZip(zipIn, zipOut, settings, compression, buffer, uncompressedOutRaw, checksum, uncompressedOutChecked);
+		reZip(zipIn, zipOut, compression, buffer, uncompressedOutRaw, checksum, uncompressedOutChecked);
 	}
 
-	private static void reZip(
+	private void reZip(
 			final ZipInputStream zipIn,
 			final ZipOutputStream zipOut,
-			final Settings settings,
 			final int compression,
 			final byte[] buffer,
 			final ByteArrayOutputStream uncompressedOutRaw,
@@ -168,7 +159,7 @@ public final class ReZip {
 			entry.setMethod(compression);
 			// Unknown compressed size
 			entry.setCompressedSize(-1);
-			if (settings.isNullifyTimes()) {
+			if (isNullifyTimes()) {
 				entry.setTime(0);
 				entry.setCreationTime(FileTime.fromMillis(0));
 				entry.setLastAccessTime(FileTime.fromMillis(0));
@@ -177,9 +168,9 @@ public final class ReZip {
 
 			// Copy uncompressed entry content into destination ZIP
 			zipOut.putNextEntry(entry);
-			if (settings.isRecursive() && Utils.isZip(entry.getName(), entry.getSize(), zipIn)) {
+			if (isRecursive() && Utils.isZip(entry.getName(), entry.getSize(), zipIn)) {
 				try (ZipInputStream zipInRec = new ZipInputStream(zipIn); ZipOutputStream zipOutRec = new ZipOutputStream(zipOut)) {
-					reZip(zipInRec, zipOutRec, settings, compression, buffer, uncompressedOutRaw, checksum, uncompressedOutChecked);
+					reZip(zipInRec, zipOutRec, compression, buffer, uncompressedOutRaw, checksum, uncompressedOutChecked);
 				}
 			} else {
 				uncompressedOutRaw.writeTo(zipOut);
