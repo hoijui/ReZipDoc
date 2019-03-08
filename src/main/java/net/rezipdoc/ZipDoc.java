@@ -44,7 +44,7 @@ import java.util.zip.ZipInputStream;
  * @see "https://github.com/costerwi/zipdoc"
  */
 @SuppressWarnings("WeakerAccess")
-public final class ZipDoc {
+public class ZipDoc {
 
 	private ZipDoc() {
 	}
@@ -56,7 +56,7 @@ public final class ZipDoc {
 			System.exit(1);
 		}
 
-		transform(argv[0]);
+		new ZipDoc().transform(argv[0]);
 	}
 
 	/**
@@ -66,7 +66,7 @@ public final class ZipDoc {
 	 * @throws IOException          if any input or output fails
 	 * @throws TransformerException if XML pretty-printing fails
 	 */
-	public static void transform(final String zipFilePath) throws IOException, TransformerException {
+	public void transform(final String zipFilePath) throws IOException, TransformerException {
 
 		try (ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath))) {
 			transform(zipIn, System.out);
@@ -81,7 +81,7 @@ public final class ZipDoc {
 	 * @throws IOException          if any input or output fails
 	 * @throws TransformerException if XML pretty-printing fails
 	 */
-	public static void transform(final ZipInputStream zipIn, final PrintStream output)
+	public void transform(final ZipInputStream zipIn, final PrintStream output)
 			throws IOException, TransformerException
 	{
 		final Transformer serializer = SAXTransformerFactory.newInstance().newTransformer();
