@@ -1,0 +1,26 @@
+language: java
+sudo: false # faster builds
+
+addons:
+  sonarcloud:
+    organization: "hoijui-github"
+    token:
+      secure: "6b0921904f3f9b1a695f964b912e9c93594c36a7"
+
+jdk:
+# Only test one JDK to save energy
+#  - oraclejdk8
+#  - oraclejdk11
+  - openjdk8
+#  - openjdk11
+
+#script:
+# NOTE JaCoCo is used to have code coverage, the agent has to be activated
+# NOTE The SonarCube Community Edition (free plan) only allows branch "master".
+#  - mvnExtra=""; if [ $TRAVIS_BRANCH = "master" ]; then mvnExtra="sonar:sonar"; fi; mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package $mvnExtra
+
+cache:
+  directories:
+    - '$HOME/.m2/repository'
+    - '$HOME/.sonar/cache'
+
