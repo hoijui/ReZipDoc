@@ -30,99 +30,104 @@ import java.util.Set;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class Utils {
 
-    private static final Set<String> SUFFIXES_XML;
-    private static final Set<String> SUFFIXES_TEXT;
-    private static final Set<String> SUFFIXES_ZIP;
+	private static final Set<String> SUFFIXES_XML;
+	private static final Set<String> SUFFIXES_TEXT;
+	private static final Set<String> SUFFIXES_ZIP;
 
-    static {
-        final Set<String> suffixesXml = new HashSet<>();
-        suffixesXml.add("xml");
-        suffixesXml.add("svg");
-        SUFFIXES_XML = suffixesXml;
+	static {
+		final Set<String> suffixesXml = new HashSet<>();
+		suffixesXml.add("xml");
+		suffixesXml.add("svg");
+		SUFFIXES_XML = suffixesXml;
 
-        final Set<String> suffixesText = new HashSet<>(suffixesXml);
-        suffixesText.add("txt");
-        suffixesText.add("md");
-        suffixesText.add("markdown");
-        SUFFIXES_TEXT = suffixesText;
+		final Set<String> suffixesText = new HashSet<>(suffixesXml);
+		suffixesText.add("txt");
+		suffixesText.add("md");
+		suffixesText.add("markdown");
+		SUFFIXES_TEXT = suffixesText;
 
-        final Set<String> suffixesZip = new HashSet<>();
-        suffixesZip.add("zip");
-        suffixesZip.add("jar");
-        SUFFIXES_ZIP = suffixesZip;
-    }
+		final Set<String> suffixesZip = new HashSet<>();
+		suffixesZip.add("zip");
+		suffixesZip.add("jar");
+		SUFFIXES_ZIP = suffixesZip;
+	}
 
-	private Utils() {}
+	private Utils() {
+	}
 
-    /**
-     * Checks whether a file denotes an XML based file format.
-     * @param fileName to be checked for known XML file extensions (for example ".xml" and ".svg")
-     * @param contentBytes length of the content in bytes
-     * @param contentIn to be checked for magic file header
-     * @param magicHeader the magic file header to look for
-     * @param suffixes the file suffixes to look for
-     * @return whether the supplied file type is XML based
-     */
-    public static boolean isType(final String fileName, final long contentBytes, final InputStream contentIn, final String magicHeader, final Set<String> suffixes) {
+	/**
+	 * Checks whether a file denotes an XML based file format.
+	 *
+	 * @param fileName     to be checked for known XML file extensions (for example ".xml" and ".svg")
+	 * @param contentBytes length of the content in bytes
+	 * @param contentIn    to be checked for magic file header
+	 * @param magicHeader  the magic file header to look for
+	 * @param suffixes     the file suffixes to look for
+	 * @return whether the supplied file type is XML based
+	 */
+	public static boolean isType(final String fileName, final long contentBytes, final InputStream contentIn,
+			final String magicHeader, final Set<String> suffixes)
+	{
+		if (!contentIn.markSupported()) {
+			throw new IllegalStateException();
+		}
 
-        if (!contentIn.markSupported()) {
-            throw new IllegalStateException();
-        }
+		boolean matches = false;
 
-        boolean matches = false;
+		final String fileNameLower = fileName.toLowerCase();
+		if (fileNameLower.contains(".")) {
+			final String suffix = fileNameLower.substring(fileNameLower.lastIndexOf('.'));
+			matches = suffixes.contains(suffix);
+		}
+		if (!matches && (magicHeader != null) && contentBytes >= magicHeader.length()) {
+			final int maxHeaderBytes = magicHeader.length() * 2 + 2;
+			contentIn.mark(maxHeaderBytes);
+			final byte[] buffer = new byte[maxHeaderBytes];
+			try {
+				try {
+					final int readHeaderBytes = contentIn.read(buffer);
+					if (readHeaderBytes >= magicHeader.length()) {
+						final String header = new String(buffer);
+						if (header.toLowerCase().startsWith(magicHeader)) {
+							matches = true;
+						}
+					}
+				} finally {
+					contentIn.reset();
+				}
+			} catch (final IOException ex) {
+				ex.printStackTrace();
+			}
+		}
 
-        final String fileNameLower = fileName.toLowerCase();
-        if (fileNameLower.contains(".")) {
-            final String suffix = fileNameLower.substring(fileNameLower.lastIndexOf('.'));
-            matches = suffixes.contains(suffix);
-        }
-        if (!matches && (magicHeader != null) && contentBytes >= magicHeader.length()) {
-            final int maxHeaderBytes = magicHeader.length() * 2 + 2;
-            contentIn.mark(maxHeaderBytes);
-            final byte[] buffer = new byte[maxHeaderBytes];
-            try {
-                try {
-                    final int readHeaderBytes = contentIn.read(buffer);
-                    if (readHeaderBytes >= magicHeader.length()) {
-                        final String header = new String(buffer);
-                        if (header.toLowerCase().startsWith(magicHeader)) {
-                            matches = true;
-                        }
-                    }
-                } finally {
-                    contentIn.reset();
-                }
-            } catch (final IOException ex) {
-                ex.printStackTrace();
-            }
-        }
+		return matches;
+	}
 
-        return matches;
-    }
+	/**
+	 * Checks whether a file denotes an XML based file format.
+	 *
+	 * @param fileName     to be checked for known XML file extensions (for example ".xml" and ".svg")
+	 * @param contentBytes length of the content in bytes
+	 * @param contentIn    to be checked for magic file header for XML: {@literal "<?xml "}
+	 * @return whether the supplied file type is XML based
+	 */
+	public static boolean isXml(final String fileName, final long contentBytes, final InputStream contentIn) {
+		return isType(fileName, contentBytes, contentIn, "<?xml ", SUFFIXES_XML);
+	}
 
-    /**
-     * Checks whether a file denotes an XML based file format.
-     * @param fileName to be checked for known XML file extensions (for example ".xml" and ".svg")
-     * @param contentBytes length of the content in bytes
-     * @param contentIn to be checked for magic file header for XML: {@literal "<?xml "}
-     * @return whether the supplied file type is XML based
-     */
-    public static boolean isXml(final String fileName, final long contentBytes, final InputStream contentIn) {
-        return isType(fileName, contentBytes, contentIn, "<?xml ", SUFFIXES_XML);
-    }
+	/**
+	 * Checks whether a file denotes an plain-text file format.
+	 *
+	 * @param fileName     to be checked
+	 * @param contentBytes length of the content in bytes
+	 * @param contentIn    to see if only non-binary data is present
+	 * @return whether the supplied file name is text based
+	 */
+	public static boolean isPlainText(final String fileName, final long contentBytes, final InputStream contentIn) {
+		return isType(fileName, contentBytes, contentIn, null, SUFFIXES_TEXT);
+	}
 
-    /**
-     * Checks whether a file denotes an plain-text file format.
-     * @param fileName to be checked
-     * @param contentBytes length of the content in bytes
-     * @param contentIn to see if only non-binary data is present
-     * @return whether the supplied file name is text based
-     */
-    public static boolean isPlainText(final String fileName, final long contentBytes, final InputStream contentIn) {
-        return isType(fileName, contentBytes, contentIn, null, SUFFIXES_TEXT);
-    }
-
-    public static boolean isZip(final String fileName, final long contentBytes, final InputStream contentIn) {
-        return isType(fileName, contentBytes, contentIn, null, SUFFIXES_ZIP);
-    }
+	public static boolean isZip(final String fileName, final long contentBytes, final InputStream contentIn) {
+		return isType(fileName, contentBytes, contentIn, null, SUFFIXES_ZIP);
+	}
 }
