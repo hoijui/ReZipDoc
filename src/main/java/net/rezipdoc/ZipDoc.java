@@ -48,7 +48,7 @@ public class ZipDoc {
 
 	public static void main(final String[] argv) throws IOException, TransformerException {
 
-		if (1 != argv.length) {
+		if (1 != argv.length || "--help".equals(argv[0]) || "-h".equals(argv[0])) {
 			System.err.printf("Usage: %s in-file.zip > text-representation.txt%n", ZipDoc.class.getSimpleName());
 			System.exit(1);
 		}
