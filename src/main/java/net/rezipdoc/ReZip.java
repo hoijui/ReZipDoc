@@ -20,7 +20,10 @@
 package net.rezipdoc;
 
 import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedOutputStream;
@@ -114,6 +117,15 @@ public class ReZip {
 
 		try (ZipInputStream zipIn = new ZipInputStream(System.in);
 				ZipOutputStream zipOut = new ZipOutputStream(System.out))
+		{
+			reZip(zipIn, zipOut);
+		}
+	}
+
+	public void reZip(final Path zipInFile, final Path zipOutFile) throws IOException {
+
+		try (ZipInputStream zipIn = new ZipInputStream(new BufferedInputStream(new FileInputStream(zipInFile.toFile())));
+		     ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipOutFile.toFile())))
 		{
 			reZip(zipIn, zipOut);
 		}
