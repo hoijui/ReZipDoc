@@ -106,8 +106,14 @@ public class ZipDoc {
 
 			if (Utils.isXml(entry.getName(), entry.getSize(), uncompressedOutRaw)) {
 				// XML file: pretty-print the data to stdout
-				final InputSource inBuffer = new InputSource(uncompressedOutRaw.createInputStream());
-				serializer.transform(new SAXSource(inBuffer), new StreamResult(output));
+				try {
+					final InputSource inBuffer = new InputSource(uncompressedOutRaw.createInputStream());
+					serializer.transform(new SAXSource(inBuffer), new StreamResult(output));
+				} catch (final TransformerException ex) {
+					ex.printStackTrace(System.err);
+					// In case of failure of pretty-printing, use the XML as-is
+					uncompressedOutRaw.writeTo(output);
+				}
 			} else if (Utils.isPlainText(entry.getName(), entry.getSize(), uncompressedOutRaw)) {
 				// Text file: dump directly to output
 				uncompressedOutRaw.writeTo(output);
