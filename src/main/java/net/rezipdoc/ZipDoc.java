@@ -36,10 +36,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * The program takes a single argument, the name of the file to convert,
+ * The program takes a single argument, the name of the ZIP file to convert,
  * and produces a more human readable, textual representation of its content on stdout.
- *
- * @see "https://github.com/costerwi/zipdoc"
+ * It is meant to be used as a git textconv filter; see the README for details.
  */
 @SuppressWarnings("WeakerAccess")
 public class ZipDoc {
@@ -72,7 +71,8 @@ public class ZipDoc {
 	}
 
 	/**
-	 * Reads the specified ZIP document and outputs a textual representation of its to the specified output stream.
+	 * Reads the specified ZIP document and outputs a textual representation
+	 * of its to the specified output stream.
 	 *
 	 * @param zipIn  the ZIP document to convert to a text
 	 * @param output where the text gets written to
