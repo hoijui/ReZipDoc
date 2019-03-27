@@ -1,0 +1,62 @@
+/*
+ * Copyright (C) 2015-2019,
+ * Carl Osterwisch <costerwi@gmail.com>,
+ * Robin Vobruba <hoijui.quaero@gmail.com>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package net.rezipdoc;
+
+import org.junit.Test;
+
+import javax.xml.transform.TransformerException;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+/**
+ * @see ZipDoc
+ */
+public class ZipDocTest extends AbstractReZipDocTest {
+
+	private void testRecursive(final boolean recursive) throws IOException, TransformerException {
+
+		// This is the original, compressed file
+		createRecursiveZip(zipFile, projectRoot, archiveContents, ZipEntry.DEFLATED);
+		// This creates the uncompressed file
+		final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream();
+		new ZipDoc(recursive, false).transform(
+				new ZipInputStream(new FileInputStream(zipFile.toFile())),
+				new PrintStream(bufferedOutputStream));
+		// Test whether the filtered ZIP file does (not) contain the original content
+		// placed in a sub-ZIP file in plain text
+		checkContains(recursive, bufferedOutputStream, archiveContents.subList(0, 2));
+		// Test whether the filtered ZIP file contains the directly embedded original content
+		// in plain text
+		checkContains(true, bufferedOutputStream, archiveContents.subList(2, archiveContents.size()));
+	}
+
+	@Test
+	public void testNonRecursive() throws IOException, TransformerException {
+		testRecursive(false);
+	}
+
+	@Test
+	public void testRecursive() throws IOException, TransformerException {
+		testRecursive(true);
+	}
+}
