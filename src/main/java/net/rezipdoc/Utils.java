@@ -44,6 +44,7 @@ public final class Utils {
 		suffixesText.add("txt");
 		suffixesText.add("md");
 		suffixesText.add("markdown");
+		suffixesText.add("properties");
 		SUFFIXES_TEXT = suffixesText;
 
 		final Set<String> suffixesZip = new HashSet<>();
