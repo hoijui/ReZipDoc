@@ -65,38 +65,23 @@ public final class Utils {
 	 * @param suffixes     the file suffixes to look for
 	 * @return whether the supplied file type is XML based
 	 */
-	public static boolean isType(final String fileName, final long contentBytes, final InputStream contentIn,
+	public static boolean isType(final String fileName, final long contentBytes, final BufferedOutputStream contentIn,
 			final String magicHeader, final Set<String> suffixes)
 	{
-		if (!contentIn.markSupported()) {
-			throw new IllegalStateException();
-		}
-
 		boolean matches = false;
 
 		final String fileNameLower = fileName.toLowerCase();
 		if (fileNameLower.contains(".")) {
-			final String suffix = fileNameLower.substring(fileNameLower.lastIndexOf('.'));
+			final String suffix = fileNameLower.substring(fileNameLower.lastIndexOf('.') + 1);
 			matches = suffixes.contains(suffix);
 		}
 		if (!matches && (magicHeader != null) && contentBytes >= magicHeader.length()) {
-			final int maxHeaderBytes = magicHeader.length() * 2 + 2;
-			contentIn.mark(maxHeaderBytes);
-			final byte[] buffer = new byte[maxHeaderBytes];
 			try {
-				try {
-					final int readHeaderBytes = contentIn.read(buffer);
-					if (readHeaderBytes >= magicHeader.length()) {
-						final String header = new String(buffer);
-						if (header.toLowerCase().startsWith(magicHeader)) {
-							matches = true;
-						}
-					}
-				} finally {
-					contentIn.reset();
+				if (contentIn.startsWith(magicHeader.getBytes())) {
+					matches = true;
 				}
-			} catch (final IOException ex) {
-				ex.printStackTrace();
+			} finally {
+				contentIn.reset();
 			}
 		}
 
@@ -111,7 +96,7 @@ public final class Utils {
 	 * @param contentIn    to be checked for magic file header for XML: {@literal "<?xml "}
 	 * @return whether the supplied file type is XML based
 	 */
-	public static boolean isXml(final String fileName, final long contentBytes, final InputStream contentIn) {
+	public static boolean isXml(final String fileName, final long contentBytes, final BufferedOutputStream contentIn) {
 		return isType(fileName, contentBytes, contentIn, "<?xml ", SUFFIXES_XML);
 	}
 
@@ -123,11 +108,11 @@ public final class Utils {
 	 * @param contentIn    to see if only non-binary data is present
 	 * @return whether the supplied file name is text based
 	 */
-	public static boolean isPlainText(final String fileName, final long contentBytes, final InputStream contentIn) {
+	public static boolean isPlainText(final String fileName, final long contentBytes, final BufferedOutputStream contentIn) {
 		return isType(fileName, contentBytes, contentIn, null, SUFFIXES_TEXT);
 	}
 
-	public static boolean isZip(final String fileName, final long contentBytes, final InputStream contentIn) {
+	public static boolean isZip(final String fileName, final long contentBytes, final BufferedOutputStream contentIn) {
 		return isType(fileName, contentBytes, contentIn, null, SUFFIXES_ZIP);
 	}
 }

@@ -19,7 +19,7 @@
 
 package net.rezipdoc;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.nio.file.attribute.FileTime;
 import java.util.zip.CRC32;
@@ -54,6 +54,10 @@ public class ReZip {
 		this.compression = compression;
 		this.nullifyTimes = nullifyTimes;
 		this.recursive = recursive;
+	}
+
+	public ReZip() {
+		this(false, false, true);
 	}
 
 	public boolean isCompression() {
@@ -127,7 +131,7 @@ public class ReZip {
 	{
 		final int compression = isCompression() ? ZipEntry.DEFLATED : ZipEntry.STORED;
 		final byte[] buffer = new byte[8192];
-		final ByteArrayOutputStream uncompressedOutRaw = new ByteArrayOutputStream();
+		final BufferedOutputStream uncompressedOutRaw = new BufferedOutputStream();
 		final CRC32 checksum = new CRC32();
 		final CheckedOutputStream uncompressedOutChecked = new CheckedOutputStream(uncompressedOutRaw, checksum);
 		reZip(zipIn, zipOut, compression, buffer, uncompressedOutRaw, checksum, uncompressedOutChecked);
@@ -138,7 +142,7 @@ public class ReZip {
 			final ZipOutputStream zipOut,
 			final int compression,
 			final byte[] buffer,
-			final ByteArrayOutputStream uncompressedOutRaw,
+			final BufferedOutputStream uncompressedOutRaw,
 			final CRC32 checksum,
 			final CheckedOutputStream uncompressedOutChecked)
 			throws IOException
@@ -153,7 +157,21 @@ public class ReZip {
 			}
 			zipIn.closeEntry();
 
-			// Modify ZIP entry for destination ZIP
+			// If we found a ZIP in this ZIP, an dwe want to recursively filter, then do so
+			if (isRecursive() && Utils.isZip(entry.getName(), entry.getSize(), uncompressedOutRaw)) {
+				final BufferedOutputStream subUncompressedOutRaw = new BufferedOutputStream();
+				final CRC32 subChecksum = new CRC32();
+				final CheckedOutputStream subUncompressedOutChecked = new CheckedOutputStream(subUncompressedOutRaw, subChecksum);
+				try (ZipInputStream zipInRec = new ZipInputStream(uncompressedOutRaw.createInputStream(true));
+				     ZipOutputStream zipOutRec = new ZipOutputStream(uncompressedOutChecked))
+				{
+					uncompressedOutRaw.reset();
+					checksum.reset();
+					reZip(zipInRec, zipOutRec, compression, buffer, subUncompressedOutRaw, subChecksum, subUncompressedOutChecked);
+				}
+			}
+
+			// Create the ZIP entry for destination ZIP
 			entry.setSize(uncompressedOutRaw.size());
 			entry.setCrc(checksum.getValue());
 			entry.setMethod(compression);
@@ -166,15 +184,8 @@ public class ReZip {
 				entry.setLastModifiedTime(FileTime.fromMillis(0));
 			}
 
-			// Copy uncompressed entry content into destination ZIP
 			zipOut.putNextEntry(entry);
-			if (isRecursive() && Utils.isZip(entry.getName(), entry.getSize(), zipIn)) {
-				try (ZipInputStream zipInRec = new ZipInputStream(zipIn); ZipOutputStream zipOutRec = new ZipOutputStream(zipOut)) {
-					reZip(zipInRec, zipOutRec, compression, buffer, uncompressedOutRaw, checksum, uncompressedOutChecked);
-				}
-			} else {
-				uncompressedOutRaw.writeTo(zipOut);
-			}
+			uncompressedOutRaw.writeTo(zipOut);
 			zipOut.closeEntry();
 		}
 	}

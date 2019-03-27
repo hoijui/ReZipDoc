@@ -27,8 +27,6 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.TransformerException;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -90,7 +88,7 @@ public class ZipDoc {
 		serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 		final byte[] buffer = new byte[8192];
 		ZipEntry entry;
-		final ByteArrayOutputStream uncompressedOutRaw = new ByteArrayOutputStream();
+		final BufferedOutputStream uncompressedOutRaw = new BufferedOutputStream();
 		final CRC32 checkSum = new CRC32();
 		final CheckedOutputStream uncompressedOutChecked = new CheckedOutputStream(uncompressedOutRaw, checkSum);
 		while ((entry = zipIn.getNextEntry()) != null) {
@@ -106,11 +104,11 @@ public class ZipDoc {
 			}
 			zipIn.closeEntry();
 
-			if (Utils.isXml(entry.getName(), entry.getSize(), zipIn)) {
+			if (Utils.isXml(entry.getName(), entry.getSize(), uncompressedOutRaw)) {
 				// XML file: pretty-print the data to stdout
-				final InputSource inBuffer = new InputSource(new ByteArrayInputStream(uncompressedOutRaw.toByteArray()));
+				final InputSource inBuffer = new InputSource(uncompressedOutRaw.createInputStream());
 				serializer.transform(new SAXSource(inBuffer), new StreamResult(output));
-			} else if (Utils.isPlainText(entry.getName(), entry.getSize(), zipIn)) {
+			} else if (Utils.isPlainText(entry.getName(), entry.getSize(), uncompressedOutRaw)) {
 				// Text file: dump directly to output
 				uncompressedOutRaw.writeTo(output);
 			} else {
