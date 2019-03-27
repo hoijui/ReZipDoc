@@ -43,7 +43,17 @@ import java.util.zip.ZipInputStream;
 @SuppressWarnings("WeakerAccess")
 public class ZipDoc {
 
-	private ZipDoc() {
+	private final boolean recursive;
+	private final boolean formatXml;
+
+	public ZipDoc(final boolean recursive, final boolean formatXml) {
+
+		this.recursive = recursive;
+		this.formatXml = formatXml;
+	}
+
+	public ZipDoc() {
+		this(true, true);
 	}
 
 	public static void main(final String[] argv) throws IOException, TransformerException {
@@ -104,7 +114,7 @@ public class ZipDoc {
 			}
 			zipIn.closeEntry();
 
-			if (Utils.isXml(entry.getName(), entry.getSize(), uncompressedOutRaw)) {
+			if (formatXml && Utils.isXml(entry.getName(), entry.getSize(), uncompressedOutRaw)) {
 				// XML file: pretty-print the data to stdout
 				try {
 					final InputSource inBuffer = new InputSource(uncompressedOutRaw.createInputStream());
@@ -117,6 +127,16 @@ public class ZipDoc {
 			} else if (Utils.isPlainText(entry.getName(), entry.getSize(), uncompressedOutRaw)) {
 				// Text file: dump directly to output
 				uncompressedOutRaw.writeTo(output);
+			} else if (Utils.isZip(entry.getName(), entry.getSize(), uncompressedOutRaw)
+					&& recursive)
+			{
+				// Zip: recursively uncompress to output
+				output.println("sub-ZIP start:\t" + entry.getName());
+				try (ZipInputStream zipInRec = new ZipInputStream(uncompressedOutRaw.createInputStream(true)))
+				{
+					transform(zipInRec, output);
+				}
+				output.println("sub-ZIP end:  \t" + entry.getName());
 			} else {
 				// Unknown file type: report uncompressed size and CRC32
 				output.println("File size:\t" + uncompressedOutRaw.size());
