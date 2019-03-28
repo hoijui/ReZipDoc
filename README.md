@@ -106,8 +106,8 @@ git config --add --bool merge.renormalize true
 ## Motivation
 
 Many popular applications, such as
-[Microsoft](http://en.wikipedia.org/wiki/Office_Open_XML) and
-[Open](http://en.wikipedia.org/wiki/OpenDocument) Office,
+[Microsoft Office](http://en.wikipedia.org/wiki/Office_Open_XML) and
+[Libre/Open Office](http://en.wikipedia.org/wiki/OpenDocument),
 save their documents as XML in compressed zip containers.
 Small changes to these document's contents may result in big changes to their
 compressed binary container file.
