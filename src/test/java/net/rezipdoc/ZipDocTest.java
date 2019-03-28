@@ -22,9 +22,9 @@ package net.rezipdoc;
 import org.junit.Test;
 
 import javax.xml.transform.TransformerException;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -40,7 +40,7 @@ public class ZipDocTest extends AbstractReZipDocTest {
 		// This creates the uncompressed file
 		final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream();
 		new ZipDoc(recursive, false).transform(
-				new ZipInputStream(new FileInputStream(zipFile.toFile())),
+				new ZipInputStream(Files.newInputStream(zipFile)),
 				new PrintStream(bufferedOutputStream));
 		// Test whether the filtered ZIP file does (not) contain the original content
 		// placed in a sub-ZIP file in plain text

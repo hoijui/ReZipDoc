@@ -24,7 +24,6 @@ import org.junit.Assert;
 import org.junit.Before;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
@@ -62,7 +61,7 @@ public abstract class AbstractReZipDocTest {
 
 	protected static void createZip(final Path zipFile, final Map<Path, List<File>> rootContents, final int compressionMethod) throws IOException {
 
-		try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipFile.toFile()))) {
+		try (ZipOutputStream zipOut = new ZipOutputStream(Files.newOutputStream(zipFile))) {
 			zipOut.setMethod(compressionMethod);
 			for (final Path rootDir : rootContents.keySet()) {
 				for (final File file : rootContents.get(rootDir)) {
@@ -77,22 +76,33 @@ public abstract class AbstractReZipDocTest {
 		}
 	}
 
-	protected static void createZip(final Path zipFile, final Path rootDir, final List<File> contents, final int compressionMethod) throws IOException {
-
+	protected static void createZip(
+			final Path zipFile,
+			final Path rootDir,
+			final List<File> contents,
+			final int compressionMethod)
+			throws IOException
+	{
 		final Map<Path, List<File>> rootContents = new HashMap<>();
 		rootContents.put(rootDir, contents);
 		createZip(zipFile, rootContents, compressionMethod);
 	}
 
-	protected static void createRecursiveZip(final Path zipFile, final Path rootDir, final List<File> contents, final int compressionMethod) throws IOException {
-
+	protected static void createRecursiveZip(
+			final Path zipFile,
+			final Path rootDir,
+			final List<File> contents,
+			final int compressionMethod)
+			throws IOException
+	{
 		if (contents.size() < 4) {
 			throw new IllegalStateException("We need at least 4 content elements for a recursive ZIP file");
 		}
 
 		final Map<Path, List<File>> subRootContents = new HashMap<>();
 		subRootContents.put(rootDir, contents.subList(0, 2));
-		final Path subZipFile = Files.createTempFile(MethodHandles.lookup().lookupClass().getName() + "_original_sub_", ".zip");
+		final Path subZipFile = Files.createTempFile(MethodHandles.lookup().lookupClass().getName()
+				+ "_original_sub_", ".zip");
 		createZip(subZipFile, subRootContents, compressionMethod);
 
 		final Map<Path, List<File>> mainRootContents = new HashMap<>();
@@ -120,8 +130,12 @@ public abstract class AbstractReZipDocTest {
 		zipFile.toFile().delete();
 	}
 
-	protected static void checkContains(final boolean contains, final String contentsActual, final List<File> contentsExpected) throws IOException {
-
+	protected static void checkContains(
+			final boolean contains,
+			final String contentsActual,
+			final List<File> contentsExpected)
+			throws IOException
+	{
 		for (final File file : contentsExpected) {
 			final String fileContent = new String(Files.readAllBytes(file.toPath()));
 			Assert.assertEquals(
