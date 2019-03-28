@@ -1,13 +1,17 @@
 # ReZipDoc = ReZip & ZipDoc
 
+If you are storing ZIP based files in your `git` repo,
+you probably want to use __ReZipDoc__.
+
 * __ReZip__ For more efficient Git packing of ZIP based files
-* __ZipDoc__ A Git `textconv` program to dump a ZIP files contents as text to stdout
+* __ZipDoc__ A Git `textconv` program to show text-based diffs of ZIP files
+
+## Project state
 
 [![License](https://img.shields.io/badge/license-GPL%203-orange.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 [![GitHub last commit](https://img.shields.io/github/last-commit/hoijui/ReZipDoc.svg)](https://github.com/hoijui/ReZipDoc)
 [![Issues](https://img.shields.io/badge/issues-GitHub-red.svg)](https://github.com/hoijui/ReZipDoc/issues)
-
-for branch `master`:
+`master`:
 [![Build Status](https://travis-ci.org/hoijui/ReZipDoc.svg?branch=master)](https://travis-ci.org/hoijui/ReZipDoc)
 
 ## Installation
@@ -148,7 +152,10 @@ The main benefit of ReZip over Zippey,
 is that the actual file stored in the repository is still a ZIP file.
 Thus, in many cases, it will still work _as-is_
 with the respective application (for example Open Office),
-even if it is obtained without going through a re-packing-with-compression filter.
+even if it is obtained without going through
+the re-packing-with-compression smudge filter,
+so for example when downloading the file through a web-interface,
+instead of checking it out with git.
 
 ## Observations
 
@@ -172,4 +179,5 @@ original files, since zLib could work more efficiently on uncompressed data.
 The packed repository with ReZip was only 10% smaller than the packed repository
 storing compressed zips.
 I think this unremarkable efficiency improvement is due to a large number of
-_\*.png_ files in the presentation which were already stored without compression in the original _\*.pptx_.
+_\*.png_ files in the presentation which were already stored without compression
+in the original _\*.pptx_.
