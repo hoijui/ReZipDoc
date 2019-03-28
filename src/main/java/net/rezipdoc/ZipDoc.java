@@ -150,7 +150,7 @@ public class ZipDoc {
 				// Zip: recursively uncompress to output
 				output.println("sub-ZIP start:\t" + entry.getName());
 				try (ZipInputStream zipInRec = new ZipInputStream(
-						uncompressedOutRaw.createInputStream(true)))
+						uncompressedOutRaw.createInputStream(false)))
 				{
 					transform(zipInRec, output);
 				}
