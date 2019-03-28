@@ -20,9 +20,8 @@
 package net.rezipdoc;
 
 import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.util.zip.CRC32;
@@ -40,17 +39,32 @@ import java.util.zip.ZipOutputStream;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class ReZip {
 
+	/**
+	 * Whether to re-pack the output ZIP with compression
+	 * (default: {@code false}).
+	 */
 	private final boolean compression;
+	/**
+	 * Whether to re-pack the output ZIP with all entries time-stamps
+	 * (creation-, last-access- and last-modified-times) set to zero
+	 * (default: {@code false}).
+	 */
 	private final boolean nullifyTimes;
+	/**
+	 * Whether to also re-pack ZIP files contained within the supplied ZIP
+	 * (and therein, and therein, ...)
+	 * (default: {@code true}).
+	 */
 	private final boolean recursive;
 
 	/**
 	 * Stores settings about how to re-zip.
 	 *
-	 * @param compression  whether the output ZIP is compressed or not
-	 * @param nullifyTimes whether the creation-, last-access- and last-modified-times of the archive entries
-	 *                     should be set to <code>0</code>
-	 * @param recursive    whether to re-zip recursively (the ZIPs within ZIPs within ZIPs ...)
+	 * @param compression whether the output ZIP is to use compression
+	 * @param nullifyTimes whether the creation-, last-access- and last-modified-times
+	 *   of the re-packed archive entries should be set to {@code 0}
+	 * @param recursive whether to re-pack the ZIP recursively
+	 *   (repacking the ZIPs within ZIPs ... within the supplied ZIP)
 	 */
 	public ReZip(final boolean compression, final boolean nullifyTimes, final boolean recursive) {
 
@@ -63,17 +77,31 @@ public class ReZip {
 		this(false, false, true);
 	}
 
+	/**
+	 * Whether to re-pack the output ZIP with compression.
+	 * @return default: {@code false}
+	 */
 	public boolean isCompression() {
 		return compression;
 	}
 
+	/**
+	 * Whether to re-pack the output ZIP with all entries time-stamps
+	 * (creation-, last-access- and last-modified-times) set to zero.
+	 * @return default: {@code false}
+	 */
 	public boolean isNullifyTimes() {
 		return nullifyTimes;
 	}
 
+	/**
+	 * Whether to also re-pack ZIP files contained within the supplied ZIP
+	 * (and therein, and therein, ...).
+	 * @return default: {@code true}
+	 */
 	public boolean isRecursive() {
-			return recursive;
-		}
+		return recursive;
+	}
 
 	/**
 	 * Reads a ZIP file from stdin and writes new ZIP content to stdout.
@@ -124,8 +152,8 @@ public class ReZip {
 
 	public void reZip(final Path zipInFile, final Path zipOutFile) throws IOException {
 
-		try (ZipInputStream zipIn = new ZipInputStream(new BufferedInputStream(new FileInputStream(zipInFile.toFile())));
-		     ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipOutFile.toFile())))
+		try (ZipInputStream zipIn = new ZipInputStream(new BufferedInputStream(Files.newInputStream(zipInFile)));
+				ZipOutputStream zipOut = new ZipOutputStream(Files.newOutputStream(zipOutFile)))
 		{
 			reZip(zipIn, zipOut);
 		}
@@ -141,18 +169,18 @@ public class ReZip {
 	public void reZip(final ZipInputStream zipIn, final ZipOutputStream zipOut)
 			throws IOException
 	{
-		final int compression = isCompression() ? ZipEntry.DEFLATED : ZipEntry.STORED;
+		final int compressionMethod = isCompression() ? ZipEntry.DEFLATED : ZipEntry.STORED;
 		final byte[] buffer = new byte[8192];
 		final BufferedOutputStream uncompressedOutRaw = new BufferedOutputStream();
 		final CRC32 checksum = new CRC32();
 		final CheckedOutputStream uncompressedOutChecked = new CheckedOutputStream(uncompressedOutRaw, checksum);
-		reZip(zipIn, zipOut, compression, buffer, uncompressedOutRaw, checksum, uncompressedOutChecked);
+		reZip(zipIn, zipOut, compressionMethod, buffer, uncompressedOutRaw, checksum, uncompressedOutChecked);
 	}
 
 	private void reZip(
 			final ZipInputStream zipIn,
 			final ZipOutputStream zipOut,
-			final int compression,
+			final int compressionMethod,
 			final byte[] buffer,
 			final BufferedOutputStream uncompressedOutRaw,
 			final CRC32 checksum,
@@ -175,18 +203,18 @@ public class ReZip {
 				final CRC32 subChecksum = new CRC32();
 				final CheckedOutputStream subUncompressedOutChecked = new CheckedOutputStream(subUncompressedOutRaw, subChecksum);
 				try (ZipInputStream zipInRec = new ZipInputStream(uncompressedOutRaw.createInputStream(true));
-				     ZipOutputStream zipOutRec = new ZipOutputStream(uncompressedOutChecked))
+						ZipOutputStream zipOutRec = new ZipOutputStream(uncompressedOutChecked))
 				{
 					uncompressedOutRaw.reset();
 					checksum.reset();
-					reZip(zipInRec, zipOutRec, compression, buffer, subUncompressedOutRaw, subChecksum, subUncompressedOutChecked);
+					reZip(zipInRec, zipOutRec, compressionMethod, buffer, subUncompressedOutRaw, subChecksum, subUncompressedOutChecked);
 				}
 			}
 
 			// Create the ZIP entry for destination ZIP
 			entry.setSize(uncompressedOutRaw.size());
 			entry.setCrc(checksum.getValue());
-			entry.setMethod(compression);
+			entry.setMethod(compressionMethod);
 			// Unknown compressed size
 			entry.setCompressedSize(-1);
 			if (isNullifyTimes()) {

@@ -45,10 +45,9 @@ public class BufferedOutputStream extends ByteArrayOutputStream {
 	 * @param   size   the initial size.
 	 * @exception  IllegalArgumentException if size is negative.
 	 */
-	public BufferedOutputStream(int size) {
+	public BufferedOutputStream(final int size) {
 		super(size);
 	}
-
 
 	/**
 	 * Tests if this buffer starts with the specified prefix.
@@ -62,18 +61,34 @@ public class BufferedOutputStream extends ByteArrayOutputStream {
 	 */
 	public boolean startsWith(final byte[] prefix) {
 
+		boolean startsWith = true;
 		if (prefix.length > count) {
-			return false;
-		}
-		int idx = prefix.length;
-		while (--idx >= 0) {
-			if (buf[idx] != prefix[idx]) {
-				return false;
+			startsWith = false;
+		} else {
+			int idx = prefix.length - 1;
+			while (idx >= 0) {
+				if (buf[idx] != prefix[idx]) {
+					startsWith = false;
+					break;
+				}
+				idx--;
 			}
 		}
-		return true;
+		return startsWith;
 	}
 
+	/**
+	 * Creates an {@code InputStream} streaming the data of this buffer.
+	 * CAUTION If {@code copyBytes} is false, do not add data to this buffer
+	 *   while the stream is still in use!
+	 *
+	 * @param copyBytes whether to copy the internal data into the stream,
+	 *   or just reference it.
+	 *   If this is {@code false}, then the behavior of the created stream
+	 *   in case of data being added to the buffer after the streams creations
+	 *   is undefined.
+	 * @return an {@code InputStream} using the same data as this buffer.
+	 */
 	public ByteArrayInputStream createInputStream(final boolean copyBytes) {
 
 		final ByteArrayInputStream inStream;
@@ -84,9 +99,5 @@ public class BufferedOutputStream extends ByteArrayOutputStream {
 		}
 
 		return inStream;
-	}
-
-	public ByteArrayInputStream createInputStream() {
-		return createInputStream(false);
 	}
 }

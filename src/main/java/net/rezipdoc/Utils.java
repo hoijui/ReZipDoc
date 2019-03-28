@@ -59,7 +59,8 @@ public final class Utils {
 	/**
 	 * Checks whether a file denotes an XML based file format.
 	 *
-	 * @param fileName     to be checked for known XML file extensions (for example ".xml" and ".svg")
+	 * @param fileName     to be checked for known XML file extensions
+	 *                     (for example ".xml" and ".svg")
 	 * @param contentBytes length of the content in bytes
 	 * @param contentIn    to be checked for magic file header
 	 * @param magicHeader  the magic file header to look for
@@ -92,9 +93,11 @@ public final class Utils {
 	/**
 	 * Checks whether a file denotes an XML based file format.
 	 *
-	 * @param fileName     to be checked for known XML file extensions (for example ".xml" and ".svg")
+	 * @param fileName to be checked for known XML file extensions
+	 *   (for example ".xml" and ".svg")
 	 * @param contentBytes length of the content in bytes
-	 * @param contentIn    to be checked for magic file header for XML: {@literal "<?xml "}
+	 * @param contentIn to be checked for magic file header for XML:
+	 *   {@literal "<?xml "}
 	 * @return whether the supplied file type is XML based
 	 */
 	public static boolean isXml(final String fileName, final long contentBytes, final BufferedOutputStream contentIn) {
