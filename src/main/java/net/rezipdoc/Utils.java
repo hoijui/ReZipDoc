@@ -45,6 +45,16 @@ public final class Utils {
 		suffixesText.add("md");
 		suffixesText.add("markdown");
 		suffixesText.add("properties");
+		suffixesText.add("java");
+		suffixesText.add("kt");
+		suffixesText.add("c");
+		suffixesText.add("cxx");
+		suffixesText.add("cpp");
+		suffixesText.add("h");
+		suffixesText.add("hxx");
+		suffixesText.add("hpp");
+		suffixesText.add("js");
+		suffixesText.add("html");
 		SUFFIXES_TEXT = suffixesText;
 
 		final Set<String> suffixesZip = new HashSet<>();
