@@ -115,7 +115,7 @@ public final class Utils {
 	}
 
 	/**
-	 * Checks whether a file denotes an plain-text file format.
+	 * Checks whether a file denotes a plain-text file format.
 	 *
 	 * @param fileName     to be checked
 	 * @param contentBytes length of the content in bytes
