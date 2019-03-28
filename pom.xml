@@ -23,13 +23,13 @@
 
 	<name>ReZipDoc</name>
 	<description>A Git filter and textconv for textifying ZIP based binary files, which work better for delta-compression and diffs</description>
-	<url>https://gitlab.com/hoijui/ReZipDoc/</url>
+	<url>https://github.com/hoijui/ReZipDoc/</url>
 	<inceptionYear>2019</inceptionYear>
 
 	<scm>
-		<connection>scm:git:git@gitlab.com:hoijui/ReZipDoc.git</connection>
-		<developerConnection>scm:git:git@gitlab.com:hoijui/ReZipDoc.git</developerConnection>
-		<url>https://gitlab.com/hoijui/ReZipDoc</url>
+		<connection>scm:git:git@github.com:hoijui/ReZipDoc.git</connection>
+		<developerConnection>scm:git:git@github.com:hoijui/ReZipDoc.git</developerConnection>
+		<url>https://github.com/hoijui/ReZipDoc</url>
 		<tag>HEAD</tag>
 	</scm>
 
@@ -42,8 +42,8 @@
 	</licenses>
 
 	<issueManagement>
-		<system>GitLab</system>
-		<url>https://gitlab.com/hoijui/ReZipDoc/issues</url>
+		<system>GitHub</system>
+		<url>https://github.com/hoijui/ReZipDoc/issues</url>
 	</issueManagement>
 
 	<developers>
