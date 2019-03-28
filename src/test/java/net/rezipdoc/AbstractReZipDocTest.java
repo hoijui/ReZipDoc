@@ -115,7 +115,7 @@ public abstract class AbstractReZipDocTest {
 	public void setUp() throws IOException {
 
 		projectRoot = new File("").toPath();
-		archiveContents = createArchiveContentsList(projectRoot);
+		archiveContents = createArchiveContentsList(projectRoot.resolve("src"));
 		// We do not want too much content
 		final int maxContentFiles = 10;
 		if (archiveContents.size() > maxContentFiles) {
