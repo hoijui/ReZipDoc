@@ -148,13 +148,13 @@ public class ZipDoc {
 					&& recursive)
 			{
 				// Zip: recursively uncompress to output
-				output.println("sub-ZIP start:\t" + entry.getName());
+				output.println("Sub-ZIP start:\t" + entry.getName());
 				try (ZipInputStream zipInRec = new ZipInputStream(
 						uncompressedOutRaw.createInputStream(false)))
 				{
 					transform(zipInRec, output);
 				}
-				output.println("sub-ZIP end:  \t" + entry.getName());
+				output.println("Sub-ZIP end:  \t" + entry.getName());
 			} else {
 				// Unknown file type: report uncompressed size and CRC32
 				output.println("File size:\t" + uncompressedOutRaw.size());
