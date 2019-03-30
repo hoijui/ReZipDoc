@@ -3,8 +3,10 @@
 If you are storing ZIP based files in your `git` repo,
 you probably want to use __ReZipDoc__.
 
-* __ReZip__ For more efficient Git packing of ZIP based files
-* __ZipDoc__ A Git `textconv` program to show text-based diffs of ZIP files
+* [__ReZip__](https://github.com/costerwi/rezip)
+  For more efficient Git packing of ZIP based files
+* [__ZipDoc__](https://github.com/costerwi/zipdoc)
+  A Git `textconv` program to show text-based diffs of ZIP files
 
 ## Project state
 
