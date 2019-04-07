@@ -22,7 +22,10 @@
 	<packaging>jar</packaging>
 
 	<name>ReZipDoc</name>
-	<description>A Git filter and textconv for textifying ZIP based binary files, which work better for delta-compression and diffs</description>
+	<description>
+		A Git filter and textconv for textifying ZIP based binary files,
+		which work better for delta-compression and diffs
+	</description>
 	<url>https://github.com/hoijui/ReZipDoc/</url>
 	<inceptionYear>2019</inceptionYear>
 
@@ -322,8 +325,8 @@
 									</requireJavaVersion>
 									<requireSameVersions>
 										<dependencies>
-											<dependency>${project.groupId}
-											</dependency> <!-- All artifacts with this groupID need to have the same version -->
+											<!-- All artifacts with this groupID need to have the same version -->
+											<dependency>${project.groupId}</dependency>
 										</dependencies>
 									</requireSameVersions>
 								</rules>
