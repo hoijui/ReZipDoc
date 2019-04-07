@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2015-2019,
- * Carl Osterwisch <costerwi@gmail.com>,
- * Robin Vobruba <hoijui.quaero@gmail.com>.
+ * Copyright (C) 2015-2019, The authors of the ReZipDoc project.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
