@@ -19,8 +19,10 @@ package net.rezipdoc;
 
 import org.xml.sax.InputSource;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.stream.StreamResult;
@@ -107,7 +109,10 @@ public class ZipDoc {
 	public void transform(final ZipInputStream zipIn, final PrintStream output)
 			throws IOException, TransformerException
 	{
-		final Transformer serializer = SAXTransformerFactory.newInstance().newTransformer();
+		final TransformerFactory serializerFac = SAXTransformerFactory.newInstance();
+		// This prevents malicious code injection/execution
+		serializerFac.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+		final Transformer serializer = serializerFac.newTransformer();
 		serializer.setOutputProperty(OutputKeys.INDENT, "yes");
 		serializer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 		serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
