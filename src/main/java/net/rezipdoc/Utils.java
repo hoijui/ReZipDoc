@@ -31,7 +31,7 @@ public final class Utils {
 
 	private static final Set<String> SUFFIXES_XML;
 	private static final Set<String> SUFFIXES_TEXT;
-	private static final Set<String> SUFFIXES_ZIP;
+	private static final Set<String> SUFFIXES_ARCHIVE;
 
 	static {
 		final Set<String> suffixesXml = new HashSet<>();
@@ -66,7 +66,7 @@ public final class Utils {
 		suffixesZip.add("ods");
 		suffixesZip.add("odp");
 		suffixesZip.add("fcstd");
-		SUFFIXES_ZIP = suffixesZip;
+		SUFFIXES_ARCHIVE = suffixesZip;
 	}
 
 	private Utils() {
@@ -129,7 +129,7 @@ public final class Utils {
 	}
 
 	public static boolean isZip(final String fileName, final long contentBytes, final BufferedOutputStream contentIn) {
-		return isType(fileName, contentBytes, contentIn, null, SUFFIXES_ZIP);
+		return isType(fileName, contentBytes, contentIn, null, SUFFIXES_ARCHIVE);
 	}
 
 	/**
