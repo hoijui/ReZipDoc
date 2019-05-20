@@ -86,12 +86,8 @@ public final class Utils {
 			matches = suffixes.contains(suffix);
 		}
 		if (!matches && (magicHeader != null) && contentBytes >= magicHeader.length()) {
-			try {
-				if (contentIn.startsWith(magicHeader.getBytes())) {
-					matches = true;
-				}
-			} finally {
-				contentIn.reset();
+			if (contentIn.startsWith(magicHeader.getBytes())) {
+				matches = true;
 			}
 		}
 
