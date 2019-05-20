@@ -17,11 +17,20 @@
 
 package net.rezipdoc;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Various helper functions.
@@ -29,47 +38,121 @@ import java.util.Set;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class Utils {
 
+	public static final String RESOURCE_FILE_SUFFIXES_PREFIX = "reZipDoc-";
+	public static final String RESOURCE_FILE_SUFFIXES_TEXT
+			= RESOURCE_FILE_SUFFIXES_PREFIX + "suffixes-text.csv";
+	public static final String RESOURCE_FILE_SUFFIXES_XML
+			= RESOURCE_FILE_SUFFIXES_PREFIX + "suffixes-xml.csv";
+	public static final String RESOURCE_FILE_SUFFIXES_ARCHIVE
+			= RESOURCE_FILE_SUFFIXES_PREFIX + "suffixes-archive.csv";
 	private static final Set<String> SUFFIXES_XML;
 	private static final Set<String> SUFFIXES_TEXT;
 	private static final Set<String> SUFFIXES_ARCHIVE;
 
 	static {
-		final Set<String> suffixesXml = new HashSet<>();
-		suffixesXml.add("xml");
-		suffixesXml.add("svg");
-		SUFFIXES_XML = suffixesXml;
+		{
+			final Set<String> defaultSuffixesXml = new HashSet<>();
+			defaultSuffixesXml.add("xml");
+			defaultSuffixesXml.add("svg");
+			SUFFIXES_XML = collectFileOrDefaults(RESOURCE_FILE_SUFFIXES_XML, defaultSuffixesXml);
+		}
 
-		final Set<String> suffixesText = new HashSet<>(suffixesXml);
-		suffixesText.add("txt");
-		suffixesText.add("md");
-		suffixesText.add("markdown");
-		suffixesText.add("properties");
-		suffixesText.add("java");
-		suffixesText.add("kt");
-		suffixesText.add("c");
-		suffixesText.add("cxx");
-		suffixesText.add("cpp");
-		suffixesText.add("h");
-		suffixesText.add("hxx");
-		suffixesText.add("hpp");
-		suffixesText.add("js");
-		suffixesText.add("html");
-		SUFFIXES_TEXT = suffixesText;
+		{
+			final Set<String> defaultSuffixesText = new HashSet<>();
+			defaultSuffixesText.add("txt");
+			defaultSuffixesText.add("md");
+			defaultSuffixesText.add("markdown");
+			defaultSuffixesText.add("properties");
+			defaultSuffixesText.add("java");
+			defaultSuffixesText.add("kt");
+			defaultSuffixesText.add("c");
+			defaultSuffixesText.add("cxx");
+			defaultSuffixesText.add("cpp");
+			defaultSuffixesText.add("h");
+			defaultSuffixesText.add("hxx");
+			defaultSuffixesText.add("hpp");
+			defaultSuffixesText.add("js");
+			defaultSuffixesText.add("html");
+			SUFFIXES_TEXT = collectFileOrDefaults(RESOURCE_FILE_SUFFIXES_TEXT, defaultSuffixesText);
+		}
 
-		final Set<String> suffixesZip = new HashSet<>();
-		suffixesZip.add("zip");
-		suffixesZip.add("jar");
-		suffixesZip.add("docx");
-		suffixesZip.add("xlsx");
-		suffixesZip.add("pptx");
-		suffixesZip.add("odt");
-		suffixesZip.add("ods");
-		suffixesZip.add("odp");
-		suffixesZip.add("fcstd");
-		SUFFIXES_ARCHIVE = suffixesZip;
+		{
+			Set<String> defaultSuffixesZip = new HashSet<>();
+			defaultSuffixesZip.add("zip");
+			defaultSuffixesZip.add("jar");
+			defaultSuffixesZip.add("docx");
+			defaultSuffixesZip.add("xlsx");
+			defaultSuffixesZip.add("pptx");
+			defaultSuffixesZip.add("odt");
+			defaultSuffixesZip.add("ods");
+			defaultSuffixesZip.add("odp");
+			defaultSuffixesZip.add("fcstd");
+			SUFFIXES_ARCHIVE = collectFileOrDefaults(RESOURCE_FILE_SUFFIXES_ARCHIVE, defaultSuffixesZip);
+		}
 	}
 
 	private Utils() {
+	}
+
+	/**
+	 * Returns the directory in which our sources are located.
+	 *
+	 * @return the dir where this ".class" or ".jar" file is located
+	 * @throws URISyntaxException should never happen
+	 * @see "https://stackoverflow.com/a/320595/586229"
+	 */
+	public static Path sourceDir() throws URISyntaxException {
+
+		File sourceLocation = new File(Utils.class.getProtectionDomain()
+				.getCodeSource().getLocation().toURI());
+		// If our source location is a JAR file, get its parent dir
+		if (Files.isRegularFile(sourceLocation.toPath())) {
+			sourceLocation = sourceLocation.getParentFile();
+		}
+		return sourceLocation.toPath();
+	}
+
+	/**
+	 * Reads all lines of a file, and streams them.
+	 * @param textFile the file to be used as a data source
+	 * @return the file as a stream of lines
+	 * @throws IOException if there is a problem while reading the file
+	 */
+	public static List<String> readLines(final Path textFile) throws IOException {
+
+		final Charset encoding = StandardCharsets.UTF_8;
+		try (Stream<String> fileIn = Files.lines(textFile, encoding)) {
+			return fileIn
+					.map(String::trim)
+					// filter-out empty lines and comments
+					.filter(s -> !s.isEmpty() && (s.charAt(0) != '#'))
+					.collect(Collectors.toList());
+		}
+	}
+
+	public static Set<String> collectFileOrDefaults(final String localResourceFilePath, final Set<String> defaults) {
+
+		Set<String> suffixes;
+		try {
+			final Path suffixesFile = sourceDir().resolve(localResourceFilePath);
+			try {
+				suffixes = collectFileNameMatchers(suffixesFile);
+				System.out.printf("Read suffixes from file \"%s\".%n", suffixesFile);
+			} catch (IOException exc) {
+				System.out.printf("Did not read suffixes from file \"%s\".%n", suffixesFile);
+				suffixes = defaults;
+			}
+		} catch (URISyntaxException exc) {
+			exc.printStackTrace();
+			suffixes = null;
+			System.exit(1);
+		}
+
+		return suffixes;
+	}
+
+	public static Set<String> collectFileNameMatchers(final Path resourceFile) throws IOException {
+		return new HashSet<>(readLines(resourceFile));
 	}
 
 	/**
