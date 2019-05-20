@@ -19,6 +19,7 @@ package net.rezipdoc;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -122,5 +123,23 @@ public final class Utils {
 
 	public static boolean isZip(final String fileName, final long contentBytes, final BufferedOutputStream contentIn) {
 		return isType(fileName, contentBytes, contentIn, null, SUFFIXES_ZIP);
+	}
+
+	/**
+	 * Copies input content to output.
+	 * The same like Java 9's {@code InputStream#transferTo(OutputStream)}.
+	 *
+	 * @param source the source of the data
+	 * @param target where the source data should be copied to
+	 * @param buffer the buffer to use for transfering;
+	 *   no more then {@code buffer.length} bytes are read at a time
+	 * @throws IOException if any input or output fails
+	 */
+	public static void transferTo(final InputStream source, final OutputStream target, final byte[] buffer)
+			throws IOException
+	{
+		for (int n = source.read(buffer); n >= 0; n = source.read(buffer)) {
+			target.write(buffer, 0, n);
+		}
 	}
 }

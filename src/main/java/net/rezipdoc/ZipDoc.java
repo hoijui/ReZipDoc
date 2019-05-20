@@ -128,10 +128,7 @@ public class ZipDoc {
 			output.println("Sub-file:\t" + entry);
 
 			// Copy the file from zipIn into the uncompressed, check-summed output stream
-			int len;
-			while ((len = zipIn.read(buffer)) > 0) {
-				uncompressedOutChecked.write(buffer, 0, len);
-			}
+			Utils.transferTo(zipIn, uncompressedOutChecked, buffer);
 			zipIn.closeEntry();
 
 			final boolean isXml = Utils.isXml(entry.getName(), entry.getSize(), uncompressedOutRaw);

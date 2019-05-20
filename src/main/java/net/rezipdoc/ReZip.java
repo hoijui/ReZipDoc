@@ -190,9 +190,7 @@ public class ReZip {
 			checksum.reset();
 
 			// Copy file from zipIn into uncompressed, check-summed output stream
-			for (int len = zipIn.read(buffer); len > 0; len = zipIn.read(buffer)) {
-				uncompressedOutChecked.write(buffer, 0, len);
-			}
+			Utils.transferTo(zipIn, uncompressedOutChecked, buffer);
 			zipIn.closeEntry();
 
 			// If we found a ZIP in this ZIP, an dwe want to recursively filter, then do so
