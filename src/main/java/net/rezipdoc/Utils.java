@@ -203,10 +203,11 @@ public final class Utils {
 			final String suffix = fileNameLower.substring(fileNameLower.lastIndexOf('.') + 1);
 			matches = suffixes.contains(suffix);
 		}
-		if (!matches && (magicHeader != null) && contentBytes >= magicHeader.length()) {
-			if (contentIn.startsWith(magicHeader.getBytes())) {
-				matches = true;
-			}
+		if (!matches && (magicHeader != null)
+				&& (contentBytes >= magicHeader.length())
+				&& contentIn.startsWith(magicHeader.getBytes()))
+		{
+			matches = true;
 		}
 
 		return matches;
