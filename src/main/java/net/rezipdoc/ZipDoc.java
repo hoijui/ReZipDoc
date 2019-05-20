@@ -17,16 +17,6 @@
 
 package net.rezipdoc;
 
-import org.xml.sax.InputSource;
-
-import javax.xml.XMLConstants;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
@@ -72,7 +62,7 @@ public class ZipDoc {
 		this(true, true);
 	}
 
-	public static void main(final String[] argv) throws IOException, TransformerException {
+	public static void main(final String[] argv) throws IOException {
 
 		if (1 != argv.length || "--help".equals(argv[0]) || "-h".equals(argv[0])) {
 			System.err.printf("Usage: %s in-file.zip > text-representation.txt%n", ZipDoc.class.getSimpleName());
@@ -88,9 +78,8 @@ public class ZipDoc {
 	 *
 	 * @param zipFile the ZIP file to convert to a text
 	 * @throws IOException if any input or output fails
-	 * @throws TransformerException if XML pretty-printing fails
 	 */
-	public void transform(final Path zipFile) throws IOException, TransformerException {
+	public void transform(final Path zipFile) throws IOException {
 
 		try (ZipInputStream zipIn = new ZipInputStream(Files.newInputStream(zipFile))) {
 			transform(zipIn, System.out);
@@ -103,19 +92,12 @@ public class ZipDoc {
 	 *
 	 * @param zipIn  the ZIP document to convert to a text
 	 * @param output where the text gets written to
-	 * @throws IOException          if any input or output fails
-	 * @throws TransformerException if XML pretty-printing fails
+	 * @throws IOException if any input or output fails
 	 */
 	public void transform(final ZipInputStream zipIn, final PrintStream output)
-			throws IOException, TransformerException
+			throws IOException
 	{
-		final TransformerFactory serializerFac = SAXTransformerFactory.newInstance();
-		// This prevents malicious code injection/execution
-		serializerFac.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-		final Transformer serializer = serializerFac.newTransformer();
-		serializer.setOutputProperty(OutputKeys.INDENT, "yes");
-		serializer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-		serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+		final XmlFormatter xmlFormatter = new XmlFormatter(2, "  ", true);
 		final byte[] buffer = new byte[8192];
 		ZipEntry entry;
 		final BufferedOutputStream uncompressedOutRaw = new BufferedOutputStream();
@@ -134,14 +116,7 @@ public class ZipDoc {
 			final boolean isXml = Utils.isXml(entry.getName(), entry.getSize(), uncompressedOutRaw);
 			if (formatXml && isXml) {
 				// XML file: pretty-print the data to stdout
-				try {
-					final InputSource inBuffer = new InputSource(uncompressedOutRaw.createInputStream(false));
-					serializer.transform(new SAXSource(inBuffer), new StreamResult(output));
-				} catch (final TransformerException ex) {
-					ex.printStackTrace(System.err);
-					// In case of failure of pretty-printing, use the XML as-is
-					uncompressedOutRaw.writeTo(output);
-				}
+				xmlFormatter.prettify(uncompressedOutRaw.createInputStream(false), output, buffer);
 			} else if (Utils.isPlainText(entry.getName(), entry.getSize(), uncompressedOutRaw) || isXml) {
 				// Text file: dump directly to output
 				uncompressedOutRaw.writeTo(output);
