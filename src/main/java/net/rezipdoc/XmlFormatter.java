@@ -23,6 +23,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -155,6 +156,7 @@ public class XmlFormatter {
 		}
 
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 //		transformerFactory.setAttribute("indent-number", indentSpaces);
 		Transformer transformer = transformerFactory.newTransformer();
 		//transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
