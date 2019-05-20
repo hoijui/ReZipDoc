@@ -19,6 +19,7 @@ package net.rezipdoc;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
@@ -54,6 +55,11 @@ public class ReZip {
 	 * (default: {@code true}).
 	 */
 	private final boolean recursive;
+	/**
+	 * Whether to pretty-print XML content
+	 * (default: {@code false}).
+	 */
+	private final boolean formatXml;
 
 	/**
 	 * Stores settings about how to re-zip.
@@ -63,16 +69,19 @@ public class ReZip {
 	 *   of the re-packed archive entries should be set to {@code 0}
 	 * @param recursive whether to re-pack the ZIP recursively
 	 *   (repacking the ZIPs within ZIPs ... within the supplied ZIP)
+	 * @param formatXml whether to pretty-print XML content
+	 *   (default: {@code true})
 	 */
-	public ReZip(final boolean compression, final boolean nullifyTimes, final boolean recursive) {
+	public ReZip(final boolean compression, final boolean nullifyTimes, final boolean recursive, final boolean formatXml) {
 
 		this.compression = compression;
 		this.nullifyTimes = nullifyTimes;
 		this.recursive = recursive;
+		this.formatXml = formatXml;
 	}
 
 	public ReZip() {
-		this(false, false, true);
+		this(false, false, true, false);
 	}
 
 	/**
@@ -102,6 +111,14 @@ public class ReZip {
 	}
 
 	/**
+	 * Whether to pretty-print XML content
+	 * @return default: {@code false}
+	 */
+	public boolean isFormatXml() {
+		return formatXml;
+	}
+
+	/**
 	 * Reads a ZIP file from stdin and writes new ZIP content to stdout.
 	 * With the <code>--compressed</code> command line argument,
 	 * the output will be a compressed ZIP as well.
@@ -114,6 +131,7 @@ public class ReZip {
 		boolean compressed = false;
 		boolean nullifyTimes = false;
 		boolean recursive = true;
+		boolean formatXml = false;
 		for (final String arg : argv) {
 			if ("--compressed".equals(arg)) {
 				compressed = true;
@@ -121,17 +139,20 @@ public class ReZip {
 				nullifyTimes = true;
 			} else if ("--non-recursive".equals(arg)) {
 				recursive = false;
+			} else if ("--format-xml".equals(arg)) {
+				formatXml = true;
 			} else {
 				System.err.printf("Usage: %s [--compressed] [--nullify-times] [--non-recursive] <in.zip >out.zip%n",
 						ReZip.class.getSimpleName());
 				System.err.println("\t--compressed       re-zip compressed");
 				System.err.println("\t--nullify-times    set creation-, last-access- and last-modified-times of the re-zipped archives entries to 0");
 				System.err.println("\t--non-recursive    do not re-zip archives within archives");
+				System.err.println("\t--format-xml       pretty-print (reformat) XML content");
 				System.exit(1);
 			}
 		}
 
-		new ReZip(compressed, nullifyTimes, recursive).reZip();
+		new ReZip(compressed, nullifyTimes, recursive, formatXml).reZip();
 	}
 
 	/**
@@ -185,6 +206,7 @@ public class ReZip {
 			final CheckedOutputStream uncompressedOutChecked)
 			throws IOException
 	{
+		final XmlFormatter xmlFormatter = new XmlFormatter();
 		for (ZipEntry entry = zipIn.getNextEntry(); entry != null; entry = zipIn.getNextEntry()) {
 			uncompressedOutRaw.reset();
 			checksum.reset();
@@ -194,7 +216,12 @@ public class ReZip {
 			zipIn.closeEntry();
 
 			// If we found a ZIP in this ZIP, and we want to recursively filter, then do so
-			if (isRecursive() && Utils.isZip(entry.getName(), entry.getSize(), uncompressedOutRaw)) {
+			if (formatXml && Utils.isXml(entry.getName(), entry.getSize(), uncompressedOutRaw)) {
+				// XML file: pretty-print the data to stdout
+				final InputStream source = uncompressedOutRaw.createInputStream(true);
+				uncompressedOutRaw.reset();
+				xmlFormatter.prettify(source, uncompressedOutRaw, buffer);
+			} else if (isRecursive() && Utils.isZip(entry.getName(), entry.getSize(), uncompressedOutRaw)) {
 				final BufferedOutputStream subUncompressedOutRaw = new BufferedOutputStream();
 				final CRC32 subChecksum = new CRC32();
 				final CheckedOutputStream subUncompressedOutChecked = new CheckedOutputStream(subUncompressedOutRaw, subChecksum);

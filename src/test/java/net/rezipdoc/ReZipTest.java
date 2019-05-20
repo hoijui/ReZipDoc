@@ -53,7 +53,7 @@ public class ReZipTest extends AbstractReZipDocTest {
 		// This is the original, compressed file
 		createRecursiveZip(zipFile, projectRoot, archiveContents, ZipEntry.DEFLATED);
 		// This creates the uncompressed file
-		new ReZip(false, false, recursive).reZip(zipFile, reZipFile);
+		new ReZip(false, false, recursive, false).reZip(zipFile, reZipFile);
 		// Test whether the filtered ZIP file does (not) contain the original content
 		// placed in a sub-ZIP file in plain text
 		checkContains(recursive, reZipFile, archiveContents.subList(0, 2));
@@ -77,7 +77,7 @@ public class ReZipTest extends AbstractReZipDocTest {
 		// This is the original, compressed file
 		createZip(zipFile, projectRoot, archiveContents, ZipEntry.DEFLATED);
 		// This creates the *still compressed* file
-		new ReZip(!plainText, false, true).reZip(zipFile, reZipFile);
+		new ReZip(!plainText, false, true, false).reZip(zipFile, reZipFile);
 		// Test whether the filtered ZIP file does (not) contain the original content in plain text
 		checkContains(plainText, reZipFile, archiveContents);
 	}
