@@ -20,6 +20,7 @@ package net.rezipdoc;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
@@ -141,13 +142,25 @@ public class ReZip {
 				recursive = false;
 			} else if ("--format-xml".equals(arg)) {
 				formatXml = true;
+			} else if ("--write-suffixes".equals(arg)) {
+				try {
+					Utils.writeSuffixesFiles();
+					return;
+				} catch (URISyntaxException exc) {
+					exc.printStackTrace();
+					System.exit(1);
+				}
 			} else {
-				System.err.printf("Usage: %s [--compressed] [--nullify-times] [--non-recursive] <in.zip >out.zip%n",
+				System.err.println("Usage:");
+				System.err.printf("\t%s [--compressed] [--nullify-times] [--non-recursive] <in.zip >out.zip%n",
 						ReZip.class.getSimpleName());
+				System.err.printf("\t%s --write-suffixes%n", ReZip.class.getSimpleName());
+				System.err.println("Options:");
 				System.err.println("\t--compressed       re-zip compressed");
 				System.err.println("\t--nullify-times    set creation-, last-access- and last-modified-times of the re-zipped archives entries to 0");
 				System.err.println("\t--non-recursive    do not re-zip archives within archives");
 				System.err.println("\t--format-xml       pretty-print (reformat) XML content");
+				System.err.println("\t--write-suffixes   writes suffix files next to the JAR, populated with defaults, and exits");
 				System.exit(1);
 			}
 		}

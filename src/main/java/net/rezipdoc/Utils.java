@@ -18,14 +18,17 @@
 package net.rezipdoc;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -128,6 +131,30 @@ public final class Utils {
 					.filter(s -> !s.isEmpty() && (s.charAt(0) != '#'))
 					.collect(Collectors.toList());
 		}
+	}
+
+	public static void writeLines(final Path textFile, final Collection<String> lines) throws IOException {
+
+		try (final PrintStream out = new PrintStream(new FileOutputStream(textFile.toFile()))) {
+			lines.forEach(out::println);
+		}
+	}
+
+	/**
+	 * Writes all suffix files next ot our binary (JAR).
+	 * @throws IOException if there is a problem while writing the file
+	 * @throws URISyntaxException if there is a problem while writing the file
+	 */
+	public static void writeSuffixesFiles() throws IOException, URISyntaxException {
+
+		Path suffixesFile = sourceDir().resolve(RESOURCE_FILE_SUFFIXES_TEXT);
+		writeLines(suffixesFile, SUFFIXES_TEXT);
+
+		suffixesFile = sourceDir().resolve(RESOURCE_FILE_SUFFIXES_XML);
+		writeLines(suffixesFile, SUFFIXES_XML);
+
+		suffixesFile = sourceDir().resolve(RESOURCE_FILE_SUFFIXES_ARCHIVE);
+		writeLines(suffixesFile, SUFFIXES_ARCHIVE);
 	}
 
 	public static Set<String> collectFileOrDefaults(final String localResourceFilePath, final Set<String> defaults) {
