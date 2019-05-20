@@ -129,7 +129,8 @@ public class ZipDoc {
 			}
 			zipIn.closeEntry();
 
-			if (formatXml && Utils.isXml(entry.getName(), entry.getSize(), uncompressedOutRaw)) {
+			final boolean isXml = Utils.isXml(entry.getName(), entry.getSize(), uncompressedOutRaw);
+			if (formatXml && isXml) {
 				// XML file: pretty-print the data to stdout
 				try {
 					final InputSource inBuffer = new InputSource(uncompressedOutRaw.createInputStream(false));
@@ -139,7 +140,7 @@ public class ZipDoc {
 					// In case of failure of pretty-printing, use the XML as-is
 					uncompressedOutRaw.writeTo(output);
 				}
-			} else if (Utils.isPlainText(entry.getName(), entry.getSize(), uncompressedOutRaw)) {
+			} else if (Utils.isPlainText(entry.getName(), entry.getSize(), uncompressedOutRaw) || isXml) {
 				// Text file: dump directly to output
 				uncompressedOutRaw.writeTo(output);
 			} else if (Utils.isZip(entry.getName(), entry.getSize(), uncompressedOutRaw)
