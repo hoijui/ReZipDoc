@@ -102,13 +102,15 @@ public class XmlFormatter {
 				new XmlFormatter().prettify(source, target, createBuffer());
 			}
 		} else {
-			LOGGER.warning("Usage:");
-			LOGGER.warning(String.format("\t%s in-file.xml out-file.xml",
-					XmlFormatter.class.getSimpleName()));
-			LOGGER.warning(String.format("\t%s in-file.xml > out-file.xml",
-					XmlFormatter.class.getSimpleName()));
-			LOGGER.warning(String.format("\t%s < in-file.xml > out-file.xml",
-					XmlFormatter.class.getSimpleName()));
+			if (LOGGER.isLoggable(Level.WARNING)) {
+				LOGGER.warning("Usage:");
+				LOGGER.warning(String.format("\t%s in-file.xml out-file.xml",
+						XmlFormatter.class.getSimpleName()));
+				LOGGER.warning(String.format("\t%s in-file.xml > out-file.xml",
+						XmlFormatter.class.getSimpleName()));
+				LOGGER.warning(String.format("\t%s < in-file.xml > out-file.xml",
+						XmlFormatter.class.getSimpleName()));
+			}
 			System.exit(1);
 		}
 	}

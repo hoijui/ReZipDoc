@@ -191,14 +191,20 @@ public final class Utils {
 			final Path suffixesFile = sourceDir().resolve(localResourceFilePath);
 			try {
 				suffixes = collectFileNameMatchers(suffixesFile);
-				LOGGER.info(String.format("Read suffixes from file \"%s\".", suffixesFile));
+				if (LOGGER.isLoggable(Level.INFO)) {
+					LOGGER.info(String.format("Read suffixes from file \"%s\".", suffixesFile));
+				}
 			} catch (IOException exc) {
-				LOGGER.info(String.format("Did not read suffixes from file \"%s\".", suffixesFile));
+				if (LOGGER.isLoggable(Level.INFO)) {
+					LOGGER.info(String.format("Did not read suffixes from file \"%s\".", suffixesFile));
+				}
 				suffixes = defaults;
 			}
 		} catch (URISyntaxException exc) {
-			LOGGER.log(Level.SEVERE, String.format("Failed collecting suffixes for \"%s\"",
-					localResourceFilePath), exc);
+			if (LOGGER.isLoggable(Level.SEVERE)) {
+				LOGGER.log(Level.SEVERE, String.format("Failed collecting suffixes for \"%s\"",
+						localResourceFilePath), exc);
+			}
 			suffixes = null;
 			System.exit(1);
 		}
