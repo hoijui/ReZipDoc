@@ -193,7 +193,7 @@ public class ReZip {
 			Utils.transferTo(zipIn, uncompressedOutChecked, buffer);
 			zipIn.closeEntry();
 
-			// If we found a ZIP in this ZIP, an dwe want to recursively filter, then do so
+			// If we found a ZIP in this ZIP, and we want to recursively filter, then do so
 			if (isRecursive() && Utils.isZip(entry.getName(), entry.getSize(), uncompressedOutRaw)) {
 				final BufferedOutputStream subUncompressedOutRaw = new BufferedOutputStream();
 				final CRC32 subChecksum = new CRC32();
