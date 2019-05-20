@@ -16,6 +16,11 @@ you probably want to use __ReZipDoc__.
 `master`:
 [![Build Status](https://travis-ci.org/hoijui/ReZipDoc.svg?branch=master)](https://travis-ci.org/hoijui/ReZipDoc)
 
+[![SonarCloud Status](https://sonarcloud.io/api/project_badges/measure?project=net.rezipdoc:rezipdoc&metric=alert_status)](https://sonarcloud.io/dashboard?id=net.rezipdoc:rezipdoc) 
+[![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=net.rezipdoc:rezipdoc&metric=coverage)](https://sonarcloud.io/component_measures/metric/coverage/list?id=net.rezipdoc:rezipdoc)
+[![SonarCloud Bugs](https://sonarcloud.io/api/project_badges/measure?project=net.rezipdoc:rezipdoc&metric=bugs)](https://sonarcloud.io/component_measures/metric/reliability_rating/list?id=net.rezipdoc:rezipdoc)
+[![SonarCloud Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=net.rezipdoc:rezipdoc&metric=vulnerabilities)](https://sonarcloud.io/component_measures/metric/security_rating/list?id=net.rezipdoc:rezipdoc)
+
 ## Installation
 
 This program requires Java JRE 8 or newer.
