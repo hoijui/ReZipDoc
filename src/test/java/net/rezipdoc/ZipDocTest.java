@@ -19,7 +19,6 @@ package net.rezipdoc;
 
 import org.junit.Test;
 
-import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
@@ -31,7 +30,7 @@ import java.util.zip.ZipInputStream;
  */
 public class ZipDocTest extends AbstractReZipDocTest {
 
-	private void testRecursive(final boolean recursive) throws IOException, TransformerException {
+	private void testRecursive(final boolean recursive) throws IOException {
 
 		// This is the original, compressed file
 		createRecursiveZip(zipFile, projectRoot, archiveContents, ZipEntry.DEFLATED);
@@ -49,12 +48,12 @@ public class ZipDocTest extends AbstractReZipDocTest {
 	}
 
 	@Test
-	public void testNonRecursive() throws IOException, TransformerException {
+	public void testNonRecursive() throws IOException {
 		testRecursive(false);
 	}
 
 	@Test
-	public void testRecursive() throws IOException, TransformerException {
+	public void testRecursive() throws IOException {
 		testRecursive(true);
 	}
 }
