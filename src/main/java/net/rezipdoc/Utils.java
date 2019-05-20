@@ -32,6 +32,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Formatter;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -40,6 +45,8 @@ import java.util.stream.Stream;
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class Utils {
+
+	private static final Logger LOGGER = Utils.getLogger(Utils.class.getName());
 
 	public static final String RESOURCE_FILE_SUFFIXES_PREFIX = "reZipDoc-";
 	public static final String RESOURCE_FILE_SUFFIXES_TEXT
@@ -95,6 +102,26 @@ public final class Utils {
 	}
 
 	private Utils() {
+	}
+
+	public static Logger getLogger(final String name) {
+
+		final Logger logger = Logger.getLogger(name);
+		for (final Handler handler : logger.getHandlers()) {
+			logger.removeHandler(handler);
+		}
+		logger.setUseParentHandlers(false);
+
+		final Formatter basicFmt = new BasicLogFormatter();
+
+		final ConsoleHandler stdErr = new ConsoleHandler();
+		stdErr.setLevel(Level.FINEST);
+		stdErr.setFormatter(basicFmt);
+		logger.addHandler(stdErr);
+
+		logger.setLevel(Level.FINEST);
+
+		return logger;
 	}
 
 	/**
@@ -164,13 +191,14 @@ public final class Utils {
 			final Path suffixesFile = sourceDir().resolve(localResourceFilePath);
 			try {
 				suffixes = collectFileNameMatchers(suffixesFile);
-				System.out.printf("Read suffixes from file \"%s\".%n", suffixesFile);
+				LOGGER.info(String.format("Read suffixes from file \"%s\".", suffixesFile));
 			} catch (IOException exc) {
-				System.out.printf("Did not read suffixes from file \"%s\".%n", suffixesFile);
+				LOGGER.info(String.format("Did not read suffixes from file \"%s\".", suffixesFile));
 				suffixes = defaults;
 			}
 		} catch (URISyntaxException exc) {
-			exc.printStackTrace();
+			LOGGER.log(Level.SEVERE, String.format("Failed collecting suffixes for \"%s\"",
+					localResourceFilePath), exc);
 			suffixes = null;
 			System.exit(1);
 		}

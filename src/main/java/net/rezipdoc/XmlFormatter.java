@@ -42,6 +42,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Takes XML content as input,
@@ -51,6 +53,8 @@ import java.io.PrintStream;
  */
 @SuppressWarnings("WeakerAccess")
 public class XmlFormatter {
+
+	private static final Logger LOGGER = Utils.getLogger(XmlFormatter.class.getName());
 
 	private final int indentSpaces;
 	private final String indent;
@@ -98,10 +102,13 @@ public class XmlFormatter {
 				new XmlFormatter().prettify(source, target, createBuffer());
 			}
 		} else {
-			System.err.println("Usage:");
-			System.err.printf("\t%s in-file.xml out-file.xml%n", XmlFormatter.class.getSimpleName());
-			System.err.printf("\t%s in-file.xml > out-file.xml%n", XmlFormatter.class.getSimpleName());
-			System.err.printf("\t%s < in-file.xml > out-file.xml%n", XmlFormatter.class.getSimpleName());
+			LOGGER.warning("Usage:");
+			LOGGER.warning(String.format("\t%s in-file.xml out-file.xml",
+					XmlFormatter.class.getSimpleName()));
+			LOGGER.warning(String.format("\t%s in-file.xml > out-file.xml",
+					XmlFormatter.class.getSimpleName()));
+			LOGGER.warning(String.format("\t%s < in-file.xml > out-file.xml",
+					XmlFormatter.class.getSimpleName()));
 			System.exit(1);
 		}
 	}
@@ -127,8 +134,8 @@ public class XmlFormatter {
 			} else {
 				prettifyRoughAndFast(xmlIn, xmlOut, buffer);
 			}
-		} catch (final Exception ex) {
-			ex.printStackTrace(System.err);
+		} catch (final Exception exc) {
+			LOGGER.log(Level.WARNING, "Failed to pretty print; fallback to carbon-copy", exc);
 			// In case of failure of pretty-printing, use the XML as-is
 			Utils.transferTo(xmlIn, xmlOut, buffer);
 		}

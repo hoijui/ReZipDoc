@@ -22,6 +22,7 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.Logger;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.ZipEntry;
@@ -37,6 +38,8 @@ import java.util.zip.ZipInputStream;
  */
 @SuppressWarnings("WeakerAccess")
 public class ZipDoc {
+
+	private static final Logger LOGGER = Utils.getLogger(ZipDoc.class.getName());
 
 	private final boolean recursive;
 	private final boolean formatXml;
@@ -65,7 +68,8 @@ public class ZipDoc {
 	public static void main(final String[] argv) throws IOException {
 
 		if (1 != argv.length || "--help".equals(argv[0]) || "-h".equals(argv[0])) {
-			System.err.printf("Usage: %s in-file.zip > text-representation.txt%n", ZipDoc.class.getSimpleName());
+			LOGGER.warning(String.format("Usage: %s in-file.zip > text-representation.txt%n",
+					ZipDoc.class.getSimpleName()));
 			System.exit(1);
 		}
 

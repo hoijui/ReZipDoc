@@ -24,6 +24,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.ZipEntry;
@@ -38,6 +40,8 @@ import java.util.zip.ZipOutputStream;
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class ReZip {
+
+	private static final Logger LOGGER = Utils.getLogger(ReZip.class.getName());
 
 	/**
 	 * Whether to re-pack the output ZIP with compression
@@ -147,20 +151,20 @@ public class ReZip {
 					Utils.writeSuffixesFiles();
 					return;
 				} catch (URISyntaxException exc) {
-					exc.printStackTrace();
+					LOGGER.log(Level.SEVERE, "Failed writing suffixes files", exc);
 					System.exit(1);
 				}
 			} else {
-				System.err.println("Usage:");
-				System.err.printf("\t%s [--compressed] [--nullify-times] [--non-recursive] <in.zip >out.zip%n",
-						ReZip.class.getSimpleName());
-				System.err.printf("\t%s --write-suffixes%n", ReZip.class.getSimpleName());
-				System.err.println("Options:");
-				System.err.println("\t--compressed       re-zip compressed");
-				System.err.println("\t--nullify-times    set creation-, last-access- and last-modified-times of the re-zipped archives entries to 0");
-				System.err.println("\t--non-recursive    do not re-zip archives within archives");
-				System.err.println("\t--format-xml       pretty-print (reformat) XML content");
-				System.err.println("\t--write-suffixes   writes suffix files next to the JAR, populated with defaults, and exits");
+				LOGGER.warning("Usage:");
+				LOGGER.warning(String.format("\t%s [--compressed] [--nullify-times] [--non-recursive] <in.zip >out.zip",
+						ReZip.class.getSimpleName()));
+				LOGGER.warning(String.format("\t%s --write-suffixes", ReZip.class.getSimpleName()));
+				LOGGER.warning("Options:");
+				LOGGER.warning("\t--compressed       re-zip compressed");
+				LOGGER.warning("\t--nullify-times    set creation-, last-access- and last-modified-times of the re-zipped archives entries to 0");
+				LOGGER.warning("\t--non-recursive    do not re-zip archives within archives");
+				LOGGER.warning("\t--format-xml       pretty-print (reformat) XML content");
+				LOGGER.warning("\t--write-suffixes   writes suffix files next to the JAR, populated with defaults, and exits");
 				System.exit(1);
 			}
 		}
