@@ -59,6 +59,13 @@ public final class Utils {
 		final Set<String> suffixesZip = new HashSet<>();
 		suffixesZip.add("zip");
 		suffixesZip.add("jar");
+		suffixesZip.add("docx");
+		suffixesZip.add("xlsx");
+		suffixesZip.add("pptx");
+		suffixesZip.add("odt");
+		suffixesZip.add("ods");
+		suffixesZip.add("odp");
+		suffixesZip.add("fcstd");
 		SUFFIXES_ZIP = suffixesZip;
 	}
 
