@@ -150,7 +150,9 @@ public class XmlFormatter {
 			XPathExpressionException,
 			TransformerException
 	{
-		Document document = DocumentBuilderFactory.newInstance()
+		final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+		final Document document = documentBuilderFactory
 				.newDocumentBuilder()
 				.parse(new InputSource(xmlIn));
 
