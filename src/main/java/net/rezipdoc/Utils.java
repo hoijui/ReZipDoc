@@ -29,6 +29,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -60,45 +61,37 @@ public final class Utils {
 	private static final Set<String> SUFFIXES_ARCHIVE;
 
 	static {
-		{
-			final Set<String> defaultSuffixesXml = new HashSet<>();
-			defaultSuffixesXml.add("xml");
-			defaultSuffixesXml.add("svg");
-			SUFFIXES_XML = collectFileOrDefaults(RESOURCE_FILE_SUFFIXES_XML, defaultSuffixesXml);
-		}
+		SUFFIXES_XML = collectFileOrDefaults(RESOURCE_FILE_SUFFIXES_XML, setOf(
+				"xml",
+				"svg"));
 
-		{
-			final Set<String> defaultSuffixesText = new HashSet<>();
-			defaultSuffixesText.add("txt");
-			defaultSuffixesText.add("md");
-			defaultSuffixesText.add("markdown");
-			defaultSuffixesText.add("properties");
-			defaultSuffixesText.add("java");
-			defaultSuffixesText.add("kt");
-			defaultSuffixesText.add("c");
-			defaultSuffixesText.add("cxx");
-			defaultSuffixesText.add("cpp");
-			defaultSuffixesText.add("h");
-			defaultSuffixesText.add("hxx");
-			defaultSuffixesText.add("hpp");
-			defaultSuffixesText.add("js");
-			defaultSuffixesText.add("html");
-			SUFFIXES_TEXT = collectFileOrDefaults(RESOURCE_FILE_SUFFIXES_TEXT, defaultSuffixesText);
-		}
 
-		{
-			Set<String> defaultSuffixesZip = new HashSet<>();
-			defaultSuffixesZip.add("zip");
-			defaultSuffixesZip.add("jar");
-			defaultSuffixesZip.add("docx");
-			defaultSuffixesZip.add("xlsx");
-			defaultSuffixesZip.add("pptx");
-			defaultSuffixesZip.add("odt");
-			defaultSuffixesZip.add("ods");
-			defaultSuffixesZip.add("odp");
-			defaultSuffixesZip.add("fcstd");
-			SUFFIXES_ARCHIVE = collectFileOrDefaults(RESOURCE_FILE_SUFFIXES_ARCHIVE, defaultSuffixesZip);
-		}
+		SUFFIXES_TEXT = collectFileOrDefaults(RESOURCE_FILE_SUFFIXES_TEXT, setOf(
+				"txt",
+				"md",
+				"markdown",
+				"properties",
+				"java",
+				"kt",
+				"c",
+				"cxx",
+				"cpp",
+				"h",
+				"hxx",
+				"hpp",
+				"js",
+				"html"));
+
+		SUFFIXES_ARCHIVE = collectFileOrDefaults(RESOURCE_FILE_SUFFIXES_ARCHIVE, setOf(
+				"zip",
+				"jar",
+				"docx",
+				"xlsx",
+				"pptx",
+				"odt",
+				"ods",
+				"odp",
+				"fcstd"));
 	}
 
 	private Utils() {
@@ -182,6 +175,14 @@ public final class Utils {
 
 		suffixesFile = sourceDir().resolve(RESOURCE_FILE_SUFFIXES_ARCHIVE);
 		writeLines(suffixesFile, SUFFIXES_ARCHIVE);
+	}
+
+	@SafeVarargs
+	public static <T> Set<T> setOf(final T... defaults) {
+
+		final Set<T> strings = new HashSet<>();
+		Collections.addAll(strings, defaults);
+		return strings;
 	}
 
 	public static Set<String> collectFileOrDefaults(final String localResourceFilePath, final Set<String> defaults) {
