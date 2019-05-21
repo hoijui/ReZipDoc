@@ -156,8 +156,8 @@ public class XmlFormatter {
 				.newDocumentBuilder()
 				.parse(new InputSource(xmlIn));
 
-		XPath xPath = XPathFactory.newInstance().newXPath();
-		NodeList nodeList = (NodeList) xPath.evaluate("//text()[normalize-space()='']",
+		final XPath xPath = XPathFactory.newInstance().newXPath();
+		final NodeList nodeList = (NodeList) xPath.evaluate("//text()[normalize-space()='']",
 				document,
 				XPathConstants.NODESET);
 
@@ -166,16 +166,16 @@ public class XmlFormatter {
 			node.getParentNode().removeChild(node);
 		}
 
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		final TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 //		transformerFactory.setAttribute("indent-number", indentSpaces);
-		Transformer transformer = transformerFactory.newTransformer();
+		final Transformer transformer = transformerFactory.newTransformer();
 		//transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", String.valueOf(indentSpaces));
 
-		StreamResult streamResult = new StreamResult(xmlOut);
+		final StreamResult streamResult = new StreamResult(xmlOut);
 
 		transformer.transform(new DOMSource(document), streamResult);
 	}
