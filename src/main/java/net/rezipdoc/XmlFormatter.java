@@ -89,6 +89,19 @@ public class XmlFormatter {
 		this(2, "  ", true);
 	}
 
+	private static void printUsage(final Level logLevel) {
+
+		if (LOGGER.isLoggable(logLevel)) {
+			LOGGER.log(logLevel, "Usage examples:");
+			LOGGER.log(logLevel, String.format("\t%s in-file.xml out-file.xml",
+					XmlFormatter.class.getSimpleName()));
+			LOGGER.log(logLevel, String.format("\t%s in-file.xml > out-file.xml",
+					XmlFormatter.class.getSimpleName()));
+			LOGGER.log(logLevel, String.format("\t%s < in-file.xml > out-file.xml",
+					XmlFormatter.class.getSimpleName()));
+		}
+	}
+
 	public static void main(final String[] args) throws IOException {
 
 		if (0 == args.length) {
@@ -104,15 +117,7 @@ public class XmlFormatter {
 				new XmlFormatter().prettify(source, target, createBuffer());
 			}
 		} else {
-			if (LOGGER.isLoggable(Level.WARNING)) {
-				LOGGER.warning("Usage:");
-				LOGGER.warning(String.format("\t%s in-file.xml out-file.xml",
-						XmlFormatter.class.getSimpleName()));
-				LOGGER.warning(String.format("\t%s in-file.xml > out-file.xml",
-						XmlFormatter.class.getSimpleName()));
-				LOGGER.warning(String.format("\t%s < in-file.xml > out-file.xml",
-						XmlFormatter.class.getSimpleName()));
-			}
+			printUsage(Level.WARNING);
 			System.exit(1);
 		}
 	}
