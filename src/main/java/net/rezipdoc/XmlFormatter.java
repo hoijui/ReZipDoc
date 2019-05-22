@@ -104,7 +104,6 @@ public class XmlFormatter {
 		}
 	}
 
-	@SuppressWarnings("restriction") // to suppress warnings relative to usage of discouraged or forbidden references, like `System.in`
 	private void prettifyByArgs(final List<String> args) throws IOException {
 
 		// normal usage: prettify input to output
