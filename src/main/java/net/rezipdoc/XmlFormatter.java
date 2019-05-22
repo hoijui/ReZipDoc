@@ -56,6 +56,8 @@ public class XmlFormatter {
 
 	private static final Logger LOGGER = Utils.getLogger(XmlFormatter.class.getName());
 
+	private static final int DEFAULT_BUFFER_SIZE = 2048;
+
 	private final int indentSpaces;
 	private final String indent;
 	private final boolean correct;
@@ -116,7 +118,7 @@ public class XmlFormatter {
 	}
 
 	private static byte[] createBuffer() {
-		return new byte[2048];
+		return new byte[DEFAULT_BUFFER_SIZE];
 	}
 
 	/**
