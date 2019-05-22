@@ -250,7 +250,7 @@ public class XmlFormatter {
 		}
 	}
 
-	public int handleRow(final PrintStream xmlOut, final String row, int numIndents) {
+	private int handleRow(final PrintStream xmlOut, final String row, int numIndents) {
 		if (!row.isEmpty()) {
 			if (row.startsWith("<?")) {
 				xmlOut.append(row).append("\n");
