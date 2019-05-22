@@ -104,30 +104,39 @@ public class XmlFormatter {
 		}
 	}
 
-	public static void main(final String[] args) throws IOException {
+	private void prettifyByArgs(final List<String> args) throws IOException {
+
+		// normal usage: prettify input to output
+		if (args.size() == 0) {
+			prettify(System.in, System.out, createBuffer());
+		} else if (args.size() == 1) {
+			try (final InputStream source = new FileInputStream(args.get(0))) {
+				prettify(source, System.out, createBuffer());
+			}
+		} else if (args.size() == 2) {
+			try (final InputStream source = new FileInputStream(args.get(0));
+					final OutputStream target = new FileOutputStream(args.get(1)))
+			{
+				prettify(source, target, createBuffer());
+			}
+		} else {
+			throw new IllegalArgumentException("Between 0 and 2 arguments are required, but " + args.size() + " were given");
+		}
+	}
+
+	public static void main(final String[] args) {
 
 		final List<String> argsL = Arrays.asList(args);
 		if (argsL.contains("-h") || argsL.contains("--help")) {
 			printUsage(Level.INFO);
-		} else if (args.length < 3) {
+		} else if (argsL.size() < 3) {
 			// normal usage: prettify input to output
-			if (args.length == 0) {
-				new XmlFormatter().prettify(System.in, System.out, createBuffer());
-			} else if (args.length == 1) {
-				try (final InputStream source = new FileInputStream(args[0])) {
-					new XmlFormatter().prettify(source, System.out, createBuffer());
-				}
-			} else {
-				// args.length == 2
-				try (final InputStream source = new FileInputStream(args[0]);
-						final OutputStream target = new FileOutputStream(args[1]))
-				{
-					new XmlFormatter().prettify(source, target, createBuffer());
-				}
+			try {
+				new XmlFormatter().prettifyByArgs(argsL);
+			} catch (final Exception exc) {
+				printUsage(Level.WARNING);
+				System.exit(1);
 			}
-		} else {
-			printUsage(Level.WARNING);
-			System.exit(1);
 		}
 	}
 
