@@ -86,6 +86,7 @@ public class ZipDoc {
 	 * @param zipFile the ZIP file to convert to a text
 	 * @throws IOException if any input or output fails
 	 */
+	@SuppressWarnings("restriction") // to suppress warnings relative to usage of discouraged or forbidden references, like `System.in`
 	public void transform(final Path zipFile) throws IOException {
 
 		try (ZipInputStream zipIn = new ZipInputStream(Files.newInputStream(zipFile))) {

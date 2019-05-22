@@ -179,6 +179,7 @@ public class ReZip {
 	 *
 	 * @throws IOException if any input or output fails
 	 */
+	@SuppressWarnings("restriction") // to suppress warnings relative to usage of discouraged or forbidden references, like `System.in`
 	public void reZip() throws IOException {
 
 		try (ZipInputStream zipIn = new ZipInputStream(System.in);
