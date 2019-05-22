@@ -98,6 +98,8 @@ public final class Utils {
 	private Utils() {
 	}
 
+	private static ReroutableConsoleHandler stdErr;
+
 	public static Logger getLogger(final String name) {
 
 		final Logger logger = Logger.getLogger(name);
@@ -108,14 +110,20 @@ public final class Utils {
 
 		final Formatter basicFmt = new BasicLogFormatter();
 
-		final ConsoleHandler stdErr = new ConsoleHandler();
-		stdErr.setLevel(Level.FINEST);
-		stdErr.setFormatter(basicFmt);
+		if (stdErr == null) {
+			stdErr = new ReroutableConsoleHandler();
+			stdErr.setLevel(Level.FINEST);
+			stdErr.setFormatter(basicFmt);
+		}
 		logger.addHandler(stdErr);
 
 		logger.setLevel(Level.FINEST);
 
 		return logger;
+	}
+
+	public static ReroutableConsoleHandler getLogHandler() {
+		return stdErr;
 	}
 
 	/**
