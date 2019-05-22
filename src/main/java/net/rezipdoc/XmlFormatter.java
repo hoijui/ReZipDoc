@@ -42,6 +42,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -104,7 +106,10 @@ public class XmlFormatter {
 
 	public static void main(final String[] args) throws IOException {
 
-		if (args.length < 3) {
+		final List<String> argsL = Arrays.asList(args);
+		if (argsL.contains("-h") || argsL.contains("--help")) {
+			printUsage(Level.INFO);
+		} else if (args.length < 3) {
 			// normal usage: prettify input to output
 			if (args.length == 0) {
 				new XmlFormatter().prettify(System.in, System.out, createBuffer());
