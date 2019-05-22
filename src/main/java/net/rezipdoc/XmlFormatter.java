@@ -36,12 +36,15 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
@@ -165,6 +168,29 @@ public class XmlFormatter {
 			LOGGER.log(Level.WARNING, "Failed to pretty print; fallback to carbon-copy", exc);
 			// In case of failure of pretty-printing, use the XML as-is
 			Utils.transferTo(xmlIn, xmlOut, buffer);
+		}
+	}
+
+	/**
+	 * Reformats XML content to be easy on the human eye.
+	 * NOTE Rather use the
+	 *      {@link #prettify(InputStream, OutputStream, byte[]) streamed version},
+	 *      as it uses less memory.
+	 *
+	 * @param xml  the XML content to be pretty-printed
+	 * @return pretty XML content
+	 * @throws IOException if any input or output fails
+	 */
+	public String prettify(final String xml) throws IOException {
+
+		final byte[] xmlBytes = xml.getBytes(StandardCharsets.UTF_8);
+		try (final InputStream xmlIn = new ByteArrayInputStream(xmlBytes);
+				final ByteArrayOutputStream xmlOut = new ByteArrayOutputStream())
+		{
+			// NOTE It is a bit hacky to use the input buffer as working buffer,
+			//      but should work without problems in this case
+			prettify(xmlIn, xmlOut, xmlBytes);
+			return new String(xmlOut.toByteArray(), StandardCharsets.UTF_8);
 		}
 	}
 
