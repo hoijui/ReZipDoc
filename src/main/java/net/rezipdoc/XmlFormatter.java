@@ -104,17 +104,21 @@ public class XmlFormatter {
 
 	public static void main(final String[] args) throws IOException {
 
-		if (0 == args.length) {
-			new XmlFormatter().prettify(System.in, System.out, createBuffer());
-		} else if (1 == args.length) {
-			try (final InputStream source = new FileInputStream(args[0])) {
-				new XmlFormatter().prettify(source, System.out, createBuffer());
-			}
-		} else if (2 == args.length) {
-			try (final InputStream source = new FileInputStream(args[0]);
-					final OutputStream target = new FileOutputStream(args[1]))
-			{
-				new XmlFormatter().prettify(source, target, createBuffer());
+		if (args.length < 3) {
+			// normal usage: prettify input to output
+			if (args.length == 0) {
+				new XmlFormatter().prettify(System.in, System.out, createBuffer());
+			} else if (args.length == 1) {
+				try (final InputStream source = new FileInputStream(args[0])) {
+					new XmlFormatter().prettify(source, System.out, createBuffer());
+				}
+			} else {
+				// args.length == 2
+				try (final InputStream source = new FileInputStream(args[0]);
+						final OutputStream target = new FileOutputStream(args[1]))
+				{
+					new XmlFormatter().prettify(source, target, createBuffer());
+				}
 			}
 		} else {
 			printUsage(Level.WARNING);
