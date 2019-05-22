@@ -267,7 +267,7 @@
 							</manifestEntries>
 							<!--
 								We want uncompressed JARs, so they play more nicely with git,
-								as this software is very likely to be stored in a git archive.
+								as this software might be stored in a git archive.
 							-->
 							<compress>false</compress>
 						</archive>
@@ -456,7 +456,7 @@
 										The `gpg.keyname` property is defined in settings.xml,
 										and needs to match the `uid` as displayed by `gpg2 \-\-list-keys`.
 										Example:
-											Firstname Lastname (Comment) &lt;user@email.org&gt;
+											First-name Last-name (Comment) &lt;user@email.org&gt;
 									-->
 									<keyname>${gpg.keyname}</keyname>
 									<passphraseServerId>${gpg.keyname}</passphraseServerId>
