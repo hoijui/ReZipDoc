@@ -22,19 +22,11 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Scanner;
 
 /**
  * @see BufferedOutputStream
  */
 public class BufferedOutputStreamTest {
-
-	private static String readStreamToString(final InputStream inputStream) {
-
-		final Scanner inScr = new Scanner(inputStream).useDelimiter("\\A");
-		return inScr.hasNext() ? inScr.next() : "";
-	}
 
 	@Test
 	public void testStartsWith() throws IOException {
@@ -54,7 +46,7 @@ public class BufferedOutputStreamTest {
 		try (final BufferedOutputStream outStream = new BufferedOutputStream()) {
 			outStream.write("hello".getBytes());
 			try (final ByteArrayInputStream inStream = outStream.createInputStream(false)) {
-				Assert.assertEquals("hello", readStreamToString(inStream));
+				Assert.assertEquals("hello", Utils.readStreamToString(inStream));
 			}
 		}
 
@@ -64,7 +56,7 @@ public class BufferedOutputStreamTest {
 			outStream.write("hello".getBytes());
 			try (final ByteArrayInputStream inStream = outStream.createInputStream(false)) {
 				outStream.write(" world".getBytes());
-				Assert.assertEquals("hello", readStreamToString(inStream));
+				Assert.assertEquals("hello", Utils.readStreamToString(inStream));
 			}
 		}
 
@@ -72,7 +64,7 @@ public class BufferedOutputStreamTest {
 			outStream.write("hello".getBytes());
 			try (final ByteArrayInputStream inStream = outStream.createInputStream(false)) {
 				outStream.reset();
-				Assert.assertEquals("hello", readStreamToString(inStream));
+				Assert.assertEquals("hello", Utils.readStreamToString(inStream));
 			}
 		}
 
@@ -81,7 +73,7 @@ public class BufferedOutputStreamTest {
 			try (final ByteArrayInputStream inStream = outStream.createInputStream(false)) {
 				outStream.reset();
 				outStream.write("world".getBytes());
-				Assert.assertEquals("world", readStreamToString(inStream));
+				Assert.assertEquals("world", Utils.readStreamToString(inStream));
 			}
 		}
 	}
@@ -92,7 +84,7 @@ public class BufferedOutputStreamTest {
 		try (final BufferedOutputStream outStream = new BufferedOutputStream()) {
 			outStream.write("hello".getBytes());
 			try (final ByteArrayInputStream inStream = outStream.createInputStream(true)) {
-				Assert.assertEquals("hello", readStreamToString(inStream));
+				Assert.assertEquals("hello", Utils.readStreamToString(inStream));
 			}
 		}
 
@@ -100,7 +92,7 @@ public class BufferedOutputStreamTest {
 			outStream.write("hello".getBytes());
 			try (final ByteArrayInputStream inStream = outStream.createInputStream(true)) {
 				outStream.write(" world".getBytes());
-				Assert.assertEquals("hello", readStreamToString(inStream));
+				Assert.assertEquals("hello", Utils.readStreamToString(inStream));
 			}
 		}
 
@@ -108,7 +100,7 @@ public class BufferedOutputStreamTest {
 			outStream.write("hello".getBytes());
 			try (final ByteArrayInputStream inStream = outStream.createInputStream(true)) {
 				outStream.reset();
-				Assert.assertEquals("hello", readStreamToString(inStream));
+				Assert.assertEquals("hello", Utils.readStreamToString(inStream));
 			}
 		}
 
@@ -117,7 +109,7 @@ public class BufferedOutputStreamTest {
 			try (final ByteArrayInputStream inStream = outStream.createInputStream(true)) {
 				outStream.reset();
 				outStream.write("world".getBytes());
-				Assert.assertEquals("hello", readStreamToString(inStream));
+				Assert.assertEquals("hello", Utils.readStreamToString(inStream));
 			}
 		}
 	}

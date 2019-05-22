@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
@@ -151,6 +152,12 @@ public final class Utils {
 					.filter(s -> !s.isEmpty() && (s.charAt(0) != '#'))
 					.collect(Collectors.toList());
 		}
+	}
+
+	public static String readStreamToString(final InputStream inputStream) {
+
+		final Scanner inScr = new Scanner(inputStream).useDelimiter("\\A");
+		return inScr.hasNext() ? inScr.next() : "";
 	}
 
 	public static void writeLines(final Path textFile, final Collection<String> lines) throws IOException {
