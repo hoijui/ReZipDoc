@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.rezipdoc;
+package io.github.hoijui.rezipdoc;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
@@ -45,7 +45,7 @@ public class BasicLogFormatterTest {
 		final String actual = formatter.format(record);
 		Assert.assertThat(actual, CoreMatchers.startsWith("Hello World!\n"
 						+ "java.lang.NullPointerException\n"
-						+ "	at net.rezipdoc.BasicLogFormatterTest.testWithException(BasicLogFormatterTest.java:"));
+						+ "	at io.github.hoijui.rezipdoc.BasicLogFormatterTest.testWithException(BasicLogFormatterTest.java:"));
 	}
 
 	@Test

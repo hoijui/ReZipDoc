@@ -17,10 +17,10 @@ you probably want to use __ReZipDoc__.
 [![Build Status](https://travis-ci.org/hoijui/ReZipDoc.svg?branch=master)](https://travis-ci.org/hoijui/ReZipDoc)
 [![Open Hub project report](https://www.openhub.net/p/ReZipDoc/widgets/project_thin_badge.gif)](https://www.openhub.net/p/ReZipDoc?ref=sample)
 
-[![SonarCloud Status](https://sonarcloud.io/api/project_badges/measure?project=net.rezipdoc:rezipdoc&metric=alert_status)](https://sonarcloud.io/dashboard?id=net.rezipdoc:rezipdoc) 
-[![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=net.rezipdoc:rezipdoc&metric=coverage)](https://sonarcloud.io/component_measures/metric/coverage/list?id=net.rezipdoc:rezipdoc)
-[![SonarCloud Bugs](https://sonarcloud.io/api/project_badges/measure?project=net.rezipdoc:rezipdoc&metric=bugs)](https://sonarcloud.io/component_measures/metric/reliability_rating/list?id=net.rezipdoc:rezipdoc)
-[![SonarCloud Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=net.rezipdoc:rezipdoc&metric=vulnerabilities)](https://sonarcloud.io/component_measures/metric/security_rating/list?id=net.rezipdoc:rezipdoc)
+[![SonarCloud Status](https://sonarcloud.io/api/project_badges/measure?project=io.github.hoijui.rezipdoc:rezipdoc&metric=alert_status)](https://sonarcloud.io/dashboard?id=io.github.hoijui.rezipdoc:rezipdoc) 
+[![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=io.github.hoijui.rezipdoc:rezipdoc&metric=coverage)](https://sonarcloud.io/component_measures/metric/coverage/list?id=io.github.hoijui.rezipdoc:rezipdoc)
+[![SonarCloud Bugs](https://sonarcloud.io/api/project_badges/measure?project=io.github.hoijui.rezipdoc:rezipdoc&metric=bugs)](https://sonarcloud.io/component_measures/metric/reliability_rating/list?id=io.github.hoijui.rezipdoc:rezipdoc)
+[![SonarCloud Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=io.github.hoijui.rezipdoc:rezipdoc&metric=vulnerabilities)](https://sonarcloud.io/component_measures/metric/security_rating/list?id=io.github.hoijui.rezipdoc:rezipdoc)
 
 ## Installation
 
@@ -59,13 +59,13 @@ add these lines:
 
 ```bash
 # Install the add/commit filter
-git config --global --replace-all filter.reZip.clean "java -cp ~/bin/rezipdoc-*.jar net.rezipdoc.ReZip"
+git config --global --replace-all filter.reZip.clean "java -cp ~/bin/rezipdoc-*.jar io.github.hoijui.rezipdoc.ReZip"
 
 # (optionally) Install the checkout filter
-git config --global --replace-all filter.reZip.smudge "java -cp ~/bin/rezipdoc-*.jar net.rezipdoc.ReZip"
+git config --global --replace-all filter.reZip.smudge "java -cp ~/bin/rezipdoc-*.jar io.github.hoijui.rezipdoc.ReZip"
 
 # (optionally) Install the diff filter
-git config --global --replace-all diff.zipDoc.textconv "java -cp ~/bin/rezipdoc-*.jar net.rezipdoc.ZipDoc"
+git config --global --replace-all diff.zipDoc.textconv "java -cp ~/bin/rezipdoc-*.jar io.github.hoijui.rezipdoc.ZipDoc"
 ```
 
 ### 4. Enable the filters

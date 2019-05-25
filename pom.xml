@@ -15,7 +15,7 @@
 		<java.version>8</java.version>
 	</properties>
 
-	<groupId>net.rezipdoc</groupId>
+	<groupId>io.github.hoijui.rezipdoc</groupId>
 	<artifactId>rezipdoc</artifactId>
 	<version>0.1-SNAPSHOT</version>
 

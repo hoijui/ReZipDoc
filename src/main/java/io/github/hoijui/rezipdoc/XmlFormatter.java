@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.rezipdoc;
+package io.github.hoijui.rezipdoc;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

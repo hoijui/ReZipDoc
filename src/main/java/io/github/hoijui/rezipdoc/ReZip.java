@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.rezipdoc;
+package io.github.hoijui.rezipdoc;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;

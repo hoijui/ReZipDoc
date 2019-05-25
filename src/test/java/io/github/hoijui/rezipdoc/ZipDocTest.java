@@ -15,51 +15,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.rezipdoc;
+package io.github.hoijui.rezipdoc;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
- * @see ReZip
+ * @see ZipDoc
  */
-@SuppressWarnings("WeakerAccess")
-public class ReZipTest extends AbstractReZipDocTest {
-
-	protected Path reZipFile;
-
-	@Before
-	public void setUp() throws IOException {
-
-		super.setUp();
-		reZipFile = Files.createTempFile(getClass().getName() + "_filtered_", ".zip");
-	}
-
-	@After
-	public void tearDown() {
-
-		super.tearDown();
-		reZipFile.toFile().delete();
-	}
+public class ZipDocTest extends AbstractReZipDocTest {
 
 	private void testRecursive(final boolean recursive) throws IOException {
 
 		// This is the original, compressed file
 		createRecursiveZip(zipFile, projectRoot, archiveContents, ZipEntry.DEFLATED);
 		// This creates the uncompressed file
-		new ReZip(false, false, recursive, false).reZip(zipFile, reZipFile);
+		final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream();
+		new ZipDoc(recursive, false).transform(
+				new ZipInputStream(Files.newInputStream(zipFile)),
+				new PrintStream(bufferedOutputStream));
 		// Test whether the filtered ZIP file does (not) contain the original content
 		// placed in a sub-ZIP file in plain text
-		checkContains(recursive, reZipFile, archiveContents.subList(0, 2));
+		checkContains(recursive, bufferedOutputStream, archiveContents.subList(0, 2));
 		// Test whether the filtered ZIP file contains the directly embedded original content
 		// in plain text
-		checkContains(true, reZipFile, archiveContents.subList(2, archiveContents.size()));
+		checkContains(true, bufferedOutputStream, archiveContents.subList(2, archiveContents.size()));
 	}
 
 	@Test
@@ -70,25 +55,5 @@ public class ReZipTest extends AbstractReZipDocTest {
 	@Test
 	public void testRecursive() throws IOException {
 		testRecursive(true);
-	}
-
-	private void testPlainText(final boolean plainText) throws IOException {
-
-		// This is the original, compressed file
-		createZip(zipFile, projectRoot, archiveContents, ZipEntry.DEFLATED);
-		// This creates the *still compressed* file
-		new ReZip(!plainText, false, true, false).reZip(zipFile, reZipFile);
-		// Test whether the filtered ZIP file does (not) contain the original content in plain text
-		checkContains(plainText, reZipFile, archiveContents);
-	}
-
-	@Test
-	public void testContentsNotVisibleInFullInPlainText() throws IOException {
-		testPlainText(false);
-	}
-
-	@Test
-	public void testContentsVisibleInFullInPlainText() throws IOException {
-		testPlainText(true);
 	}
 }
