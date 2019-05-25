@@ -34,6 +34,8 @@ import java.nio.charset.StandardCharsets;
  */
 public class XmlFormatterTest {
 
+//	TODO Use System.lineSeparator();
+
 	private void testStringPrettyPrint(final String input, final String expected) throws IOException {
 
 		final String actual = new XmlFormatter().prettify(input);
