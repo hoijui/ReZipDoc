@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -309,5 +310,52 @@ public final class Utils {
 		for (int n = source.read(buffer); n >= 0; n = source.read(buffer)) {
 			target.write(buffer, 0, n);
 		}
+	}
+
+	/**
+	 * Tries to determine the type of an input stream based on the
+	 * characters at the beginning of the input stream.
+	 *
+	 * @param is an input stream that supports marks.
+	 * @return a guess at the content type, or {@code null} if none
+	 * can be determined.
+	 * @throws IOException if an I/O error occurs while reading the
+	 *                     input stream.
+	 * @see InputStream#mark(int)
+	 * @see InputStream#markSupported()
+	 * @see URLConnection#guessContentTypeFromStream(InputStream)
+	 */
+	public static String guessContentTypeFromStream(final InputStream is) throws IOException {
+
+		String contentMimeType = URLConnection.guessContentTypeFromStream(is);
+		if (contentMimeType == null && is.markSupported()) {
+			// JDK does not know the mime type, but we might be able to figure it out ...
+
+			// read the first 16 byte of the file (it might be a magic header)
+			is.mark(16);
+			final int c1 = is.read();
+			final int c2 = is.read();
+			final int c3 = is.read();
+			final int c4 = is.read();
+			final int c5 = is.read();
+			final int c6 = is.read();
+			final int c7 = is.read();
+			final int c8 = is.read();
+			final int c9 = is.read();
+			final int c10 = is.read();
+			final int c11 = is.read();
+			final int c12 = is.read();
+			final int c13 = is.read();
+			final int c14 = is.read();
+			final int c15 = is.read();
+			final int c16 = is.read();
+			is.reset();
+
+			if (c1 == 0xCA && c2 == 0xFE && c3 == 0xBA && c4 == 0xBE) {
+				contentMimeType = "application/java-vm";
+			}
+		}
+
+		return contentMimeType;
 	}
 }
