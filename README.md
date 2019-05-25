@@ -81,7 +81,7 @@ Assign attributes to paths in _<repo-root>/.gitattributes_:
 # This makes git visualize ZIP files as uncompressed text with some meta info
 # NOTE See the ReZipDoc README for how to install the required git filter
 [attr]zipDoc      diff=zipDoc textual
-# This combines in-history uncompression and uncompressed view of ZIP files
+# This combines in-history decompression and uncompressed view of ZIP files
 [attr]reZipDoc    reZip zipDoc
 
 # MS Office
