@@ -243,7 +243,7 @@ public class ReZip {
 			zipIn.closeEntry();
 
 			// If we found a ZIP in this ZIP, and we want to recursively filter, then do so
-			if (formatXml && Utils.isXml(entry.getName(), entry.getSize(), uncompressedOutRaw)) {
+			if (isFormatXml() && Utils.isXml(entry.getName(), entry.getSize(), uncompressedOutRaw)) {
 				// XML file: pretty-print the data to stdout
 				final InputStream source = uncompressedOutRaw.createInputStream(true);
 				uncompressedOutRaw.reset();
