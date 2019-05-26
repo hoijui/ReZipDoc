@@ -138,4 +138,11 @@ public class ReZipTest extends AbstractReZipDocTest {
 	public void testContentsVisibleInFullInPlainText() throws IOException {
 		testPlainText(true);
 	}
+
+	@Test
+	public void testInvalidArgument() throws IOException {
+
+		exit.expectSystemExitWithStatus(1);
+		ReZip.main(new String[] { "-invalid-argument" });
+	}
 }

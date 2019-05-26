@@ -20,6 +20,8 @@ package io.github.hoijui.rezipdoc;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
+import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +45,8 @@ public abstract class AbstractReZipDocTest {
 	protected Path projectRoot;
 	protected List<File> archiveContents;
 	protected Path zipFile;
+    @Rule
+    public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
 	protected static List<File> createArchiveContentsList(final Path scanRoot) throws IOException {
 
