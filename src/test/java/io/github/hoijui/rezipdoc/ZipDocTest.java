@@ -69,4 +69,11 @@ public class ZipDocTest extends AbstractReZipDocTest {
 	public void testRecursive() throws IOException {
 		testRecursive(true);
 	}
+
+	@Test
+	public void testInvalidArgument() throws IOException {
+
+		exit.expectSystemExitWithStatus(1);
+		ZipDoc.main(new String[] { "-invalid-argument", "theZipFile" });
+	}
 }
