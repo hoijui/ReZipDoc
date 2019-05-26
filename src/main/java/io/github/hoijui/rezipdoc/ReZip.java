@@ -123,6 +123,22 @@ public class ReZip {
 		return formatXml;
 	}
 
+	private static void printUsage(final Level logLevel) {
+
+		if (LOGGER.isLoggable(logLevel)) {
+			LOGGER.log(logLevel, "Usage:");
+			LOGGER.log(logLevel, String.format("\t%s [--compressed] [--nullify-times] [--non-recursive] <in.zip >out.zip",
+					ReZip.class.getSimpleName()));
+			LOGGER.log(logLevel, String.format("\t%s --write-suffixes", ReZip.class.getSimpleName()));
+			LOGGER.log(logLevel, "Options:");
+			LOGGER.log(logLevel, "\t--compressed       re-zip compressed");
+			LOGGER.log(logLevel, "\t--nullify-times    set creation-, last-access- and last-modified-times of the re-zipped archives entries to 0");
+			LOGGER.log(logLevel, "\t--non-recursive    do not re-zip archives within archives");
+			LOGGER.log(logLevel, "\t--format-xml       pretty-print (reformat) XML content");
+			LOGGER.log(logLevel, "\t--write-suffixes   writes suffix files next to the JAR, populated with defaults, and exits");
+		}
+	}
+
 	/**
 	 * Reads a ZIP file from stdin and writes new ZIP content to stdout.
 	 * With the <code>--compressed</code> command line argument,
@@ -138,7 +154,10 @@ public class ReZip {
 		boolean recursive = true;
 		boolean formatXml = false;
 		for (final String arg : argv) {
-			if ("--compressed".equals(arg)) {
+			if ("--help".equals(arg) || "-h".equals(arg)) {
+				printUsage(Level.INFO);
+				return;
+			} else if ("--compressed".equals(arg)) {
 				compressed = true;
 			} else if ("--nullify-times".equals(arg)) {
 				nullifyTimes = true;
@@ -155,18 +174,7 @@ public class ReZip {
 					System.exit(1);
 				}
 			} else {
-				if (LOGGER.isLoggable(Level.WARNING)) {
-					LOGGER.warning("Usage:");
-					LOGGER.warning(String.format("\t%s [--compressed] [--nullify-times] [--non-recursive] <in.zip >out.zip",
-							ReZip.class.getSimpleName()));
-					LOGGER.warning(String.format("\t%s --write-suffixes", ReZip.class.getSimpleName()));
-					LOGGER.warning("Options:");
-					LOGGER.warning("\t--compressed       re-zip compressed");
-					LOGGER.warning("\t--nullify-times    set creation-, last-access- and last-modified-times of the re-zipped archives entries to 0");
-					LOGGER.warning("\t--non-recursive    do not re-zip archives within archives");
-					LOGGER.warning("\t--format-xml       pretty-print (reformat) XML content");
-					LOGGER.warning("\t--write-suffixes   writes suffix files next to the JAR, populated with defaults, and exits");
-				}
+				printUsage(Level.WARNING);
 				System.exit(1);
 			}
 		}
