@@ -21,9 +21,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.zip.ZipEntry;
 
 /**
@@ -48,18 +54,69 @@ public class ReZipTest extends AbstractReZipDocTest {
 		reZipFile.toFile().delete();
 	}
 
+	private void runReZip(final boolean compression, final boolean nullifyTimes,
+			final boolean recursive, final boolean formatXml,
+			final Path zipFile, final Path reZipFile)
+			throws IOException
+	{
+		// call the internal function directly
+//		new ReZip(compression, nullifyTimes, recursive, formatXml)
+//				.reZip(zipFile, reZipFile);
+
+		// call main method (this tests more code, and uses the class
+		// nearly as it wil be used as a git filter
+		final List<String> mainArgs = new LinkedList<>();
+		if (compression) {
+			mainArgs.add("--compressed");
+		}
+		if (nullifyTimes) {
+			mainArgs.add("--nullify-times");
+		}
+		if (!recursive) {
+			mainArgs.add("--non-recursive");
+		}
+		if (formatXml) {
+			mainArgs.add("--format-xml");
+		}
+		final InputStream inBefore = System.in;
+		final PrintStream outBefore = System.out;
+		try (final InputStream tempIn = new FileInputStream(zipFile.toFile());
+				final PrintStream tempOut = new PrintStream(new FileOutputStream(reZipFile.toFile())))
+		{
+			System.setIn(tempIn);
+			System.setOut(tempOut);
+			ReZip.main(mainArgs.toArray(new String[0]));
+			System.setIn(inBefore);
+			System.setOut(outBefore);
+		}
+	}
+
 	private void testRecursive(final boolean recursive) throws IOException {
 
 		// This is the original, compressed file
 		createRecursiveZip(zipFile, projectRoot, archiveContents, ZipEntry.DEFLATED);
+
 		// This creates the uncompressed file
-		new ReZip(false, false, recursive, false).reZip(zipFile, reZipFile);
+		runReZip(false, false, recursive, false, zipFile, reZipFile);
+
 		// Test whether the filtered ZIP file does (not) contain the original content
 		// placed in a sub-ZIP file in plain text
 		checkContains(recursive, reZipFile, archiveContents.subList(0, 2));
 		// Test whether the filtered ZIP file contains the directly embedded original content
 		// in plain text
 		checkContains(true, reZipFile, archiveContents.subList(2, archiveContents.size()));
+	}
+
+	private void testPlainText(final boolean plainText) throws IOException {
+
+		// This is the original, compressed file
+		createZip(zipFile, projectRoot, archiveContents, ZipEntry.DEFLATED);
+
+		// This creates the *still compressed* file
+		runReZip(!plainText, false, true, false, zipFile, reZipFile);
+
+		// Test whether the filtered ZIP file does (not) contain the original content in plain text
+		checkContains(plainText, reZipFile, archiveContents);
 	}
 
 	@Test
@@ -70,16 +127,6 @@ public class ReZipTest extends AbstractReZipDocTest {
 	@Test
 	public void testRecursive() throws IOException {
 		testRecursive(true);
-	}
-
-	private void testPlainText(final boolean plainText) throws IOException {
-
-		// This is the original, compressed file
-		createZip(zipFile, projectRoot, archiveContents, ZipEntry.DEFLATED);
-		// This creates the *still compressed* file
-		new ReZip(!plainText, false, true, false).reZip(zipFile, reZipFile);
-		// Test whether the filtered ZIP file does (not) contain the original content in plain text
-		checkContains(plainText, reZipFile, archiveContents);
 	}
 
 	@Test
