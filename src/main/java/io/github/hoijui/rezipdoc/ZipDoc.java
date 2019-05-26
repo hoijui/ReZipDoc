@@ -66,12 +66,19 @@ public class ZipDoc {
 		this(true, true);
 	}
 
+	private static void printUsage(final Level logLevel) {
+
+		if (LOGGER.isLoggable(logLevel)) {
+			LOGGER.log(logLevel, String.format("Usage: %s in-file.zip > text-representation.txt%n",
+				ZipDoc.class.getSimpleName()));
+		}
+	}
+
 	public static void main(final String[] argv) throws IOException {
 
 		if (1 != argv.length || "--help".equals(argv[0]) || "-h".equals(argv[0])) {
 			if (LOGGER.isLoggable(Level.WARNING)) {
-				LOGGER.warning(String.format("Usage: %s in-file.zip > text-representation.txt%n",
-						ZipDoc.class.getSimpleName()));
+				printUsage(Level.WARNING);
 			}
 			System.exit(1);
 		}
