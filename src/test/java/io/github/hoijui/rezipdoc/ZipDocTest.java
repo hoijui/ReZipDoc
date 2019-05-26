@@ -21,9 +21,9 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.file.Files;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 /**
  * @see ZipDoc
@@ -34,11 +34,24 @@ public class ZipDocTest extends AbstractReZipDocTest {
 
 		// This is the original, compressed file
 		createRecursiveZip(zipFile, projectRoot, archiveContents, ZipEntry.DEFLATED);
+
 		// This creates the uncompressed file
 		final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream();
-		new ZipDoc(recursive, false).transform(
-				new ZipInputStream(Files.newInputStream(zipFile)),
-				new PrintStream(bufferedOutputStream));
+//		new ZipDoc(recursive, false).transform(
+//				new ZipInputStream(Files.newInputStream(zipFile)),
+//				new PrintStream(bufferedOutputStream));
+		final List<String> mainArgs = new LinkedList<>();
+		if (!recursive) {
+			mainArgs.add("--non-recursive");
+		}
+		mainArgs.add(zipFile.toFile().getAbsolutePath());
+		final PrintStream outBefore = System.out;
+		try (final PrintStream tempOut = new PrintStream(bufferedOutputStream)) {
+			System.setOut(tempOut);
+			ZipDoc.main(mainArgs.toArray(new String[0]));
+			System.setOut(outBefore);
+		}
+
 		// Test whether the filtered ZIP file does (not) contain the original content
 		// placed in a sub-ZIP file in plain text
 		checkContains(recursive, bufferedOutputStream, archiveContents.subList(0, 2));
