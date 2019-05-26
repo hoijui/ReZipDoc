@@ -76,14 +76,27 @@ public class ZipDoc {
 
 	public static void main(final String[] argv) throws IOException {
 
-		if (1 != argv.length || "--help".equals(argv[0]) || "-h".equals(argv[0])) {
-			if (LOGGER.isLoggable(Level.WARNING)) {
+		boolean recursive = true;
+		boolean formatXml = false;
+		for (int i = 0; i < argv.length - 1; i++) {
+			final String arg = argv[i];
+			if ("--help".equals(arg) || "-h".equals(arg)) {
+				printUsage(Level.INFO);
+				return;
+			} else if ("--non-recursive".equals(arg)) {
+				recursive = false;
+			} else if ("--format-xml".equals(arg)) {
+				formatXml = true;
+			} else {
+				if (LOGGER.isLoggable(Level.WARNING)) {
+					LOGGER.log(Level.WARNING, String.format("Invalid argument '%s'%n", arg));
+				}
 				printUsage(Level.WARNING);
+				System.exit(1);
 			}
-			System.exit(1);
 		}
 
-		new ZipDoc().transform(Paths.get(argv[0]));
+		new ZipDoc(recursive, formatXml).transform(Paths.get(argv[argv.length - 1]));
 	}
 
 	/**
