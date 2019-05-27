@@ -76,7 +76,11 @@ public class ZipDoc {
 
 	public static void main(final String[] argv) throws IOException {
 
-		if ((argv.length > 0) && ("--help".equals(argv[0]) || "-h".equals(argv[0]))) {
+		if (argv.length == 0) {
+			printUsage(Level.WARNING);
+			System.exit(1);
+		}
+		if ("--help".equals(argv[0]) || "-h".equals(argv[0])) {
 			printUsage(Level.INFO);
 			return;
 		}

@@ -137,9 +137,18 @@ public class XmlFormatter {
 			try {
 				new XmlFormatter().prettifyByArgs(argsL);
 			} catch (final Exception exc) {
-				printUsage(Level.WARNING);
+				if (LOGGER.isLoggable(Level.WARNING)) {
+					LOGGER.log(Level.WARNING, "Failed to XML pretty-print", exc);
+					printUsage(Level.WARNING);
+				}
 				System.exit(1);
 			}
+		} else {
+			if (LOGGER.isLoggable(Level.WARNING)) {
+				LOGGER.log(Level.WARNING, String.format("Too many arguments (%d)", argsL.size()));
+				printUsage(Level.WARNING);
+			}
+			System.exit(1);
 		}
 	}
 
