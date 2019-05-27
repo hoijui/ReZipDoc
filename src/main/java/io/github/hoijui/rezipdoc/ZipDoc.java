@@ -76,14 +76,16 @@ public class ZipDoc {
 
 	public static void main(final String[] argv) throws IOException {
 
+		if ((argv.length > 0) && ("--help".equals(argv[0]) || "-h".equals(argv[0]))) {
+			printUsage(Level.INFO);
+			return;
+		}
+
 		boolean recursive = true;
 		boolean formatXml = false;
 		for (int i = 0; i < argv.length - 1; i++) {
 			final String arg = argv[i];
-			if ("--help".equals(arg) || "-h".equals(arg)) {
-				printUsage(Level.INFO);
-				return;
-			} else if ("--non-recursive".equals(arg)) {
+			if ("--non-recursive".equals(arg)) {
 				recursive = false;
 			} else if ("--format-xml".equals(arg)) {
 				formatXml = true;
