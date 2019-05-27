@@ -24,7 +24,7 @@ public class ReroutableConsoleHandler extends ConsoleHandler {
 
 	// to make this function public
 	@Override
-	public synchronized void setOutputStream(OutputStream out) throws SecurityException {
+	public synchronized void setOutputStream(OutputStream out) {
 		super.setOutputStream(out);
 	}
 }

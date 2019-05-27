@@ -110,7 +110,7 @@ public class XmlFormatter {
 	private void prettifyByArgs(final List<String> args) throws IOException {
 
 		// normal usage: prettify input to output
-		if (args.size() == 0) {
+		if (args.isEmpty()) {
 			prettify(System.in, System.out, createBuffer());
 		} else if (args.size() == 1) {
 			try (final InputStream source = new FileInputStream(args.get(0))) {
