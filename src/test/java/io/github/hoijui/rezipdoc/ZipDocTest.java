@@ -91,9 +91,30 @@ public class ZipDocTest extends AbstractReZipDocTest {
 	}
 
 	@Test
+	public void testNoArgs() throws IOException {
+
+		exit.expectSystemExitWithStatus(1);
+		try (final BufferedOutputStream outBuffer = new BufferedOutputStream()) {
+			Utils.getLogHandler().setOutputStream(outBuffer);
+			ZipDoc.main(new String[] {});
+			Assert.assertThat(new String(outBuffer.toByteArray()),
+					CoreMatchers.containsString("Usage:"));
+		} finally {
+			Utils.getLogHandler().setOutputStream(System.err);
+		}
+	}
+
+	@Test
 	public void testInvalidArgument() throws IOException {
 
 		exit.expectSystemExitWithStatus(1);
-		ZipDoc.main(new String[] { "-invalid-argument", "theZipFile" });
+		try (final BufferedOutputStream outBuffer = new BufferedOutputStream()) {
+			Utils.getLogHandler().setOutputStream(outBuffer);
+			ReZip.main(new String[] { "-invalid-argument", "theZipFile" });
+			Assert.assertThat(new String(outBuffer.toByteArray()),
+					CoreMatchers.containsString("Usage:"));
+		} finally {
+			Utils.getLogHandler().setOutputStream(System.err);
+		}
 	}
 }

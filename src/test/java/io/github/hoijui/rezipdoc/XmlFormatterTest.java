@@ -19,7 +19,9 @@ package io.github.hoijui.rezipdoc;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -33,6 +35,9 @@ import java.nio.charset.StandardCharsets;
  * @see XmlFormatter
  */
 public class XmlFormatterTest {
+
+	@Rule
+	public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
 //	TODO Use System.lineSeparator();
 
@@ -85,6 +90,20 @@ public class XmlFormatterTest {
 			XmlFormatter.main(new String[] { "--help" });
 			Assert.assertThat(toString(outBuffer),
 					CoreMatchers.startsWith("Usage examples:\n"));
+		} finally {
+			Utils.getLogHandler().setOutputStream(System.err);
+		}
+	}
+
+	@Test
+	public void testTooManyArguments() throws IOException {
+
+		exit.expectSystemExitWithStatus(1);
+		try (final BufferedOutputStream outBuffer = new BufferedOutputStream()) {
+			Utils.getLogHandler().setOutputStream(outBuffer);
+			XmlFormatter.main(new String[] { "file1", "file2", "file3" });
+			Assert.assertThat(new String(outBuffer.toByteArray()),
+					CoreMatchers.containsString("Usage:"));
 		} finally {
 			Utils.getLogHandler().setOutputStream(System.err);
 		}

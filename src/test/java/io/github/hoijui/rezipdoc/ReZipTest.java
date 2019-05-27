@@ -164,6 +164,13 @@ public class ReZipTest extends AbstractReZipDocTest {
 	public void testInvalidArgument() throws IOException {
 
 		exit.expectSystemExitWithStatus(1);
-		ReZip.main(new String[] { "-invalid-argument" });
+		try (final BufferedOutputStream outBuffer = new BufferedOutputStream()) {
+			Utils.getLogHandler().setOutputStream(outBuffer);
+			ReZip.main(new String[] { "-invalid-argument" });
+			Assert.assertThat(new String(outBuffer.toByteArray()),
+					CoreMatchers.containsString("Usage:"));
+		} finally {
+			Utils.getLogHandler().setOutputStream(System.err);
+		}
 	}
 }
