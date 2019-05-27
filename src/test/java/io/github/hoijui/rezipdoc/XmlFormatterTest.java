@@ -75,19 +75,14 @@ public class XmlFormatterTest {
 	@Test
 	public void testHelp() throws IOException {
 
-		try (final ByteArrayOutputStream outBuffer = new ByteArrayOutputStream();
-				final PrintStream out = new PrintStream(outBuffer))
-		{
-			Utils.getLogHandler().setOutputStream(out);
-
+		try (final ByteArrayOutputStream outBuffer = new ByteArrayOutputStream()) {
+			Utils.getLogHandler().setOutputStream(outBuffer);
 			XmlFormatter.main(new String[] { "-h" });
-			out.flush();
 			Assert.assertThat(toString(outBuffer),
 					CoreMatchers.startsWith("Usage examples:\n"));
 
 			outBuffer.reset();
 			XmlFormatter.main(new String[] { "--help" });
-			out.flush();
 			Assert.assertThat(toString(outBuffer),
 					CoreMatchers.startsWith("Usage examples:\n"));
 		} finally {
