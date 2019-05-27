@@ -64,7 +64,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<version>4.13-beta-3</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -300,7 +300,7 @@
 										</message>
 									</bannedPlugins>
 									<requireMavenVersion>
-										<version>3.0.5</version>
+										<version>3.3.9</version>
 									</requireMavenVersion>
 									<requireJavaVersion>
 										<version>1.${java.version}</version>
@@ -378,7 +378,7 @@
 				<plugin>
 					<groupId>org.sonarsource.scanner.maven</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
-					<version>3.5.0.1254</version>
+					<version>3.6.0.1398</version>
 					<executions>
 						<execution>
 							<phase>verify</phase>
