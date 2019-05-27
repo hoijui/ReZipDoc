@@ -17,7 +17,9 @@
 
 package io.github.hoijui.rezipdoc;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -138,6 +140,24 @@ public class ReZipTest extends AbstractReZipDocTest {
 	@Test
 	public void testContentsVisibleInFullInPlainText() throws IOException {
 		testPlainText(true);
+	}
+
+	@Test
+	public void testHelp() throws IOException {
+
+		try (final BufferedOutputStream outBuffer = new BufferedOutputStream()) {
+			Utils.getLogHandler().setOutputStream(outBuffer);
+			ReZip.main(new String[] { "-h" });
+			Assert.assertThat(new String(outBuffer.toByteArray()),
+					CoreMatchers.startsWith("Usage:"));
+
+			outBuffer.reset();
+			ReZip.main(new String[] { "--help" });
+			Assert.assertThat(new String(outBuffer.toByteArray()),
+					CoreMatchers.startsWith("Usage:"));
+		} finally {
+			Utils.getLogHandler().setOutputStream(System.err);
+		}
 	}
 
 	@Test
