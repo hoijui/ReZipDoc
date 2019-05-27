@@ -86,6 +86,7 @@ public class ReZipTest extends AbstractReZipDocTest {
 			System.setIn(tempIn);
 			System.setOut(tempOut);
 			ReZip.main(mainArgs.toArray(new String[0]));
+		} finally {
 			System.setIn(inBefore);
 			System.setOut(outBefore);
 		}
