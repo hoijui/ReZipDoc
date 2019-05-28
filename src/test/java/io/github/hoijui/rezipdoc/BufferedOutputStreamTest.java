@@ -43,34 +43,34 @@ public class BufferedOutputStreamTest {
 	@Test
 	public void testCreateInputStreamWithReference() throws IOException {
 
-		try (final BufferedOutputStream outStream = new BufferedOutputStream()) {
+		try (BufferedOutputStream outStream = new BufferedOutputStream()) {
 			outStream.write("hello".getBytes());
-			try (final ByteArrayInputStream inStream = outStream.createInputStream(false)) {
+			try (ByteArrayInputStream inStream = outStream.createInputStream(false)) {
 				Assert.assertEquals("hello", Utils.readStreamToString(inStream));
 			}
 		}
 
 		// The length of the buffer is always separate for the created InputStream,
 		// thus we see the same output in this scenario
-		try (final BufferedOutputStream outStream = new BufferedOutputStream()) {
+		try (BufferedOutputStream outStream = new BufferedOutputStream()) {
 			outStream.write("hello".getBytes());
-			try (final ByteArrayInputStream inStream = outStream.createInputStream(false)) {
+			try (ByteArrayInputStream inStream = outStream.createInputStream(false)) {
 				outStream.write(" world".getBytes());
 				Assert.assertEquals("hello", Utils.readStreamToString(inStream));
 			}
 		}
 
-		try (final BufferedOutputStream outStream = new BufferedOutputStream()) {
+		try (BufferedOutputStream outStream = new BufferedOutputStream()) {
 			outStream.write("hello".getBytes());
-			try (final ByteArrayInputStream inStream = outStream.createInputStream(false)) {
+			try (ByteArrayInputStream inStream = outStream.createInputStream(false)) {
 				outStream.reset();
 				Assert.assertEquals("hello", Utils.readStreamToString(inStream));
 			}
 		}
 
-		try (final BufferedOutputStream outStream = new BufferedOutputStream()) {
+		try (BufferedOutputStream outStream = new BufferedOutputStream()) {
 			outStream.write("hello".getBytes());
-			try (final ByteArrayInputStream inStream = outStream.createInputStream(false)) {
+			try (ByteArrayInputStream inStream = outStream.createInputStream(false)) {
 				outStream.reset();
 				outStream.write("world".getBytes());
 				Assert.assertEquals("world", Utils.readStreamToString(inStream));
@@ -81,32 +81,32 @@ public class BufferedOutputStreamTest {
 	@Test
 	public void testCreateInputStreamWithCopy() throws IOException {
 
-		try (final BufferedOutputStream outStream = new BufferedOutputStream()) {
+		try (BufferedOutputStream outStream = new BufferedOutputStream()) {
 			outStream.write("hello".getBytes());
-			try (final ByteArrayInputStream inStream = outStream.createInputStream(true)) {
+			try (ByteArrayInputStream inStream = outStream.createInputStream(true)) {
 				Assert.assertEquals("hello", Utils.readStreamToString(inStream));
 			}
 		}
 
-		try (final BufferedOutputStream outStream = new BufferedOutputStream()) {
+		try (BufferedOutputStream outStream = new BufferedOutputStream()) {
 			outStream.write("hello".getBytes());
-			try (final ByteArrayInputStream inStream = outStream.createInputStream(true)) {
+			try (ByteArrayInputStream inStream = outStream.createInputStream(true)) {
 				outStream.write(" world".getBytes());
 				Assert.assertEquals("hello", Utils.readStreamToString(inStream));
 			}
 		}
 
-		try (final BufferedOutputStream outStream = new BufferedOutputStream()) {
+		try (BufferedOutputStream outStream = new BufferedOutputStream()) {
 			outStream.write("hello".getBytes());
-			try (final ByteArrayInputStream inStream = outStream.createInputStream(true)) {
+			try (ByteArrayInputStream inStream = outStream.createInputStream(true)) {
 				outStream.reset();
 				Assert.assertEquals("hello", Utils.readStreamToString(inStream));
 			}
 		}
 
-		try (final BufferedOutputStream outStream = new BufferedOutputStream()) {
+		try (BufferedOutputStream outStream = new BufferedOutputStream()) {
 			outStream.write("hello".getBytes());
-			try (final ByteArrayInputStream inStream = outStream.createInputStream(true)) {
+			try (ByteArrayInputStream inStream = outStream.createInputStream(true)) {
 				outStream.reset();
 				outStream.write("world".getBytes());
 				Assert.assertEquals("hello", Utils.readStreamToString(inStream));

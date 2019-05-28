@@ -38,13 +38,13 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
@@ -113,12 +113,12 @@ public class XmlFormatter {
 		if (args.isEmpty()) {
 			prettify(System.in, System.out, createBuffer());
 		} else if (args.size() == 1) {
-			try (final InputStream source = new FileInputStream(args.get(0))) {
+			try (InputStream source = Files.newInputStream(Paths.get(args.get(0)))) {
 				prettify(source, System.out, createBuffer());
 			}
 		} else if (args.size() == 2) {
-			try (final InputStream source = new FileInputStream(args.get(0));
-					final OutputStream target = new FileOutputStream(args.get(1)))
+			try (InputStream source = Files.newInputStream(Paths.get(args.get(0)));
+					OutputStream target = Files.newOutputStream(Paths.get(args.get(1))))
 			{
 				prettify(source, target, createBuffer());
 			}
@@ -165,8 +165,8 @@ public class XmlFormatter {
 	 * @throws IOException if any input or output fails
 	 */
 	public void prettify(final InputStream xmlIn, final OutputStream xmlOut, final byte[] buffer)
-			throws IOException {
-
+			throws IOException
+	{
 		try {
 			if (correct) {
 				prettifyCorrect(xmlIn, xmlOut);
@@ -193,8 +193,8 @@ public class XmlFormatter {
 	public String prettify(final String xml) throws IOException {
 
 		final byte[] xmlBytes = xml.getBytes(StandardCharsets.UTF_8);
-		try (final InputStream xmlIn = new ByteArrayInputStream(xmlBytes);
-				final ByteArrayOutputStream xmlOut = new ByteArrayOutputStream())
+		try (InputStream xmlIn = new ByteArrayInputStream(xmlBytes);
+				ByteArrayOutputStream xmlOut = new ByteArrayOutputStream())
 		{
 			// NOTE It is a bit hacky to use the input buffer as working buffer,
 			//      but should work without problems in this case
@@ -241,8 +241,8 @@ public class XmlFormatter {
 	}
 
 	public void prettifyRoughAndFast(final InputStream xmlIn, final OutputStream xmlOut, final byte[] buffer)
-			throws IOException {
-
+			throws IOException
+	{
 		// this is a kind of stack, denoting the number of indents
 		int numIndents = 0;
 
@@ -278,34 +278,36 @@ public class XmlFormatter {
 		handleRow(xmlOutPrinter, inBuffer.toString().trim(), numIndents);
 	}
 
-	private static void appendIndents(final PrintStream output, final int numIndents, String indent) {
+	private static void appendIndents(final PrintStream output, final int numIndents, final String indent) {
 
 		for (int ii = 0; ii < numIndents; ii++) {
 			output.append(indent);
 		}
 	}
 
-	private int handleRow(final PrintStream xmlOut, final String row, int numIndents) {
+	private int handleRow(final PrintStream xmlOut, final String row, final int numIndents) {
+
+		int curIndents = numIndents;
 		if (!row.isEmpty()) {
 			if (row.startsWith("<?")) {
 				xmlOut.append(row).append("\n");
 			} else if (row.startsWith("</")) {
-				--numIndents;
-				appendIndents(xmlOut, numIndents, indent);
+				--curIndents;
+				appendIndents(xmlOut, curIndents, indent);
 				xmlOut.append(row).append("\n");
 			} else if (row.startsWith("<") && !row.endsWith("/>")) {
-				numIndents++;
-				appendIndents(xmlOut, numIndents, indent);
+				curIndents++;
+				appendIndents(xmlOut, curIndents, indent);
 				xmlOut.append(row).append("\n");
 				if (row.endsWith("]]>")) {
-					numIndents--;
+					curIndents--;
 				}
 			} else {
-				appendIndents(xmlOut, numIndents, indent);
+				appendIndents(xmlOut, curIndents, indent);
 				xmlOut.append(row).append("\n");
 			}
 		}
 
-		return numIndents;
+		return curIndents;
 	}
 }

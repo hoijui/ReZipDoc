@@ -24,7 +24,7 @@ public class ReroutableConsoleHandler extends ConsoleHandler {
 
 	// to make this function public
 	@Override
-	public synchronized void setOutputStream(OutputStream out) {
+	public synchronized void setOutputStream(final OutputStream out) {
 		super.setOutputStream(out);
 	}
 }

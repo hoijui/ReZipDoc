@@ -26,11 +26,11 @@ import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 /**
  * @see XmlFormatter
@@ -52,7 +52,7 @@ public class XmlFormatterTest {
 
 		final File file = File.createTempFile(nameBase, ".xml");
 		file.deleteOnExit();
-		try (final PrintStream out = new PrintStream(new FileOutputStream(file))) {
+		try (PrintStream out = new PrintStream(Files.newOutputStream(file.toPath()))) {
 			out.print(content);
 		}
 		return file;
@@ -67,7 +67,7 @@ public class XmlFormatterTest {
 				xmlInFile.getAbsolutePath(),
 				xmlOutFile.getAbsolutePath() });
 
-		try (final FileInputStream resultIn = new FileInputStream(xmlOutFile)) {
+		try (InputStream resultIn = Files.newInputStream(xmlOutFile.toPath())) {
 			final String actual = Utils.readStreamToString(resultIn);
 
 			Assert.assertEquals(expected, actual);
@@ -81,7 +81,7 @@ public class XmlFormatterTest {
 	@Test
 	public void testHelp() throws IOException {
 
-		try (final ByteArrayOutputStream outBuffer = new ByteArrayOutputStream()) {
+		try (ByteArrayOutputStream outBuffer = new ByteArrayOutputStream()) {
 			Utils.getLogHandler().setOutputStream(outBuffer);
 			XmlFormatter.main(new String[] { "-h" });
 			MatcherAssert.assertThat(toString(outBuffer),
@@ -100,7 +100,7 @@ public class XmlFormatterTest {
 	public void testTooManyArguments() throws IOException {
 
 		exit.expectSystemExitWithStatus(1);
-		try (final BufferedOutputStream outBuffer = new BufferedOutputStream()) {
+		try (BufferedOutputStream outBuffer = new BufferedOutputStream()) {
 			Utils.getLogHandler().setOutputStream(outBuffer);
 			XmlFormatter.main(new String[] { "file1", "file2", "file3" });
 			MatcherAssert.assertThat(new String(outBuffer.toByteArray()),

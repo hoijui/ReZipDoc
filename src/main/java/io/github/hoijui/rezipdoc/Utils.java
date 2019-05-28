@@ -18,7 +18,6 @@
 package io.github.hoijui.rezipdoc;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -170,7 +169,7 @@ public final class Utils {
 
 	public static void writeLines(final Path textFile, final Collection<String> lines) throws IOException {
 
-		try (final PrintStream out = new PrintStream(new FileOutputStream(textFile.toFile()))) {
+		try (PrintStream out = new PrintStream(Files.newOutputStream(textFile))) {
 			lines.forEach(out::println);
 		}
 	}

@@ -23,8 +23,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -82,8 +80,8 @@ public class ReZipTest extends AbstractReZipDocTest {
 		}
 		final InputStream inBefore = System.in;
 		final PrintStream outBefore = System.out;
-		try (final InputStream tempIn = new FileInputStream(zipFile.toFile());
-				final PrintStream tempOut = new PrintStream(new FileOutputStream(reZipFile.toFile())))
+		try (InputStream tempIn = Files.newInputStream(zipFile);
+				PrintStream tempOut = new PrintStream(Files.newOutputStream(reZipFile)))
 		{
 			System.setIn(tempIn);
 			System.setOut(tempOut);
@@ -145,7 +143,7 @@ public class ReZipTest extends AbstractReZipDocTest {
 	@Test
 	public void testHelp() throws IOException {
 
-		try (final BufferedOutputStream outBuffer = new BufferedOutputStream()) {
+		try (BufferedOutputStream outBuffer = new BufferedOutputStream()) {
 			Utils.getLogHandler().setOutputStream(outBuffer);
 			ReZip.main(new String[] { "-h" });
 			MatcherAssert.assertThat(new String(outBuffer.toByteArray()),
@@ -164,7 +162,7 @@ public class ReZipTest extends AbstractReZipDocTest {
 	public void testInvalidArgument() throws IOException {
 
 		exit.expectSystemExitWithStatus(1);
-		try (final BufferedOutputStream outBuffer = new BufferedOutputStream()) {
+		try (BufferedOutputStream outBuffer = new BufferedOutputStream()) {
 			Utils.getLogHandler().setOutputStream(outBuffer);
 			ReZip.main(new String[] { "-invalid-argument" });
 			MatcherAssert.assertThat(new String(outBuffer.toByteArray()),

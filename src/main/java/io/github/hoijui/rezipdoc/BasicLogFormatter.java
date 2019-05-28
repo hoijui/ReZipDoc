@@ -27,13 +27,13 @@ public class BasicLogFormatter extends Formatter {
 	@Override
 	public synchronized String format(final LogRecord record) {
 
-		final StringWriter sw = new StringWriter();
-		final PrintWriter pw = new PrintWriter(sw);
-		pw.println(formatMessage(record));
+		final StringWriter stringW = new StringWriter();
+		final PrintWriter printW = new PrintWriter(stringW);
+		printW.println(formatMessage(record));
 		if (record.getThrown() != null) {
-			record.getThrown().printStackTrace(pw);
-			pw.close();
+			record.getThrown().printStackTrace(printW);
+			printW.close();
 		}
-		return sw.toString();
+		return stringW.toString();
 	}
 }

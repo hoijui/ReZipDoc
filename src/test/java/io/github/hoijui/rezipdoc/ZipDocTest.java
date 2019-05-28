@@ -48,7 +48,7 @@ public class ZipDocTest extends AbstractReZipDocTest {
 		}
 		mainArgs.add(zipFile.toFile().getAbsolutePath());
 		final PrintStream outBefore = System.out;
-		try (final PrintStream tempOut = new PrintStream(bufferedOutputStream)) {
+		try (PrintStream tempOut = new PrintStream(bufferedOutputStream)) {
 			System.setOut(tempOut);
 			ZipDoc.main(mainArgs.toArray(new String[0]));
 			System.setOut(outBefore);
@@ -75,7 +75,7 @@ public class ZipDocTest extends AbstractReZipDocTest {
 	@Test
 	public void testHelp() throws IOException {
 
-		try (final BufferedOutputStream outBuffer = new BufferedOutputStream()) {
+		try (BufferedOutputStream outBuffer = new BufferedOutputStream()) {
 			Utils.getLogHandler().setOutputStream(outBuffer);
 			ZipDoc.main(new String[] { "-h" });
 			MatcherAssert.assertThat(new String(outBuffer.toByteArray()),
@@ -94,7 +94,7 @@ public class ZipDocTest extends AbstractReZipDocTest {
 	public void testNoArgs() throws IOException {
 
 		exit.expectSystemExitWithStatus(1);
-		try (final BufferedOutputStream outBuffer = new BufferedOutputStream()) {
+		try (BufferedOutputStream outBuffer = new BufferedOutputStream()) {
 			Utils.getLogHandler().setOutputStream(outBuffer);
 			ZipDoc.main(new String[] {});
 			MatcherAssert.assertThat(new String(outBuffer.toByteArray()),
@@ -108,7 +108,7 @@ public class ZipDocTest extends AbstractReZipDocTest {
 	public void testInvalidArgument() throws IOException {
 
 		exit.expectSystemExitWithStatus(1);
-		try (final BufferedOutputStream outBuffer = new BufferedOutputStream()) {
+		try (BufferedOutputStream outBuffer = new BufferedOutputStream()) {
 			Utils.getLogHandler().setOutputStream(outBuffer);
 			ReZip.main(new String[] { "-invalid-argument", "theZipFile" });
 			MatcherAssert.assertThat(new String(outBuffer.toByteArray()),
