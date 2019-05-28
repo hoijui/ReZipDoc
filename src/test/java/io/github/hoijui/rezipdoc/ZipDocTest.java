@@ -18,7 +18,7 @@
 package io.github.hoijui.rezipdoc;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -78,12 +78,12 @@ public class ZipDocTest extends AbstractReZipDocTest {
 		try (final BufferedOutputStream outBuffer = new BufferedOutputStream()) {
 			Utils.getLogHandler().setOutputStream(outBuffer);
 			ZipDoc.main(new String[] { "-h" });
-			Assert.assertThat(new String(outBuffer.toByteArray()),
+			MatcherAssert.assertThat(new String(outBuffer.toByteArray()),
 					CoreMatchers.startsWith("Usage:"));
 
 			outBuffer.reset();
 			ZipDoc.main(new String[] { "--help" });
-			Assert.assertThat(new String(outBuffer.toByteArray()),
+			MatcherAssert.assertThat(new String(outBuffer.toByteArray()),
 					CoreMatchers.startsWith("Usage:"));
 		} finally {
 			Utils.getLogHandler().setOutputStream(System.err);
@@ -97,7 +97,7 @@ public class ZipDocTest extends AbstractReZipDocTest {
 		try (final BufferedOutputStream outBuffer = new BufferedOutputStream()) {
 			Utils.getLogHandler().setOutputStream(outBuffer);
 			ZipDoc.main(new String[] {});
-			Assert.assertThat(new String(outBuffer.toByteArray()),
+			MatcherAssert.assertThat(new String(outBuffer.toByteArray()),
 					CoreMatchers.containsString("Usage:"));
 		} finally {
 			Utils.getLogHandler().setOutputStream(System.err);
@@ -111,7 +111,7 @@ public class ZipDocTest extends AbstractReZipDocTest {
 		try (final BufferedOutputStream outBuffer = new BufferedOutputStream()) {
 			Utils.getLogHandler().setOutputStream(outBuffer);
 			ReZip.main(new String[] { "-invalid-argument", "theZipFile" });
-			Assert.assertThat(new String(outBuffer.toByteArray()),
+			MatcherAssert.assertThat(new String(outBuffer.toByteArray()),
 					CoreMatchers.containsString("Usage:"));
 		} finally {
 			Utils.getLogHandler().setOutputStream(System.err);

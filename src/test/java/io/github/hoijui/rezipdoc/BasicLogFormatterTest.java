@@ -18,6 +18,7 @@
 package io.github.hoijui.rezipdoc;
 
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -43,7 +44,7 @@ public class BasicLogFormatterTest {
 		final LogRecord record = new LogRecord(logLevel, "Hello World!");
 		record.setThrown(new NullPointerException());
 		final String actual = formatter.format(record);
-		Assert.assertThat(actual, CoreMatchers.startsWith("Hello World!\n"
+		MatcherAssert.assertThat(actual, CoreMatchers.startsWith("Hello World!\n"
 						+ "java.lang.NullPointerException\n"
 						+ "	at io.github.hoijui.rezipdoc.BasicLogFormatterTest.testWithException(BasicLogFormatterTest.java:"));
 	}

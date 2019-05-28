@@ -18,6 +18,7 @@
 package io.github.hoijui.rezipdoc;
 
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -83,12 +84,12 @@ public class XmlFormatterTest {
 		try (final ByteArrayOutputStream outBuffer = new ByteArrayOutputStream()) {
 			Utils.getLogHandler().setOutputStream(outBuffer);
 			XmlFormatter.main(new String[] { "-h" });
-			Assert.assertThat(toString(outBuffer),
+			MatcherAssert.assertThat(toString(outBuffer),
 					CoreMatchers.startsWith("Usage examples:\n"));
 
 			outBuffer.reset();
 			XmlFormatter.main(new String[] { "--help" });
-			Assert.assertThat(toString(outBuffer),
+			MatcherAssert.assertThat(toString(outBuffer),
 					CoreMatchers.startsWith("Usage examples:\n"));
 		} finally {
 			Utils.getLogHandler().setOutputStream(System.err);
@@ -102,7 +103,7 @@ public class XmlFormatterTest {
 		try (final BufferedOutputStream outBuffer = new BufferedOutputStream()) {
 			Utils.getLogHandler().setOutputStream(outBuffer);
 			XmlFormatter.main(new String[] { "file1", "file2", "file3" });
-			Assert.assertThat(new String(outBuffer.toByteArray()),
+			MatcherAssert.assertThat(new String(outBuffer.toByteArray()),
 					CoreMatchers.containsString("Usage:"));
 		} finally {
 			Utils.getLogHandler().setOutputStream(System.err);
