@@ -26,7 +26,32 @@ you probably want to use __ReZipDoc__.
 
 This program requires Java JRE 8 or newer.
 
-### 1. Build the JAR
+If you have a Unix/Linux environment on your system,
+which is the case on OSX, Linux, Unix,
+or on Windows with git installed,
+then [installation from Maven Central](#installation-from-maven-central)
+is the easy way to use ReZipDoc.
+Otherwise, or if you want to use the latest development version or your own code,
+you want to [install from sources](#installation-from-sources).
+
+### Installation from Maven Central
+
+In a *nix shell, make sure that CWD is the local git repo you want to install this filter to.
+Then run:
+
+```bash
+sh <(curl -s https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/install-git-filter.sh)
+```
+
+To uninstall, just append ` remove`:
+
+```bash
+sh <(curl -s https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/install-git-filter.sh) remove
+```
+
+### Installation from sources
+
+#### 1. Build the JAR
 
 Run this in bash:
 
@@ -41,14 +66,14 @@ echo "Created ReZipDoc binary:"
 ls -1 $PWD/target/rezipdoc-*.jar
 ```
 
-### 2. Install the JAR
+#### 2. Install the JAR
 
 Store _rezipdoc-\*.jar_ somewhere locally, either:
 
  * (global) in your home directory, for example under _~/bin/_
  * (repo) or in your repository, for example under _<repo-root>/tools/_
 
-### 3. Install the Filter(s)
+#### 3. Install the Filter(s)
 
 Either in:
 
@@ -68,7 +93,7 @@ git config --global --replace-all filter.reZip.smudge "java -cp ~/bin/rezipdoc-*
 git config --global --replace-all diff.zipDoc.textconv "java -cp ~/bin/rezipdoc-*.jar io.github.hoijui.rezipdoc.ZipDoc"
 ```
 
-### 4. Enable the filters
+#### 4. Enable the filters
 
 Assign attributes to paths in _<repo-root>/.gitattributes_:
 
