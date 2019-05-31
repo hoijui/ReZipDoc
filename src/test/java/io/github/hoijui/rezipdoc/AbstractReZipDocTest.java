@@ -124,7 +124,7 @@ public abstract class AbstractReZipDocTest {
 			archiveContents = archiveContents.subList(0, maxContentFiles);
 		}
 
-		zipFile   = Files.createTempFile(getClass().getName() + "_original_", ".zip");
+		zipFile = Files.createTempFile(getClass().getName() + "_original_", ".zip");
 	}
 
 	@After
