@@ -111,6 +111,8 @@ public abstract class AbstractReZipDocTest {
 		mainRootContents.put(subZipFile.getParent(), Collections.singletonList(subZipFile.toFile()));
 		mainRootContents.put(rootDir, contents.subList(2, contents.size()));
 		createZip(zipFile, mainRootContents, compressionMethod);
+
+		subZipFile.toFile().delete();
 	}
 
 	@Before
