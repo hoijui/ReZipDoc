@@ -177,7 +177,7 @@ else
 
 		cat >> "$attributes_file" << EOF
 # This forces git to treat files as if they were text-based (for example in diffs)
-[attr]textual     diff merge text
+[attr]textual     diff merge
 # This makes git re-zip ZIP files uncompressed on commit
 [attr]reZip       filter=reZip textual
 EOF
