@@ -69,9 +69,9 @@ then
 	# Set the default action
 	action="install"
 fi
-if [ "$action" != "install" -a "$action" != "remove" -a "$action" != "reinstall" ]
+if [ "$action" != "install" -a "$action" != "remove" -a "$action" != "reinstall" -a "$action" != "check" ]
 then
-	>&2 echo "Invalid action '$action'; please choose either of: install, remove, reinstall"
+	>&2 echo "Invalid action '$action'; please choose either of: install, remove, reinstall, check"
 	exit 1
 fi
 if [ "$action" = "reinstall" ]
@@ -87,7 +87,10 @@ echo "$0 action: $action ..."
 pre_text="git filter and diff \"binary\" file $binary_file_glob - "
 if [ -e ${binary_file_glob} ]
 then
-	if [ "$action" = "install" ]
+	if [ "$action" = "check" ]
+	then
+		echo "$pre_text installed!"
+	elif [ "$action" = "install" ]
 	then
 		echo "$pre_text installing skipped (file already exists)"
 	else
@@ -96,7 +99,11 @@ then
 			&& echo "done" || echo "failed!"
 	fi
 else
-	if [ "$action" = "install" ]
+	if [ "$action" = "check" ]
+	then
+		>2& echo "$pre_text not installed!"
+		exit 1
+	elif [ "$action" = "install" ]
 	then
 		echo -n "$pre_text installing ... "
 
@@ -133,7 +140,34 @@ fi
 
 # Configure the filter and (optionally) diff
 pre_text="git filter and diff config entry in $conf_file - "
-if [ "$action" = "install" ]
+if [ "$action" = "check" ]
+then
+	is_config_present() {
+		filter_name="$1"
+		git config ${filter_name} > /dev/null
+		if [ $? -eq 0 ]
+		then
+			echo "$pre_text ${filter_name} is present!"
+		else
+			>&2 echo "$pre_text ${filter_name} is not present!"
+			exit 1
+		fi
+	}
+
+	is_config_present filter.reZip.clean
+
+	if [ "$install_smudge" = "true" ]
+	then
+		is_config_present filter.reZip.smudge
+	fi
+
+	if [ "$install_diff" = "true" ]
+	then
+		is_config_present diff.zipDoc.textconv
+	fi
+
+	echo "$pre_text present!"
+elif [ "$action" = "install" ]
 then
 	echo -n "$pre_text writing ... "
 
@@ -171,7 +205,10 @@ grep -q "$marker_begin" "$attributes_file" 2> /dev/null
 if [ $? -eq 0 ]
 then
 	# Our section does exist in the attributes_file
-	if [ "$action" = "install" ]
+	if [ "$action" = "check" ]
+	then
+		echo "$pre_text exist!"
+	elif [ "$action" = "install" ]
 	then
 		echo "$pre_text writing skipped (section already exists)"
 	else
@@ -181,7 +218,11 @@ then
 	fi
 else
 	# Our section does NOT exist in the attributes_file
-	if [ "$action" = "install" ]
+	if [ "$action" = "check" ]
+	then
+		>2& echo "$pre_text do not exist!"
+		exit 1
+	elif [ "$action" = "install" ]
 	then
 		echo "$pre_text writing ..."
 		echo "$marker_begin" >> "$attributes_file"
@@ -240,7 +281,10 @@ renorm_enabled=`git config --get merge.renormalize`
 if [ "$renorm_enabled" = "true" ]
 then
 	# Renormalization is enabled
-	if [ "$action" = "install" ]
+	if [ "$action" = "check" ]
+	then
+		echo "$pre_text enabled!"
+	elif [ "$action" = "install" ]
 	then
 		echo "$pre_text enabling skipped (is already enabled)"
 	else
@@ -250,7 +294,11 @@ then
 	fi
 else
 	# Renormalization is disabled
-	if [ "$action" = "install" ]
+	if [ "$action" = "check" ]
+	then
+		>2& echo "$pre_text not enabled!"
+		exit 1
+	elif [ "$action" = "install" ]
 	then
 		echo -n "$pre_text enabling ... "
 		git config --add --bool merge.renormalize true
@@ -260,4 +308,3 @@ else
 		echo "$pre_text disabling skipped (is already disabled)"
 	fi
 fi
-
