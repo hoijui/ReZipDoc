@@ -34,7 +34,9 @@ is the easy way to use ReZipDoc.
 Otherwise, or if you want to use the latest development version or your own code,
 you want to [install from sources](#installation-from-sources).
 
-### Installation from Maven Central
+### Installation from Maven Central (easy)
+
+This installs the latest release of ReZipDoc into your local git repo.
 
 In a *nix shell, make sure that CWD is the local git repo you want to install this filter to.
 Then run:
@@ -54,7 +56,7 @@ To uninstall, just append ` remove`:
 sh <(curl -s https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/install-git-filter.sh) remove
 ```
 
-### Installation from sources
+### Installation from sources (long process)
 
 #### 1. Build the JAR
 
@@ -76,31 +78,33 @@ ls -1 $PWD/target/rezipdoc-*.jar
 Store _rezipdoc-\*.jar_ somewhere locally, either:
 
  * (global) in your home directory, for example under _~/bin/_
- * (repo) or in your repository, for example under _<repo-root>/tools/_
+ * (repo - tracked) in your repository, tracked, for example under _<repo-root>/tools/_
+ * (repo - local) __recommended__ in your repository, locally only, under _<repo-root>/.git/_
 
 #### 3. Install the Filter(s)
 
-Either in:
-
-* (global) _${HOME}/.gitattributes_
-* (repo) _<repo-root>/.gitattributes_
-
-add these lines:
+execute these lines:
 
 ```bash
 # Install the add/commit filter
-git config --global --replace-all filter.reZip.clean "java -cp ~/bin/rezipdoc-*.jar io.github.hoijui.rezipdoc.ReZip"
+git config --replace-all filter.reZip.clean "java -cp .git/rezipdoc-*.jar io.github.hoijui.rezipdoc.ReZip --uncompressed"
 
 # (optionally) Install the checkout filter
-git config --global --replace-all filter.reZip.smudge "java -cp ~/bin/rezipdoc-*.jar io.github.hoijui.rezipdoc.ReZip"
+git config --replace-all filter.reZip.smudge "java -cp .git/rezipdoc-*.jar io.github.hoijui.rezipdoc.ReZip --compressed"
 
 # (optionally) Install the diff filter
-git config --global --replace-all diff.zipDoc.textconv "java -cp ~/bin/rezipdoc-*.jar io.github.hoijui.rezipdoc.ZipDoc"
+git config --replace-all diff.zipDoc.textconv "java -cp .git/rezipdoc-*.jar io.github.hoijui.rezipdoc.ZipDoc"
 ```
 
 #### 4. Enable the filters
 
-Assign attributes to paths in _<repo-root>/.gitattributes_:
+In one of these files:
+
+* (global) _${HOME}/.gitattributes_
+* (repo - tracked) _<repo-root>/.gitattributes_
+* (repo - local) __recommended__ _<repo-root>/.git/info/attributes_
+
+Assign attributes to paths:
 
 ```bash
 # This forces git to treat files as if they were text-based (for example in diffs)
