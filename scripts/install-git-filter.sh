@@ -43,8 +43,8 @@ this_script_file=$(basename $0)
 this_script_dir=$(cd `dirname $0`; pwd)
 
 target_path_specs='*.docx *.xlsx *.pptx *.odt *.ods *.odp *.mcdx *.slx *.zip *.jar *.fcstd'
-install_smudge="true"
-install_diff="true"
+install_smudge="false"
+install_diff="false"
 java_pkg="io.github.hoijui.rezipdoc"
 maven_group="$java_pkg"
 maven_artifact="rezipdoc"
