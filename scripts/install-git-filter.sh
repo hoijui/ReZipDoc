@@ -129,18 +129,18 @@ then
 	#extra_args="--replace-all"
 
 	# Install the add/commit filter
-	git config ${extra_args} filter.reZip.clean "java -cp '$binary_file' ReZip"
+	git config ${extra_args} filter.reZip.clean "java -cp '$binary_file' ${java_pkg}.ReZip"
 
 	# (optionally) Install the checkout filter
 	if [ "$install_smudge" = "true" ]
 	then
-		git config ${extra_args} filter.reZip.smudge "java -cp '$binary_file' ReZip"
+		git config ${extra_args} filter.reZip.smudge "java -cp '$binary_file' ${java_pkg}.ReZip"
 	fi
 
 	# (optionally) Install the diff filter
 	if [ "$install_diff" = "true" ]
 	then
-		git config ${extra_args} diff.zipDoc.textconv "java -cp '$binary_file' ZipDoc"
+		git config ${extra_args} diff.zipDoc.textconv "java -cp '$binary_file' ${java_pkg}.ZipDoc"
 	fi
 
 	[ $? -eq 0 ] && echo "done" || echo "failed!"
