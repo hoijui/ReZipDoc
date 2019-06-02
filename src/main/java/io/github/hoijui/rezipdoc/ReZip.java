@@ -127,11 +127,12 @@ public class ReZip {
 
 		if (LOGGER.isLoggable(logLevel)) {
 			LOGGER.log(logLevel, "Usage:");
-			LOGGER.log(logLevel, String.format("\t%s [--compressed] [--nullify-times] [--non-recursive] <in.zip >out.zip",
+			LOGGER.log(logLevel, String.format("\t%s [--compressed|--uncompressed] [--nullify-times] [--non-recursive] <in.zip >out.zip",
 					ReZip.class.getSimpleName()));
 			LOGGER.log(logLevel, String.format("\t%s --write-suffixes", ReZip.class.getSimpleName()));
 			LOGGER.log(logLevel, "Options:");
 			LOGGER.log(logLevel, "\t--compressed       re-zip compressed");
+			LOGGER.log(logLevel, "\t--uncompressed     (noop) re-zip uncompressed (this is the default, but we may want to explicitly state it on hte command line");
 			LOGGER.log(logLevel, "\t--nullify-times    set creation-, last-access- and last-modified-times of the re-zipped archives entries to 0");
 			LOGGER.log(logLevel, "\t--non-recursive    do not re-zip archives within archives");
 			LOGGER.log(logLevel, "\t--format-xml       pretty-print (reformat) XML content");
@@ -159,6 +160,9 @@ public class ReZip {
 				return;
 			} else if ("--compressed".equals(arg)) {
 				compressed = true;
+			} else if ("--uncompressed".equals(arg)) {
+				// this is basically a noop, but it allows the command-line to look more expressive
+				compressed = false;
 			} else if ("--nullify-times".equals(arg)) {
 				nullifyTimes = true;
 			} else if ("--non-recursive".equals(arg)) {
