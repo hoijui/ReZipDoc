@@ -39,6 +39,11 @@ you want to [install from sources](#installation-from-sources).
 In a *nix shell, make sure that CWD is the local git repo you want to install this filter to.
 Then run:
 
+__NOTE__
+This downloads and executes an online script on your machine,
+which is a potential security risk.
+You may first want to check-out the script.
+
 ```bash
 sh <(curl -s https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/install-git-filter.sh)
 ```
