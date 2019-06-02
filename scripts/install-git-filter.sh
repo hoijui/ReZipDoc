@@ -38,7 +38,9 @@
 # This might slowdown merges
 enable_renormalize="true"
 
+pwd_before=$(pwd)
 this_script_file=$(basename $0)
+this_script_dir=$(cd `dirname $0`; pwd)
 
 target_path_specs='*.docx *.xlsx *.pptx *.odt *.ods *.odp *.mcdx *.slx *.zip *.jar *.fcstd'
 install_smudge="true"
@@ -46,6 +48,7 @@ install_diff="true"
 java_pkg="io.github.hoijui.rezipdoc"
 maven_group="$java_pkg"
 maven_artifact="rezipdoc"
+use_local_binary_if_available=true
 fetch_url="https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=${maven_group}&a=${maven_artifact}&v=LATEST"
 binary_file_glob=".git/rezipdoc-*.jar"
 conf_file=".git/config"
@@ -100,18 +103,27 @@ else
 		# Delete previously downloaded versions
 		rm ${binary_file_glob}
 
-		# Download the latest ReZipDoc release JAR from the Maven Central repository
-		wget --content-disposition "$fetch_url"
-		# this results in a file like "rezipdoc-0.1.jar" in the CWD
+		target_dir="${this_script_dir}/../target"
+		local_binary=`find "$target_dir" -maxdepth 1 -type f -name "rezipdoc-*.jar"  | grep -v "\-sources" | grep -v "\-javadoc" | head -1`
+		if [ "$use_local_binary_if_available" = "true" -a "local_binary" != "" ]
+		then
+			cp "$local_binary" ./
+		else
+			# Download the latest ReZipDoc release JAR from the Maven Central repository
+			wget --content-disposition "$fetch_url"
+			# this results in a file like "rezipdoc-0.1.jar" in the CWD
+		fi
 
-		source_binary_file=`find -maxdepth 1 -name "rezipdoc*.jar"`
+		source_binary_file=`find -maxdepth 1 -name "rezipdoc-*.jar"`
+
+		echo "Using driver binary '$source_binary_file'"
 
 		# Extract the version from the release JAR name
 		version=`echo "$source_binary_file" | xargs basename --suffix='.jar' | sed -e 's/.*rezipdoc-//'`
 
 		binary_file=".git/`basename $source_binary_file`"
 
-		cp "$source_binary_file" "$binary_file"
+		mv "$source_binary_file" "$binary_file"
 		[ $? -eq 0 ] \
 			&& echo "done" || echo "failed!"
 	else
