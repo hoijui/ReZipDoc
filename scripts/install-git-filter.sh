@@ -43,7 +43,10 @@ this_script_file=$(basename $0)
 target_path_specs='*.docx *.xlsx *.pptx *.odt *.ods *.odp *.mcdx *.slx *.zip *.jar *.fcstd'
 install_smudge="true"
 install_diff="true"
-fetch_url="https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=io.github.hoijui.rezipdoc&a=rezipdoc&v=LATEST"
+java_pkg="io.github.hoijui.rezipdoc"
+maven_group="$java_pkg"
+maven_artifact="rezipdoc"
+fetch_url="https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=${maven_group}&a=${maven_artifact}&v=LATEST"
 binary_file_glob=".git/rezipdoc-*.jar"
 conf_file=".git/config"
 #attributes_file="${HOME}/.gitattributes"
