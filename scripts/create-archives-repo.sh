@@ -20,16 +20,84 @@
 # SOFTWARE.
 
 
-# This creates a git repository with a lot of archives as content,
-# focusing on archives that contain mostly plain-text content that changes
-# non-radically over time.
-#
-# Practically, it will build the main JAR of this project for every commit
-# of this repo, plus some text files, and commit each change, if there was one.
+# For info about this script, please refer to the `printUsage()` function below.
 
-add_archive_bin=false
-add_archive_src=true
-num_commits_max=125
+
+pwd_before=$(pwd)
+this_script_file=$(basename $0)
+this_script_dir=$(cd `dirname $0`; pwd)
+
+# Settings and default values
+add_archive_bin="false"
+add_archive_src="true"
+num_commits_max=1000
+source_repo=$(cd ${this_script_dir}; cd ..; pwd)
+rnd=$(od -A n -t d -N 1 /dev/urandom | tr -d ' ')
+target_repo="/tmp/rezipdoc-archives-repo-${rnd}"
+# We use this one for building the binaries
+tmp_repo="/tmp/rezipdoc-tmp-repo-${rnd}"
+
+printUsage() {
+	echo "`basename $0` - This creates a git repository with a lot of archives as content,"
+	echo "focusing on archives that contain mostly plain-text content that changes"
+	echo "non-radically over time."
+	echo
+	echo "Practically, it will build the main JAR of this project for every commit"
+	echo "of this repo, plus some text files, and commit each change, if there was one."
+	echo
+	echo "Usage:"
+	echo "    `basename $0` [OPTIONS]"
+	echo
+	echo "Options:"
+	echo "    -h, --help               show this help message"
+	echo "    --no-src-archive         do not add the sources ZIP to each commit"
+	echo "    --bin-archive            add the binary archive (JAR) to each commit"
+	echo "    -m, --max-commits        maximum number of commits to transcribe into the new repo"
+	echo "    -s, --source [path|URL]  the repo to transcribe from"
+	echo "    -t, --target [path]      the repo to transcribe to"
+	echo "    --tmp [path]             the repo to use for temporary checkout and binary building"
+}
+
+# Handle command line arguments
+while [ ${#} -gt 0 ]
+do
+	opName="$1"
+	case ${opName} in
+		-h|--help)
+			printUsage
+			exit 0
+			;;
+		--no-src-archive)
+			add_archive_src="false"
+			;;
+		--bin-archive)
+			add_archive_bin="true"
+			;;
+		-m|--max-commits)
+			num_commits_max=$2
+			shift # past argument
+			;;
+		-s|--source)
+			source_repo="$2"
+			shift # past argument
+			;;
+		-t|--target)
+			target_repo="$2"
+			shift # past argument
+			;;
+		--tmp)
+			tmp_repo="$2"
+			shift # past argument
+			;;
+		*)
+			# unknown option / not an option
+			>&2 echo "Unknown option '${opName}'!"
+			printUsage
+			exit 1
+			;;
+	esac
+	shift # next argument or value
+done
 
 if [ "$add_archive_bin" != "true" -a "$add_archive_src" != "true" ]
 then
@@ -37,43 +105,44 @@ then
 	exit 1
 fi
 
-pwd_before=$(pwd)
-this_script_file=$(basename $0)
-this_script_dir=$(cd `dirname $0`; pwd)
-
-if [ "$1" != "" ]
+git ls-remote "$source_repo" > /dev/null 2> /dev/null
+if [ $? -ne 0 ]
 then
-	source_repo="$1"
-else
-	source_repo=$(cd ${this_script_dir}; cd ..; pwd)
+	>&2 echo "Source repo is not a valid git repository: '$source_repo'!"
+	exit 1
 fi
 
-rnd=$(od -A n -t d -N 1 /dev/urandom | tr -d ' ')
-if [ "$2" != "" ]
+if [ -e "$tmp_repo" ]
 then
-	target_repo="$2"
-else
-	target_repo="/tmp/rezipdoc-archive-intensive-test-repo-${rnd}"
+	>&2 echo "Temporary repo can not be an existing path: '$tmp_repo'!"
+	exit 1
 fi
-# We need this one for building the binaries
-if [ "$3" != "" ]
+
+if [ "$source_repo" = "$target_repo" ]
 then
-	tmp_source_repo="$3"
-else
-	tmp_source_repo="/tmp/rezipdoc-tmp-checkout-repo-${rnd}"
+	>&2 echo "Source and target repos can not be equal!"
+	exit 1
+fi
+
+if [ -e "$target_repo" ]
+then
+	>&2 echo "Target repo can not be an existing path: '$target_repo'!"
+	exit 1
 fi
 
 echo "Using source repo:       ${source_repo}"
-echo "Using tmp-checkout repo: ${tmp_source_repo}"
+echo "Using tmp-checkout repo: ${tmp_repo}"
 echo "Using target repo:       ${target_repo}"
 
 mkdir "$target_repo"
 cd "$target_repo"
 git init
+# This disables the global git-ignore file, which might otherwise prevent us
+# from adding binaries (like archives).
 git config core.excludesfile 'some-file-that-does-not-exist'
 
-git clone "$source_repo" "$tmp_source_repo"
-cd "$tmp_source_repo"
+git clone "$source_repo" "$tmp_repo"
+cd "$tmp_repo"
 
 num_commits=$(git log -${num_commits_max} --format="%H" --reverse master | wc -l)
 i=0
@@ -85,7 +154,7 @@ do
 	echo "Building commit ${i}/${num_commits} - ${commit_hash} ..."
 	echo
 
-	cd "$tmp_source_repo"
+	cd "$tmp_repo"
 	git checkout ${commit_hash}
 	if [ "${add_archive_bin}" = "true" ]
 	then
@@ -98,10 +167,10 @@ do
 	find -type f | grep -v "\.git" | xargs rm -Rf
 
 	# Add some Project-global text files/sources
-	cp "$tmp_source_repo/README"*  ./ 2> /dev/null
-	cp "$tmp_source_repo/LICENSE"* ./ 2> /dev/null
-	cp "$tmp_source_repo/pom.xml"  ./ 2> /dev/null
-	cp -r "$tmp_source_repo/src"*  ./
+	cp "$tmp_repo/README"*  ./ 2> /dev/null
+	cp "$tmp_repo/LICENSE"* ./ 2> /dev/null
+	cp "$tmp_repo/pom.xml"  ./ 2> /dev/null
+	cp -r "$tmp_repo/src"*  ./
 
 	# Add archive(s)
 	if [ "$add_archive_bin" = "true" ]
@@ -110,24 +179,27 @@ do
 		# because it contains mainly class files, which are binary,
 		# and thus might not play much nicer with git
 		# then the compressed archive
-		cp "$tmp_source_repo/target/"*".jar" ./
+		cp "$tmp_repo/target/"*".jar" ./
 	fi
 	if [ "$add_archive_src" = "true" ]
 	then
 		# As this probably contains mostly text files,
 		# it should play much nicer with git when uncompressed.
-		(cd "$tmp_source_repo"; zip -r "$target_repo/src.zip" src)
+		(cd "$tmp_repo"; zip -r "$target_repo/src.zip" src)
 	fi
 
 	git add --all --force
 	git commit -m "${commit_msg}"
 
-	cd "$tmp_source_repo"
+	cd "$tmp_repo"
 	echo "############################################################"
 	echo
 done
 
-echo "Created tmp-checkout repo: ${tmp_source_repo}"
+# Make sure a potential global value might be used again
+git --unset config core.excludesfile
+
+echo "Created tmp-checkout repo: ${tmp_repo}"
 echo "Created target repo: ${target_repo}"
 
 cd "$pwd_before"

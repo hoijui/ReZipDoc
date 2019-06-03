@@ -20,16 +20,16 @@
 # SOFTWARE.
 
 
-# This installs or removes a custom git filter and (optionally) a diff tool
-# to the local repo.
-#
-# Please use this driver to prevent merge conflicts in the generated sources.
-#
-# NOTE This is really only required for developers, hacking on this code-base.
-# NOTE All of this gets installed into the local repo only, under ".git/",
-#      meaning it is not versioned.
+# For info about this script, please refer to the `printUsage()` function below.
 
 
+pwd_before=$(pwd)
+this_script_file=$(basename $0)
+this_script_dir=$(cd `dirname $0`; pwd)
+
+# Settings and default values
+action=""
+target_path_specs='*.docx *.xlsx *.pptx *.odt *.ods *.odp *.mcdx *.slx *.zip *.jar *.fcstd'
 # As described in [gitattributes](http://git-scm.com/docs/gitattributes),
 # you may see unnecessary merge conflicts when you add attributes to a file that
 # causes the repository format for that file to change.
@@ -37,12 +37,6 @@
 # three stages of a file when resolving a three-way merge.
 # This might slowdown merges
 enable_renormalize="true"
-
-pwd_before=$(pwd)
-this_script_file=$(basename $0)
-this_script_dir=$(cd `dirname $0`; pwd)
-
-target_path_specs='*.docx *.xlsx *.pptx *.odt *.ods *.odp *.mcdx *.slx *.zip *.jar *.fcstd'
 install_smudge="false"
 install_diff="false"
 java_pkg="io.github.hoijui.rezipdoc"
@@ -63,25 +57,101 @@ marker_begin="# BEGIN $gen_token"
 marker_end="# END $gen_token"
 header_note="# NOTE Do not manually edit this section; it was generated with $this_script_file"
 
-action="$1"
+printUsage() {
+	echo "`basename $0` - This installs (or removes) a custom git filter"
+	echo "and (optionally) a diff tool to the local repo, which make using"
+	echo "ZIP based archives more git-workflow friendly."
+	echo
+	echo "See the ReZipDoc README for further info."
+	echo
+	echo "NOTE This is really only required for developers, hacking on this code-base."
+	echo "NOTE All of this gets installed into the local repo only, under '.git/',"
+	echo "     meaning it is not versioned."
+	echo
+	echo "Usage:"
+	echo "    `basename $0` [OPTIONS]"
+	echo
+	echo "Options:"
+	echo "    -h, --help    show this help message"
+	echo "    --install     install the filter into the local repo"
+	echo "    --remove      remove the filter from the local repo"
+	echo "    --update      remove then install the filter again"
+	echo "    --check       check whether the filter is installed (-> return value 0)"
+}
+
+set_action() {
+	new_action="$1"
+	if [ "$action" != "" ]
+	then
+		>&2 echo "You may only specify one action!"
+		printUsage
+		exit 1
+	fi
+	action="$new_action"
+}
+
+# Handle command line arguments
+while [ ${#} -gt 0 ]
+do
+	opName="$1"
+	case ${opName} in
+		-h|--help)
+			printUsage
+			exit 0
+			;;
+		-i|--install)
+			set_action "install"
+			;;
+		-r|--remove)
+			set_action "remove"
+			;;
+		-u|--update)
+			set_action "update"
+			;;
+		-c|--check)
+			set_action "check"
+			;;
+		--no-renormalize)
+			enable_renormalize="false"
+			;;
+		--smudge)
+			install_smudge="true"
+			;;
+		--diff)
+			install_diff="true"
+			;;
+		*)
+			# unknown option / not an option
+			>&2 echo "Unknown option '${opName}'!"
+			printUsage
+			exit 1
+			;;
+	esac
+	shift # next argument or value
+done
+
+
 if [ "$action" = "" ]
 then
-	# Set the default action
-	action="install"
-fi
-if [ "$action" != "install" -a "$action" != "remove" -a "$action" != "reinstall" -a "$action" != "check" ]
-then
-	>&2 echo "Invalid action '$action'; please choose either of: install, remove, reinstall, check"
+	>&2 echo "No action defined!"
+	printUsage
 	exit 1
 fi
-if [ "$action" = "reinstall" ]
+if [ "$action" = "update" ]
 then
 	# Call ourselves recursively
 	$0 remove && $0 install
 	exit $?
 fi
 
-echo "$0 action: $action ..."
+git ls-remote ./ > /dev/null 2> /dev/null
+if [ $? -ne 0 ]
+then
+	>&2 echo "The current working directory is not a valid git repo!"
+	exit 1
+fi
+
+echo "`basename $0` action: ${action}ing ..."
 
 # Install our binary (the JAR)
 pre_text="git filter and diff \"binary\" file $binary_file_glob - "
