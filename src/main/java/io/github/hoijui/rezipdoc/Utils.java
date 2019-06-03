@@ -55,42 +55,42 @@ public final class Utils {
 			= RESOURCE_FILE_SUFFIXES_PREFIX + "suffixes-xml.csv";
 	public static final String RESOURCE_FILE_SUFFIXES_ARCHIVE
 			= RESOURCE_FILE_SUFFIXES_PREFIX + "suffixes-archive.csv";
+	public static final Set<String> DEFAULT_SUFFIXES_XML = setOf(
+			"xml",
+			"svg");
+	public static final Set<String> DEFAULT_SUFFIXES_TEXT = setOf(
+			"txt",
+			"md",
+			"markdown",
+			"properties",
+			"java",
+			"kt",
+			"c",
+			"cxx",
+			"cpp",
+			"h",
+			"hxx",
+			"hpp",
+			"js",
+			"html");
+	public static final Set<String> DEFAULT_SUFFIXES_ARCHIVE = setOf(
+			"zip",
+			"jar",
+			"docx",
+			"xlsx",
+			"pptx",
+			"odt",
+			"ods",
+			"odp",
+			"fcstd");
 	private static final Set<String> SUFFIXES_XML;
 	private static final Set<String> SUFFIXES_TEXT;
 	private static final Set<String> SUFFIXES_ARCHIVE;
 
 	static {
-		SUFFIXES_XML = collectFileOrDefaults(RESOURCE_FILE_SUFFIXES_XML, setOf(
-				"xml",
-				"svg"));
-
-
-		SUFFIXES_TEXT = collectFileOrDefaults(RESOURCE_FILE_SUFFIXES_TEXT, setOf(
-				"txt",
-				"md",
-				"markdown",
-				"properties",
-				"java",
-				"kt",
-				"c",
-				"cxx",
-				"cpp",
-				"h",
-				"hxx",
-				"hpp",
-				"js",
-				"html"));
-
-		SUFFIXES_ARCHIVE = collectFileOrDefaults(RESOURCE_FILE_SUFFIXES_ARCHIVE, setOf(
-				"zip",
-				"jar",
-				"docx",
-				"xlsx",
-				"pptx",
-				"odt",
-				"ods",
-				"odp",
-				"fcstd"));
+		SUFFIXES_XML = collectFileOrDefaults(RESOURCE_FILE_SUFFIXES_XML, DEFAULT_SUFFIXES_XML);
+		SUFFIXES_TEXT = collectFileOrDefaults(RESOURCE_FILE_SUFFIXES_TEXT, DEFAULT_SUFFIXES_TEXT);
+		SUFFIXES_ARCHIVE = collectFileOrDefaults(RESOURCE_FILE_SUFFIXES_ARCHIVE, DEFAULT_SUFFIXES_ARCHIVE);
 	}
 
 	private Utils() {
