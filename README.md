@@ -10,6 +10,11 @@ you probably want to use __ReZipDoc__.
 
 ## Project state
 
+This repo contains a heavily revised, refined version of ReZip (and ZipDoc),
+plus [unit tests](src/test/java/io/github/hoijui/rezipdoc)
+and [helper scripts](scripts),
+which were not available in the original.
+
 [![License](https://img.shields.io/badge/license-GPL%203-orange.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 [![GitHub last commit](https://img.shields.io/github/last-commit/hoijui/ReZipDoc.svg)](https://github.com/hoijui/ReZipDoc)
 [![Issues](https://img.shields.io/badge/issues-GitHub-57f.svg)](https://github.com/hoijui/ReZipDoc/issues)
