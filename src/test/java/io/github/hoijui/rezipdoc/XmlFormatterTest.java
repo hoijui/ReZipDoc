@@ -23,6 +23,8 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+import org.junit.contrib.java.lang.system.SystemOutRule;
+import org.junit.contrib.java.lang.system.TextFromStandardInputStream;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -39,6 +41,13 @@ public class XmlFormatterTest {
 
 	@Rule
 	public final ExpectedSystemExit exit = ExpectedSystemExit.none();
+	@Rule
+	public final TextFromStandardInputStream systemInMock
+			= TextFromStandardInputStream.emptyStandardInputStream();
+	@Rule
+	public final SystemOutRule systemOutRule
+			= new SystemOutRule().enableLog().muteForSuccessfulTests();
+
 
 //	TODO Use System.lineSeparator();
 
@@ -60,6 +69,12 @@ public class XmlFormatterTest {
 
 	private void testFilePrettyPrint(final String input, final String expected) throws IOException {
 
+		testFilePrettyPrintFiles(input, expected);
+		testFilePrettyPrintStreams(input, expected);
+	}
+
+	private void testFilePrettyPrintFiles(final String input, final String expected) throws IOException {
+
 		final File xmlInFile = createTempFile("rezipdoc-unformatted-in", input);
 		final File xmlOutFile = createTempFile("rezipdoc-unformatted-out", "");
 
@@ -72,6 +87,16 @@ public class XmlFormatterTest {
 
 			Assert.assertEquals(expected, actual);
 		}
+	}
+
+	private void testFilePrettyPrintStreams(final String input, final String expected) {
+
+		systemInMock.provideText(input);
+		systemOutRule.clearLog();
+		XmlFormatter.main(new String[] {});
+		final String actual = systemOutRule.getLog();
+
+		Assert.assertEquals(expected, actual);
 	}
 
 	private static String toString(final ByteArrayOutputStream buffer) {
