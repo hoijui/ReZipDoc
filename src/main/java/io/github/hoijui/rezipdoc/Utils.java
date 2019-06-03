@@ -329,11 +329,15 @@ public final class Utils {
 
 	/**
 	 * Tries to determine the type of an input stream based on the
-	 * characters at the beginning of the input stream.
+	 * characters at the beginning of the stream.
+	 *
+	 * Additional values herein over what is already supported by the JDK
+	 * are taken from @{link https://en.wikipedia.org/wiki/List_of_file_signatures}.
 	 *
 	 * @param is an input stream that supports marks.
 	 * @return a guess at the content type, or {@code null} if none
 	 * can be determined.
+	 *
 	 * @throws IOException if an I/O error occurs while reading the
 	 *                     input stream.
 	 * @see InputStream#mark(int)
@@ -352,22 +356,14 @@ public final class Utils {
 			final int c2 = is.read();
 			final int c3 = is.read();
 			final int c4 = is.read();
-			final int c5 = is.read();
-			final int c6 = is.read();
-			final int c7 = is.read();
-			final int c8 = is.read();
-			final int c9 = is.read();
-			final int c10 = is.read();
-			final int c11 = is.read();
-			final int c12 = is.read();
-			final int c13 = is.read();
-			final int c14 = is.read();
-			final int c15 = is.read();
-			final int c16 = is.read();
 			is.reset();
 
-			if (c1 == 0xCA && c2 == 0xFE && c3 == 0xBA && c4 == 0xBE) {
-				contentMimeType = "application/java-vm";
+			if ((c1 == 0x50 && c2 == 0x4B)
+					&&((c3 == 0x03 && c4 == 0x04)
+						|| (c3 == 0x05 && c4 == 0x06)
+						|| (c3 == 0x07 && c4 == 0x08)))
+			{
+				contentMimeType = "application/zip";
 			}
 		}
 
