@@ -36,6 +36,8 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -44,8 +46,10 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,6 +66,9 @@ public class XmlFormatter {
 	private static Logger LOGGER = Utils.getLogger(XmlFormatter.class.getName());
 
 	private static final int DEFAULT_BUFFER_SIZE = 2048;
+	private static final int DEFAULT_ARG_INDENT_SPACES = 2;
+	private static final String DEFAULT_ARG_INDENT = "  ";
+	private static final boolean DEFAULT_ARG_CORRECT = true;
 
 	private final int indentSpaces;
 	private final String indent;
@@ -91,7 +98,7 @@ public class XmlFormatter {
 	 * Creates an instance with default values.
 	 */
 	public XmlFormatter() {
-		this(2, "  ", true);
+		this(DEFAULT_ARG_INDENT_SPACES, DEFAULT_ARG_INDENT, DEFAULT_ARG_CORRECT);
 	}
 
 	private static void printUsage(final Level logLevel) {
@@ -110,24 +117,38 @@ public class XmlFormatter {
 		}
 	}
 
-	private void prettifyByArgs(final List<String> args) throws IOException {
+	private static InputStream createInput(final Path inFile) throws IOException {
 
-		// normal usage: prettify input to output
-		if (args.isEmpty()) {
-			prettify(System.in, System.out, createBuffer());
-		} else if (args.size() == 1) {
-			try (InputStream source = Files.newInputStream(Paths.get(args.get(0)))) {
-				prettify(source, System.out, createBuffer());
-			}
-		} else if (args.size() == 2) {
-			try (InputStream source = Files.newInputStream(Paths.get(args.get(0)));
-					OutputStream target = Files.newOutputStream(Paths.get(args.get(1))))
-			{
-				prettify(source, target, createBuffer());
-			}
+		InputStream in;
+		if (inFile == null) {
+			in = new BufferedInputStream(System.in, 64) {
+				@Override
+				public void close() {
+					//super.close();
+					// NOTE We do explicitly NOT close the underlying stream
+				}
+			};
 		} else {
-			throw new IllegalArgumentException("Between 0 and 2 arguments are required, but " + args.size() + " were given");
+			in = Files.newInputStream(inFile);
 		}
+		return in;
+	}
+
+	private static OutputStream createOutput(final Path outFile) throws IOException {
+
+		OutputStream out;
+		if (outFile == null) {
+			out = new BufferedOutputStream(System.out, 64) {
+				@Override
+				public void close() {
+					//super.close();
+					// NOTE We do explicitly NOT close the underlying stream
+				}
+			};
+		} else {
+			out = Files.newOutputStream(outFile);
+		}
+		return out;
 	}
 
 	public static void main(final String[] args) {
@@ -135,28 +156,56 @@ public class XmlFormatter {
 		final List<String> argsL = Arrays.asList(args);
 		if (argsL.contains("-h") || argsL.contains("--help")) {
 			printUsage(Level.INFO);
-		} else if (argsL.size() < 3) {
+		} else {
 			// normal usage: prettify input to output
-			try {
-				new XmlFormatter().prettifyByArgs(argsL);
+			int indentSpaces = DEFAULT_ARG_INDENT_SPACES;
+			String indent = DEFAULT_ARG_INDENT;
+			boolean correct = DEFAULT_ARG_CORRECT;
+			Path inFile = null;
+			Path outFile = null;
+			int bufferSize = DEFAULT_BUFFER_SIZE;
+			final Iterator<String> argsIt = argsL.iterator();
+			while (argsIt.hasNext()) {
+				final String arg = argsIt.next();
+				if ("-r".equals(arg) || "--rough".equals(arg)) {
+					correct = false;
+				} else if ("--indent-spaces".equals(arg)) {
+					indentSpaces = Integer.valueOf(argsIt.next());
+				} else if ("--indent".equals(arg)) {
+					indent = argsIt.next();
+				} else if ("-i".equals(arg) || "--input".equals(arg)) {
+					inFile = Paths.get(argsIt.next());
+				} else if ("-o".equals(arg) || "--output".equals(arg)) {
+					outFile = Paths.get(argsIt.next());
+				} else if ("-b".equals(arg) || "--buffer-size".equals(arg)) {
+					bufferSize = Integer.valueOf(argsIt.next());
+				} else {
+					if (LOGGER.isLoggable(Level.SEVERE)) {
+						LOGGER.log(Level.SEVERE, "Unknown argument '" + arg + "'");
+						printUsage(Level.SEVERE);
+					}
+					System.exit(1);
+				}
+			}
+
+			final XmlFormatter xmlFormatter = new XmlFormatter(indentSpaces, indent, correct);
+
+			try (InputStream source = createInput(inFile);
+					OutputStream target = createOutput(outFile))
+			{
+				xmlFormatter.prettify(source, target, createBuffer(bufferSize));
 			} catch (final Exception exc) {
-				if (LOGGER.isLoggable(Level.WARNING)) {
-					LOGGER.log(Level.WARNING, "Failed to XML pretty-print", exc);
-					printUsage(Level.WARNING);
+				if (LOGGER.isLoggable(Level.SEVERE)) {
+					LOGGER.log(Level.SEVERE, "Failed to XML pretty-print", exc);
+					printUsage(Level.SEVERE);
 				}
 				System.exit(1);
 			}
-		} else {
-			if (LOGGER.isLoggable(Level.WARNING)) {
-				LOGGER.log(Level.WARNING, String.format("Too many arguments (%d)", argsL.size()));
-				printUsage(Level.WARNING);
-			}
-			System.exit(1);
 		}
 	}
 
-	private static byte[] createBuffer() {
-		return new byte[DEFAULT_BUFFER_SIZE];
+	private static byte[] createBuffer(final int size) {
+		return new byte[size];
 	}
 
 	/**

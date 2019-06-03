@@ -74,21 +74,21 @@ public class XmlFormatterTest {
 		return file;
 	}
 
-	private void testFilePrettyPrint(final String input, final String expected) throws IOException {
+	private void testPrettyPrint(final String input, final String expected) throws IOException {
 
-		testFilePrettyPrintFiles(input, expected);
-		testFilePrettyPrintFileAndStream(input, expected);
-		testFilePrettyPrintStreams(input, expected);
+		testPrettyPrintFiles(input, expected);
+		testPrettyPrintFileAndStream(input, expected);
+		testPrettyPrintStreams(input, expected);
 	}
 
-	private void testFilePrettyPrintFiles(final String input, final String expected) throws IOException {
+	private void testPrettyPrintFiles(final String input, final String expected) throws IOException {
 
 		final File xmlInFile = createTempFile("rezipdoc-unformatted-in", input);
 		final File xmlOutFile = createTempFile("rezipdoc-unformatted-out", "");
 
 		XmlFormatter.main(new String[] {
-				xmlInFile.getAbsolutePath(),
-				xmlOutFile.getAbsolutePath() });
+				"--input", xmlInFile.getAbsolutePath(),
+				"--output", xmlOutFile.getAbsolutePath() });
 
 		try (InputStream resultIn = Files.newInputStream(xmlOutFile.toPath())) {
 			final String actual = Utils.readStreamToString(resultIn);
@@ -97,19 +97,18 @@ public class XmlFormatterTest {
 		}
 	}
 
-	private void testFilePrettyPrintFileAndStream(final String input, final String expected) throws IOException {
+	private void testPrettyPrintFileAndStream(final String input, final String expected) throws IOException {
 
 		final File xmlInFile = createTempFile("rezipdoc-unformatted-in", input);
 
 		systemOutRule.clearLog();
-		XmlFormatter.main(new String[] {
-				xmlInFile.getAbsolutePath() });
+		XmlFormatter.main(new String[] { "--input", xmlInFile.getAbsolutePath() });
 		final String actual = systemOutRule.getLog();
 
 		Assert.assertEquals(expected, actual);
 	}
 
-	private void testFilePrettyPrintStreams(final String input, final String expected) {
+	private void testPrettyPrintStreams(final String input, final String expected) {
 
 		systemInMock.provideText(input);
 		systemOutRule.clearLog();
@@ -134,7 +133,7 @@ public class XmlFormatterTest {
 	}
 
 	@Test
-	public void testTooManyArguments() {
+	public void testBadArguments() {
 
 		exit.expectSystemExitWithStatus(1);
 		systemErrRule.clearLog();
@@ -165,21 +164,21 @@ public class XmlFormatterTest {
 	@Test
 	public void testFileSingleTag() throws IOException {
 
-		testFilePrettyPrint("<my-tag/>",
+		testPrettyPrint("<my-tag/>",
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<my-tag/>\n");
 	}
 
 	@Test
 	public void testFileBeginAndEndTag() throws IOException {
 
-		testFilePrettyPrint("<my-tag></my-tag>",
+		testPrettyPrint("<my-tag></my-tag>",
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<my-tag/>\n");
 	}
 
 	@Test
 	public void testFileBeginMiddleAndEndTag() throws IOException {
 
-		testFilePrettyPrint("<my-tag><middle/></my-tag>",
+		testPrettyPrint("<my-tag><middle/></my-tag>",
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<my-tag>\n  <middle/>\n</my-tag>\n");
 	}
 
