@@ -75,34 +75,46 @@ public class ZipDocTest extends AbstractReZipDocTest {
 	@Test
 	public void testHelp() throws IOException {
 
-		systemErrRule.clearLog();
+		try (BufferedOutputStream outBuffer = new BufferedOutputStream()) {
+			Utils.getLogHandler().setOutputStream(outBuffer);
 			ZipDoc.main(new String[] { "-h" });
-			MatcherAssert.assertThat(systemErrRule.getLog(),
+			MatcherAssert.assertThat(new String(outBuffer.toByteArray()),
 					CoreMatchers.startsWith("Usage:"));
 
-		systemErrRule.clearLog();
+			outBuffer.reset();
 			ZipDoc.main(new String[] { "--help" });
-			MatcherAssert.assertThat(systemErrRule.getLog(),
+			MatcherAssert.assertThat(new String(outBuffer.toByteArray()),
 					CoreMatchers.startsWith("Usage:"));
+		} finally {
+			Utils.getLogHandler().setOutputStream(System.err);
+		}
 	}
 
 	@Test
 	public void testNoArgs() throws IOException {
 
 		exit.expectSystemExitWithStatus(1);
-		systemErrRule.clearLog();
+		try (BufferedOutputStream outBuffer = new BufferedOutputStream()) {
+			Utils.getLogHandler().setOutputStream(outBuffer);
 			ZipDoc.main(new String[] {});
-			MatcherAssert.assertThat(systemErrRule.getLog(),
+			MatcherAssert.assertThat(new String(outBuffer.toByteArray()),
 					CoreMatchers.containsString("Usage:"));
+		} finally {
+			Utils.getLogHandler().setOutputStream(System.err);
+		}
 	}
 
 	@Test
 	public void testInvalidArgument() throws IOException {
 
 		exit.expectSystemExitWithStatus(1);
-		systemErrRule.clearLog();
+		try (BufferedOutputStream outBuffer = new BufferedOutputStream()) {
+			Utils.getLogHandler().setOutputStream(outBuffer);
 			ReZip.main(new String[] { "-invalid-argument", "theZipFile" });
-			MatcherAssert.assertThat(systemErrRule.getLog(),
+			MatcherAssert.assertThat(new String(outBuffer.toByteArray()),
 					CoreMatchers.containsString("Usage:"));
+		} finally {
+			Utils.getLogHandler().setOutputStream(System.err);
+		}
 	}
 }

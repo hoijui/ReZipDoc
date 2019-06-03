@@ -147,24 +147,32 @@ public class ReZipTest extends AbstractReZipDocTest {
 	@Test
 	public void testHelp() throws IOException {
 
-		systemErrRule.clearLog();
-		ReZip.main(new String[] { "-h" });
-		MatcherAssert.assertThat(systemErrRule.getLog(),
-				CoreMatchers.startsWith("Usage:"));
+		try (BufferedOutputStream outBuffer = new BufferedOutputStream()) {
+			Utils.getLogHandler().setOutputStream(outBuffer);
+			ReZip.main(new String[] { "-h" });
+			MatcherAssert.assertThat(new String(outBuffer.toByteArray()),
+					CoreMatchers.startsWith("Usage:"));
 
-		systemErrRule.clearLog();
-		ReZip.main(new String[] { "--help" });
-		MatcherAssert.assertThat(systemErrRule.getLog(),
-				CoreMatchers.startsWith("Usage:"));
+			outBuffer.reset();
+			ReZip.main(new String[] { "--help" });
+			MatcherAssert.assertThat(new String(outBuffer.toByteArray()),
+					CoreMatchers.startsWith("Usage:"));
+		} finally {
+			Utils.getLogHandler().setOutputStream(System.err);
+		}
 	}
 
 	@Test
 	public void testInvalidArgument() throws IOException {
 
 		exit.expectSystemExitWithStatus(1);
-		systemErrRule.clearLog();
-		ReZip.main(new String[] { "-invalid-argument" });
-		MatcherAssert.assertThat(systemErrRule.getLog(),
-				CoreMatchers.containsString("Usage:"));
+		try (BufferedOutputStream outBuffer = new BufferedOutputStream()) {
+			Utils.getLogHandler().setOutputStream(outBuffer);
+			ReZip.main(new String[] { "-invalid-argument" });
+			MatcherAssert.assertThat(new String(outBuffer.toByteArray()),
+					CoreMatchers.containsString("Usage:"));
+		} finally {
+			Utils.getLogHandler().setOutputStream(System.err);
+		}
 	}
 }

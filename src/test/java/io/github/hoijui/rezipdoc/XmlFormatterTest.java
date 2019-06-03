@@ -23,14 +23,15 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
-import org.junit.contrib.java.lang.system.SystemErrRule;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 import org.junit.contrib.java.lang.system.TextFromStandardInputStream;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 /**
@@ -46,9 +47,7 @@ public class XmlFormatterTest {
 	@Rule
 	public final SystemOutRule systemOutRule
 			= new SystemOutRule().mute().enableLog();
-	@Rule
-	public final SystemErrRule systemErrRule
-			= new SystemErrRule().mute().enableLog();
+
 
 //	TODO Use System.lineSeparator();
 
@@ -118,26 +117,40 @@ public class XmlFormatterTest {
 		Assert.assertEquals(expected, actual);
 	}
 
-	@Test
-	public void testHelp() {
-
-		systemErrRule.clearLog();
-		XmlFormatter.main(new String[] { "-h" });
-		MatcherAssert.assertThat(systemErrRule.getLog(),
-				CoreMatchers.startsWith("Usage examples:\n"));
-
-		systemErrRule.clearLog();
-		XmlFormatter.main(new String[] { "--help" });
-		MatcherAssert.assertThat(systemErrRule.getLog(),
-				CoreMatchers.startsWith("Usage examples:\n"));
+	private static String toString(final ByteArrayOutputStream buffer) {
+		return new String(buffer.toByteArray(), StandardCharsets.UTF_8);
 	}
 
 	@Test
-	public void testBadArguments() {
+	public void testHelp() throws IOException {
+
+		try (ByteArrayOutputStream outBuffer = new ByteArrayOutputStream()) {
+			Utils.getLogHandler().setOutputStream(outBuffer);
+			XmlFormatter.main(new String[] { "-h" });
+			MatcherAssert.assertThat(toString(outBuffer),
+					CoreMatchers.startsWith("Usage examples:\n"));
+
+			outBuffer.reset();
+			XmlFormatter.main(new String[] { "--help" });
+			MatcherAssert.assertThat(toString(outBuffer),
+					CoreMatchers.startsWith("Usage examples:\n"));
+		} finally {
+			Utils.getLogHandler().setOutputStream(System.err);
+		}
+	}
+
+	@Test
+	public void testBadArguments() throws IOException {
 
 		exit.expectSystemExitWithStatus(1);
-		systemErrRule.clearLog();
-		XmlFormatter.main(new String[] { "file1", "file2", "file3" });
+		try (BufferedOutputStream outBuffer = new BufferedOutputStream()) {
+			Utils.getLogHandler().setOutputStream(outBuffer);
+			XmlFormatter.main(new String[] { "file1", "file2", "file3" });
+			MatcherAssert.assertThat(new String(outBuffer.toByteArray()),
+					CoreMatchers.containsString("Usage:"));
+		} finally {
+			Utils.getLogHandler().setOutputStream(System.err);
+		}
 	}
 
 	@Test
