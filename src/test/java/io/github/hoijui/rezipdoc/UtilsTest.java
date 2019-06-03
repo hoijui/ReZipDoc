@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @see Utils
@@ -54,6 +55,25 @@ public class UtilsTest extends AbstractReZipDocTest {
 	public void writeAndDeleteSuffixFiles() throws IOException, URISyntaxException {
 
 		Utils.writeSuffixesFiles();
+		Set<String> loadedSuffixesXml = Utils.collectFileOrDefaults(
+				Utils.RESOURCE_FILE_SUFFIXES_XML, Utils.DEFAULT_SUFFIXES_XML);
+		Set<String> loadedSuffixesText = Utils.collectFileOrDefaults(
+				Utils.RESOURCE_FILE_SUFFIXES_TEXT, Utils.DEFAULT_SUFFIXES_TEXT);
+		Set<String> loadedSuffixesArchive = Utils.collectFileOrDefaults(
+				Utils.RESOURCE_FILE_SUFFIXES_ARCHIVE, Utils.DEFAULT_SUFFIXES_ARCHIVE);
+		Assert.assertEquals(Utils.DEFAULT_SUFFIXES_XML, loadedSuffixesXml);
+		Assert.assertEquals(Utils.DEFAULT_SUFFIXES_TEXT, loadedSuffixesText);
+		Assert.assertEquals(Utils.DEFAULT_SUFFIXES_ARCHIVE, loadedSuffixesArchive);
+
 		Utils.deleteSuffixesFiles();
+		loadedSuffixesXml = Utils.collectFileOrDefaults(
+				Utils.RESOURCE_FILE_SUFFIXES_XML, Utils.DEFAULT_SUFFIXES_XML);
+		loadedSuffixesText = Utils.collectFileOrDefaults(
+				Utils.RESOURCE_FILE_SUFFIXES_TEXT, Utils.DEFAULT_SUFFIXES_TEXT);
+		loadedSuffixesArchive = Utils.collectFileOrDefaults(
+				Utils.RESOURCE_FILE_SUFFIXES_ARCHIVE, Utils.DEFAULT_SUFFIXES_ARCHIVE);
+		Assert.assertEquals(Utils.DEFAULT_SUFFIXES_XML, loadedSuffixesXml);
+		Assert.assertEquals(Utils.DEFAULT_SUFFIXES_TEXT, loadedSuffixesText);
+		Assert.assertEquals(Utils.DEFAULT_SUFFIXES_ARCHIVE, loadedSuffixesArchive);
 	}
 }
