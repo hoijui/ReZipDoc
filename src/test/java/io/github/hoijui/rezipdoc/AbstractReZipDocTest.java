@@ -112,7 +112,7 @@ public abstract class AbstractReZipDocTest {
 		mainRootContents.put(rootDir, contents.subList(2, contents.size()));
 		createZip(zipFile, mainRootContents, compressionMethod);
 
-		subZipFile.toFile().delete();
+		Files.deleteIfExists(subZipFile);
 	}
 
 	@Before
@@ -131,7 +131,12 @@ public abstract class AbstractReZipDocTest {
 
 	@After
 	public void tearDown() {
-		zipFile.toFile().delete();
+
+		try {
+			Files.deleteIfExists(zipFile);
+		} catch (IOException exc) {
+			// ignore
+		}
 	}
 
 	protected static void checkContains(

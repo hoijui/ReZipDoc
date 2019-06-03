@@ -51,7 +51,11 @@ public class ReZipTest extends AbstractReZipDocTest {
 	public void tearDown() {
 
 		super.tearDown();
-		reZipFile.toFile().delete();
+		try {
+			Files.deleteIfExists(reZipFile);
+		} catch (IOException exc) {
+			// ignore
+		}
 	}
 
 	private void runReZip(final boolean compression, final boolean nullifyTimes,

@@ -195,17 +195,18 @@ public final class Utils {
 	/**
 	 * Deletes all suffix files next to our binary (JAR).
 	 * @throws URISyntaxException if there is a problem while looking up the file path
+	 * @throws IOException if deleting the any of the files failed
 	 */
-	public static void deleteSuffixesFiles() throws URISyntaxException {
+	public static void deleteSuffixesFiles() throws URISyntaxException, IOException {
 
 		Path suffixesFile = sourceDir().resolve(RESOURCE_FILE_SUFFIXES_TEXT);
-		suffixesFile.toFile().delete();
+		Files.deleteIfExists(suffixesFile);
 
 		suffixesFile = sourceDir().resolve(RESOURCE_FILE_SUFFIXES_XML);
-		suffixesFile.toFile().delete();
+		Files.deleteIfExists(suffixesFile);
 
 		suffixesFile = sourceDir().resolve(RESOURCE_FILE_SUFFIXES_ARCHIVE);
-		suffixesFile.toFile().delete();
+		Files.deleteIfExists(suffixesFile);
 	}
 
 	@SafeVarargs
