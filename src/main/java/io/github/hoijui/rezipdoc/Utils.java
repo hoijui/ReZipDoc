@@ -146,17 +146,18 @@ public final class Utils {
 	/**
 	 * Reads all lines of a file, and streams them.
 	 * @param textFile the file to be used as a data source
+	 * @param filter whether to filter out empty lines starting with '#'
 	 * @return the file as a stream of lines
 	 * @throws IOException if there is a problem while reading the file
 	 */
-	public static List<String> readLines(final Path textFile) throws IOException {
+	public static List<String> readLines(final Path textFile, final boolean filter) throws IOException {
 
 		final Charset encoding = StandardCharsets.UTF_8;
 		try (Stream<String> fileIn = Files.lines(textFile, encoding)) {
 			return fileIn
 					.map(String::trim)
 					// filter-out empty lines and comments
-					.filter(s -> !s.isEmpty() && (s.charAt(0) != '#'))
+					.filter(s -> !filter || (!s.isEmpty() && (s.charAt(0) != '#')))
 					.collect(Collectors.toList());
 		}
 	}
@@ -228,7 +229,7 @@ public final class Utils {
 	}
 
 	public static Set<String> collectFileNameMatchers(final Path resourceFile) throws IOException {
-		return new HashSet<>(readLines(resourceFile));
+		return new HashSet<>(readLines(resourceFile, true));
 	}
 
 	/**
