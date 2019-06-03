@@ -258,9 +258,10 @@ public final class Utils {
 	 * @param magicHeader  the magic file header to look for
 	 * @param suffixes     the file suffixes to look for
 	 * @return whether the supplied file type is XML based
+	 * @throws IOException If something went wrong while trying to read the magic file header
 	 */
 	public static boolean isType(final String fileName, final long contentBytes, final BufferedOutputStream contentIn,
-			final String magicHeader, final Set<String> suffixes)
+			final String magicHeader, final Set<String> suffixes, final String mimeType) throws IOException
 	{
 		boolean matches = false;
 
@@ -274,6 +275,12 @@ public final class Utils {
 				&& contentIn.startsWith(magicHeader.getBytes()))
 		{
 			matches = true;
+		}
+		if (!matches && mimeType != null && !mimeType.isEmpty()) {
+			final String foundMimeType = guessContentTypeFromStream(contentIn.createInputStream(false));
+			if (mimeType.equals(foundMimeType)) {
+				matches = true;
+			}
 		}
 
 		return matches;
@@ -289,8 +296,8 @@ public final class Utils {
 	 *   {@literal "<?xml "}
 	 * @return whether the supplied file type is XML based
 	 */
-	public static boolean isXml(final String fileName, final long contentBytes, final BufferedOutputStream contentIn) {
-		return isType(fileName, contentBytes, contentIn, "<?xml ", SUFFIXES_XML);
+	public static boolean isXml(final String fileName, final long contentBytes, final BufferedOutputStream contentIn) throws IOException {
+		return isType(fileName, contentBytes, contentIn, "<?xml ", SUFFIXES_XML, "application/xml");
 	}
 
 	/**
@@ -301,12 +308,12 @@ public final class Utils {
 	 * @param contentIn    to see if only non-binary data is present
 	 * @return whether the supplied file name is text based
 	 */
-	public static boolean isPlainText(final String fileName, final long contentBytes, final BufferedOutputStream contentIn) {
-		return isType(fileName, contentBytes, contentIn, null, SUFFIXES_TEXT);
+	public static boolean isPlainText(final String fileName, final long contentBytes, final BufferedOutputStream contentIn) throws IOException {
+		return isType(fileName, contentBytes, contentIn, null, SUFFIXES_TEXT, null);
 	}
 
-	public static boolean isZip(final String fileName, final long contentBytes, final BufferedOutputStream contentIn) {
-		return isType(fileName, contentBytes, contentIn, null, SUFFIXES_ARCHIVE);
+	public static boolean isZip(final String fileName, final long contentBytes, final BufferedOutputStream contentIn) throws IOException {
+		return isType(fileName, contentBytes, contentIn, null, SUFFIXES_ARCHIVE, "application/zip");
 	}
 
 	/**
