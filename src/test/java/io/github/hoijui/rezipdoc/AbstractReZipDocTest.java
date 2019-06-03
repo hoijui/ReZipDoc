@@ -37,9 +37,6 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-/**
- * @see ReZip
- */
 @SuppressWarnings("WeakerAccess")
 public abstract class AbstractReZipDocTest {
 
