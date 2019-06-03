@@ -70,6 +70,7 @@ public class XmlFormatterTest {
 	private void testFilePrettyPrint(final String input, final String expected) throws IOException {
 
 		testFilePrettyPrintFiles(input, expected);
+		testFilePrettyPrintFileAndStream(input, expected);
 		testFilePrettyPrintStreams(input, expected);
 	}
 
@@ -87,6 +88,18 @@ public class XmlFormatterTest {
 
 			Assert.assertEquals(expected, actual);
 		}
+	}
+
+	private void testFilePrettyPrintFileAndStream(final String input, final String expected) throws IOException {
+
+		final File xmlInFile = createTempFile("rezipdoc-unformatted-in", input);
+
+		systemOutRule.clearLog();
+		XmlFormatter.main(new String[] {
+				xmlInFile.getAbsolutePath() });
+		final String actual = systemOutRule.getLog();
+
+		Assert.assertEquals(expected, actual);
 	}
 
 	private void testFilePrettyPrintStreams(final String input, final String expected) {
