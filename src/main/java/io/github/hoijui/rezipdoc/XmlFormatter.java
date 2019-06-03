@@ -63,7 +63,7 @@ import java.util.logging.Logger;
 @SuppressWarnings("WeakerAccess")
 public class XmlFormatter {
 
-	private static Logger LOGGER = Utils.getLogger(XmlFormatter.class.getName());
+	private static final Logger LOGGER = Utils.getLogger(XmlFormatter.class.getName());
 
 	private static final int DEFAULT_BUFFER_SIZE = 2048;
 	private static final int DEFAULT_ARG_INDENT_SPACES = 2;
@@ -103,9 +103,6 @@ public class XmlFormatter {
 
 	private static void printUsage(final Level logLevel) {
 
-		// HACK Re-init the logger here, so it picks up the System.err
-		//      substitute SystemErrRule when testing
-		LOGGER = Utils.getLogger(XmlFormatter.class.getName());
 		if (LOGGER.isLoggable(logLevel)) {
 			LOGGER.log(logLevel, "Usage examples:");
 			LOGGER.log(logLevel, String.format("\t%s in-file.xml out-file.xml",
