@@ -176,9 +176,9 @@ public final class Utils {
 	}
 
 	/**
-	 * Writes all suffix files next ot our binary (JAR).
+	 * Writes all suffix files next to our binary (JAR).
 	 * @throws IOException if there is a problem while writing the file
-	 * @throws URISyntaxException if there is a problem while writing the file
+	 * @throws URISyntaxException if there is a problem while looking up the file path
 	 */
 	public static void writeSuffixesFiles() throws IOException, URISyntaxException {
 
