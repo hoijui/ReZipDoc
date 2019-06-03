@@ -57,6 +57,12 @@ public class XmlFormatterTest {
 		Assert.assertEquals(expected, actual);
 	}
 
+	private void testRoughStringPrettyPrint(final String input, final String expected) throws IOException {
+
+		final String actual = new XmlFormatter(2, "  ", false).prettify(input);
+		Assert.assertEquals(expected, actual);
+	}
+
 	private File createTempFile(final String nameBase, final String content) throws IOException {
 
 		final File file = File.createTempFile(nameBase, ".xml");
@@ -188,5 +194,25 @@ public class XmlFormatterTest {
 
 		testFilePrettyPrint("<my-tag><middle/></my-tag>",
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<my-tag>\n  <middle/>\n</my-tag>\n");
+	}
+
+	@Test
+	public void testRoughSingleTag() throws IOException {
+
+		testRoughStringPrettyPrint("<my-tag/>",
+				"<my-tag/>\n");
+	}
+
+	@Test
+	public void testRoughBeginAndEndTag() throws IOException {
+
+		testRoughStringPrettyPrint("<my-tag></my-tag>",
+				"<my-tag>\n</my-tag>\n");
+	}
+	@Test
+	public void testRoughBeginMiddleAndEndTag() throws IOException {
+
+		testRoughStringPrettyPrint("<my-tag><middle/></my-tag>",
+				"<my-tag>\n  <middle/>\n</my-tag>\n");
 	}
 }
