@@ -36,7 +36,6 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -101,9 +100,6 @@ public final class Utils {
 	public static Logger getLogger(final String name) {
 
 		final Logger logger = Logger.getLogger(name);
-		for (final Handler handler : logger.getHandlers()) {
-			logger.removeHandler(handler);
-		}
 		logger.setUseParentHandlers(false);
 
 		final Formatter basicFmt = new BasicLogFormatter();
