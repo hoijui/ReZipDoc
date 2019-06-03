@@ -46,7 +46,7 @@ public class XmlFormatterTest {
 			= TextFromStandardInputStream.emptyStandardInputStream();
 	@Rule
 	public final SystemOutRule systemOutRule
-			= new SystemOutRule().enableLog().muteForSuccessfulTests();
+			= new SystemOutRule().mute().enableLog();
 
 
 //	TODO Use System.lineSeparator();
