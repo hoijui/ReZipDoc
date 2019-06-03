@@ -296,9 +296,9 @@ public class XmlFormatter {
 				appendIndents(xmlOut, curIndents, indent);
 				xmlOut.append(row).append("\n");
 			} else if (row.startsWith("<") && !row.endsWith("/>")) {
-				curIndents++;
 				appendIndents(xmlOut, curIndents, indent);
 				xmlOut.append(row).append("\n");
+				curIndents++;
 				if (row.endsWith("]]>")) {
 					curIndents--;
 				}
