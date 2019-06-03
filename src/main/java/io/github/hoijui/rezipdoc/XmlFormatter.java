@@ -121,7 +121,6 @@ public class XmlFormatter {
 			in = new BufferedInputStream(System.in, 64) {
 				@Override
 				public void close() {
-					//super.close();
 					// NOTE We do explicitly NOT close the underlying stream
 				}
 			};
@@ -138,7 +137,6 @@ public class XmlFormatter {
 			out = new BufferedOutputStream(System.out, 64) {
 				@Override
 				public void close() {
-					//super.close();
 					// NOTE We do explicitly NOT close the underlying stream
 				}
 			};
@@ -277,9 +275,7 @@ public class XmlFormatter {
 
 		final TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-//		transformerFactory.setAttribute("indent-number", indentSpaces);
 		final Transformer transformer = transformerFactory.newTransformer();
-		//transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", String.valueOf(indentSpaces));
