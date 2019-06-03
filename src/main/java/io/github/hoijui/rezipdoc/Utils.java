@@ -216,19 +216,18 @@ public final class Utils {
 	public static Set<String> collectFileOrDefaults(final String localResourceFilePath, final Set<String> defaults) {
 
 		Set<String> suffixes;
+		Path suffixesFile = null;
 		try {
-			final Path suffixesFile = sourceDir().resolve(localResourceFilePath);
-			try {
-				suffixes = collectFileNameMatchers(suffixesFile);
-				if (LOGGER.isLoggable(Level.INFO)) {
-					LOGGER.info(String.format("Read suffixes from file \"%s\".", suffixesFile));
-				}
-			} catch (IOException exc) {
-				if (LOGGER.isLoggable(Level.INFO)) {
-					LOGGER.info(String.format("Did not read suffixes from file \"%s\".", suffixesFile));
-				}
-				suffixes = defaults;
+			suffixesFile = sourceDir().resolve(localResourceFilePath);
+			suffixes = collectFileNameMatchers(suffixesFile);
+			if (LOGGER.isLoggable(Level.INFO)) {
+				LOGGER.info(String.format("Read suffixes from file \"%s\".", suffixesFile));
 			}
+		} catch (IOException exc) {
+			if (LOGGER.isLoggable(Level.INFO)) {
+				LOGGER.info(String.format("Did not read suffixes from file \"%s\".", suffixesFile));
+			}
+			suffixes = defaults;
 		} catch (URISyntaxException exc) {
 			if (LOGGER.isLoggable(Level.SEVERE)) {
 				LOGGER.log(Level.SEVERE, String.format("Failed collecting suffixes for \"%s\"",
