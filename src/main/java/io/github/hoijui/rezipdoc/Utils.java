@@ -133,7 +133,7 @@ public final class Utils {
 		File sourceLocation = new File(Utils.class.getProtectionDomain()
 				.getCodeSource().getLocation().toURI());
 		// If our source location is a JAR file, get its parent dir
-		if (Files.isRegularFile(sourceLocation.toPath())) {
+		if (sourceLocation.isFile()) {
 			sourceLocation = sourceLocation.getParentFile();
 		}
 		return sourceLocation.toPath();
