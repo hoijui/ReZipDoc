@@ -32,6 +32,7 @@ source_repo=""
 target_repo=""
 num_commits_max=1000
 use_orig_commit_msg="false"
+branch="master"
 filter_installer_url="https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/install-git-filter.sh"
 
 printUsage() {
@@ -43,6 +44,7 @@ printUsage() {
 	echo
 	echo "Options:"
 	echo "    -h, --help               show this help message"
+	echo "    -b, --branch             git branch to filter"
 	echo "    -m, --max-commits        maximum number of commits to filter into the new repo"
 	echo "    -o, --orig-msg           use the original commit message (default: prefix with \"FILTERED - \")"
 	echo "    -s, --source [path|URL]  the repo to read commits from"
@@ -57,6 +59,10 @@ do
 		-h|--help)
 			printUsage
 			exit 0
+			;;
+		-b|--branch)
+			branch="$2"
+			shift # past argument
 			;;
 		-m|--max-commits)
 			num_commits_max=$2
@@ -102,8 +108,9 @@ then
 	exit 1
 fi
 
-echo "Source repo: ${source_repo}"
-echo "Target repo: ${target_repo}"
+echo "Source repo: '${source_repo}'"
+echo "Branch:      '${branch}'"
+echo "Target repo: '${target_repo}'"
 
 mkdir "$target_repo"
 cd "$target_repo"
@@ -128,12 +135,12 @@ then
 	${filter_installer} --install
 fi
 
-git checkout --orphan master_filtered
+git checkout --orphan ${branch}_filtered
 git commit --allow-empty --allow-empty-message -m ""
 
-num_commits=$(git log --format="%H" --reverse source/master | wc -l)
+num_commits=$(git log --format="%H" --reverse source/${branch} | wc -l)
 i=0
-for commit_hash in $(git log --format="%H" --reverse source/master)
+for commit_hash in $(git log --format="%H" --reverse source/${branch})
 do
 	i=`expr ${i} + 1`
 	echo
@@ -160,7 +167,8 @@ done
 # Merge the first (empty) commit with the second one
 git rebase --root
 
-echo "Source repo: ${source_repo}"
-echo "Target repo: ${target_repo}"
+echo "Source repo: '${source_repo}'"
+echo "Branch:      '${branch}'"
+echo "Target repo: '${target_repo}'"
 
 cd "$pwd_before"
