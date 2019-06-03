@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -97,8 +98,6 @@ public final class Utils {
 	private Utils() {
 	}
 
-	private static ReroutableConsoleHandler stdErr;
-
 	public static Logger getLogger(final String name) {
 
 		final Logger logger = Logger.getLogger(name);
@@ -109,20 +108,14 @@ public final class Utils {
 
 		final Formatter basicFmt = new BasicLogFormatter();
 
-		if (stdErr == null) {
-			stdErr = new ReroutableConsoleHandler();
-			stdErr.setLevel(Level.FINEST);
-			stdErr.setFormatter(basicFmt);
-		}
+		final ConsoleHandler stdErr = new ConsoleHandler();
+		stdErr.setLevel(Level.FINEST);
+		stdErr.setFormatter(basicFmt);
 		logger.addHandler(stdErr);
 
 		logger.setLevel(Level.FINEST);
 
 		return logger;
-	}
-
-	public static ReroutableConsoleHandler getLogHandler() {
-		return stdErr;
 	}
 
 	/**

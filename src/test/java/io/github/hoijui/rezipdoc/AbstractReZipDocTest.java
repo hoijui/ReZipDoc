@@ -22,6 +22,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+import org.junit.contrib.java.lang.system.SystemErrRule;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,6 +48,9 @@ public abstract class AbstractReZipDocTest {
 	protected Path zipFile;
 	@Rule
 	public final ExpectedSystemExit exit = ExpectedSystemExit.none();
+	@Rule
+	public final SystemErrRule systemErrRule
+			= new SystemErrRule().enableLog().muteForSuccessfulTests();
 
 	protected static List<File> createArchiveContentsList(final Path scanRoot) throws IOException {
 
