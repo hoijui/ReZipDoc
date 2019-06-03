@@ -45,8 +45,8 @@ public abstract class AbstractReZipDocTest {
 	protected Path projectRoot;
 	protected List<File> archiveContents;
 	protected Path zipFile;
-    @Rule
-    public final ExpectedSystemExit exit = ExpectedSystemExit.none();
+	@Rule
+	public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
 	protected static List<File> createArchiveContentsList(final Path scanRoot) throws IOException {
 
