@@ -81,6 +81,9 @@ do
 	echo
 done
 
+# Merge the first (empty) commit with the second one
+git rebase --root
+
 echo "Source repo: ${source_repo}"
 echo "Target repo: ${target_repo}"
 
