@@ -143,6 +143,31 @@ Assign attributes to paths:
 *.fcstd  reZipDoc
 ```
 
+## Filter a project
+
+This downloads the filter script and filters the `master` branch
+of the repo at `pwd` into the new repo "../myRepo_filtered".
+
+_NOTE_
+This only filters a single branch.
+
+```bash
+curl -s https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/filter-repo.sh -o filter-repo.sh
+./filter-repo.sh \
+	--source . \
+	--branch master \
+	--target ../myRepo_filtered
+```
+
+It also works with an online source:
+
+```bash
+./filter-repo.sh \
+	--source "https://github.com/hoijui/ReZipDoc.git" \
+	--branch master \
+	--target myRepo_filtered
+```
+
 ## Culprits
 
 As described in [gitattributes](http://git-scm.com/docs/gitattributes),
