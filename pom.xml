@@ -19,7 +19,7 @@
 	<artifactId>rezipdoc</artifactId>
 	<version>0.2-SNAPSHOT</version>
 
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 
 	<name>ReZipDoc</name>
 	<description>
@@ -321,6 +321,15 @@
 					<groupId>org.apache.felix</groupId>
 					<artifactId>maven-bundle-plugin</artifactId>
 					<version>2.5.4</version>
+					<extensions>true</extensions>
+					<configuration>
+						<instructions>
+							<Export-Package>
+								${project.packageName}
+							</Export-Package>
+							<!--<Random-other-Option>Whatever value we please</Random-other-Option>-->
+						</instructions>
+					</configuration>
 				</plugin>
 
 				<plugin>
@@ -395,6 +404,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
