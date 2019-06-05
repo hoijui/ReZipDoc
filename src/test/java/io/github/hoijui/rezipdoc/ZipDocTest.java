@@ -18,6 +18,7 @@
 package io.github.hoijui.rezipdoc;
 
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
@@ -75,16 +76,20 @@ public class ZipDocTest extends AbstractReZipDocTest {
 	@Test
 	public void testHelp() throws IOException {
 
+		final Matcher<String> helpMatchers = CoreMatchers.allOf(
+				CoreMatchers.startsWith(ZipDoc.class.getSimpleName()),
+				CoreMatchers.containsString("License:"),
+				CoreMatchers.containsString("Usage:"),
+				CoreMatchers.containsString("Examples:"));
+
 		try (BufferedOutputStream outBuffer = new BufferedOutputStream()) {
 			Utils.getLogHandler().setOutputStream(outBuffer);
 			ZipDoc.main(new String[] { "-h" });
-			MatcherAssert.assertThat(new String(outBuffer.toByteArray()),
-					CoreMatchers.startsWith("Usage:"));
+			MatcherAssert.assertThat(new String(outBuffer.toByteArray()), helpMatchers);
 
 			outBuffer.reset();
 			ZipDoc.main(new String[] { "--help" });
-			MatcherAssert.assertThat(new String(outBuffer.toByteArray()),
-					CoreMatchers.startsWith("Usage:"));
+			MatcherAssert.assertThat(new String(outBuffer.toByteArray()), helpMatchers);
 		} finally {
 			Utils.getLogHandler().setOutputStream(System.err);
 		}

@@ -104,7 +104,26 @@ public class XmlFormatter {
 	private static void printUsage(final Level logLevel) {
 
 		if (LOGGER.isLoggable(logLevel)) {
-			LOGGER.log(logLevel, "Usage examples:");
+			try {
+				final BinaryUtil binaryUtil = new BinaryUtil();
+				LOGGER.log(logLevel, String.format("%s %s",
+						XmlFormatter.class.getSimpleName(), binaryUtil.getVersion()));
+				LOGGER.log(logLevel, String.format("License: %s%n",
+						binaryUtil.getLicense()));
+			} catch (final IOException exc) {
+				LOGGER.log(logLevel, "Failed to get version and license info", exc);
+			}
+			LOGGER.log(logLevel, "Usage:");
+			LOGGER.log(logLevel, String.format(
+					"\t%s [XML-input-file] [XML-output-file]  # both input and output from files",
+					XmlFormatter.class.getSimpleName()));
+			LOGGER.log(logLevel, String.format(
+					"\t%s [XML-input-file]                    # input from file, output to stdout",
+					XmlFormatter.class.getSimpleName()));
+			LOGGER.log(logLevel, String.format(
+					"\t%s                                     # input from stdin, output to stdout",
+					XmlFormatter.class.getSimpleName()));
+			LOGGER.log(logLevel, "Examples:");
 			LOGGER.log(logLevel, String.format("\t%s in-file.xml out-file.xml",
 					XmlFormatter.class.getSimpleName()));
 			LOGGER.log(logLevel, String.format("\t%s in-file.xml > out-file.xml",

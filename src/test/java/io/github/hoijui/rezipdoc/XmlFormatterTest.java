@@ -18,6 +18,7 @@
 package io.github.hoijui.rezipdoc;
 
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -124,16 +125,20 @@ public class XmlFormatterTest {
 	@Test
 	public void testHelp() throws IOException {
 
+		final Matcher<String> helpMatchers = CoreMatchers.allOf(
+				CoreMatchers.startsWith(XmlFormatter.class.getSimpleName()),
+				CoreMatchers.containsString("License:"),
+				CoreMatchers.containsString("Usage:"),
+				CoreMatchers.containsString("Examples:"));
+
 		try (ByteArrayOutputStream outBuffer = new ByteArrayOutputStream()) {
 			Utils.getLogHandler().setOutputStream(outBuffer);
 			XmlFormatter.main(new String[] { "-h" });
-			MatcherAssert.assertThat(toString(outBuffer),
-					CoreMatchers.startsWith("Usage examples:\n"));
+			MatcherAssert.assertThat(toString(outBuffer), helpMatchers);
 
 			outBuffer.reset();
 			XmlFormatter.main(new String[] { "--help" });
-			MatcherAssert.assertThat(toString(outBuffer),
-					CoreMatchers.startsWith("Usage examples:\n"));
+			MatcherAssert.assertThat(toString(outBuffer), helpMatchers);
 		} finally {
 			Utils.getLogHandler().setOutputStream(System.err);
 		}

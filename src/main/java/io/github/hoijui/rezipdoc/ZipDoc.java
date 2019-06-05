@@ -69,8 +69,21 @@ public class ZipDoc {
 	private static void printUsage(final Level logLevel) {
 
 		if (LOGGER.isLoggable(logLevel)) {
-			LOGGER.log(logLevel, String.format("Usage: %s in-file.zip > text-representation.txt%n",
-				ZipDoc.class.getSimpleName()));
+			try {
+				final BinaryUtil binaryUtil = new BinaryUtil();
+				LOGGER.log(logLevel, String.format("%s %s",
+						ZipDoc.class.getSimpleName(), binaryUtil.getVersion()));
+				LOGGER.log(logLevel, String.format("License: %s%n",
+						binaryUtil.getLicense()));
+			} catch (final IOException exc) {
+				LOGGER.log(logLevel, "Failed to get version and license info", exc);
+			}
+			LOGGER.log(logLevel, String.format(
+					"Usage:%n\t%s [Archive-input-file]   # writes textual version to stdout",
+					ZipDoc.class.getSimpleName()));
+			LOGGER.log(logLevel, String.format(
+					"Examples:%n\t%s in-file.zip > text-representation.txt",
+					ZipDoc.class.getSimpleName()));
 		}
 	}
 
