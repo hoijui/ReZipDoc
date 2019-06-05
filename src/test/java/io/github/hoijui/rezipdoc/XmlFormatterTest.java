@@ -146,8 +146,6 @@ public class XmlFormatterTest {
 		try (BufferedOutputStream outBuffer = new BufferedOutputStream()) {
 			Utils.getLogHandler().setOutputStream(outBuffer);
 			XmlFormatter.main(new String[] { "file1", "file2", "file3" });
-			MatcherAssert.assertThat(new String(outBuffer.toByteArray()),
-					CoreMatchers.containsString("Usage:"));
 		} finally {
 			Utils.getLogHandler().setOutputStream(System.err);
 		}
