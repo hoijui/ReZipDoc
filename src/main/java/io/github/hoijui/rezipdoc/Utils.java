@@ -210,7 +210,7 @@ public final class Utils {
 
 		final Set<T> strings = new HashSet<>();
 		Collections.addAll(strings, defaults);
-		return strings;
+		return Collections.unmodifiableSet(strings);
 	}
 
 	public static Set<String> collectFileOrDefaults(final String localResourceFilePath, final Set<String> defaults) {
