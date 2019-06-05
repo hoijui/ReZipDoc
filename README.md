@@ -8,6 +8,23 @@ you probably want to use __ReZipDoc__.
 * [__ZipDoc__](https://github.com/costerwi/zipdoc)
   A Git `textconv` program to show text-based diffs of ZIP files
 
+---
+
+Index:
+
+* [Project state](#project-state)
+* [Installation](#installation)
+	* [easy](#installation-from-maven-central-easy)
+	* [long process (more control, more secure)](#installation-from-sources-long-process)
+* [Filter a project](#filter-a-project)
+* [Culprits](#culprits)
+* [Motivation](#motivation)
+* [How it works](#how-it-works)
+* [Benefits](#benefits)
+* [Observations](#observations)
+
+---
+
 ## Project state
 
 This repo contains a heavily revised, refined version of ReZip (and ZipDoc),
@@ -206,7 +223,6 @@ but without compression.
 
 - slower `git add`/`git commit` process
 - slower checkout process, if the smudge filter s used
-
 
 ## How it works
 
