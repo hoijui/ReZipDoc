@@ -253,6 +253,7 @@ public final class Utils {
 	 * @param contentIn    to be checked for magic file header
 	 * @param magicHeader  the magic file header to look for
 	 * @param suffixes     the file suffixes to look for
+	 * @param mimeType     which MIME-type to accept as matching
 	 * @return whether the supplied file type is XML based
 	 * @throws IOException If something went wrong while trying to read the magic file header
 	 */
@@ -291,6 +292,7 @@ public final class Utils {
 	 * @param contentIn to be checked for magic file header for XML:
 	 *   {@literal "<?xml "}
 	 * @return whether the supplied file type is XML based
+	 * @throws IOException If something went wrong while trying to read the magic file header
 	 */
 	public static boolean isXml(final String fileName, final long contentBytes, final BufferedOutputStream contentIn) throws IOException {
 		return isType(fileName, contentBytes, contentIn, "<?xml ", SUFFIXES_XML, "application/xml");
@@ -303,6 +305,7 @@ public final class Utils {
 	 * @param contentBytes length of the content in bytes
 	 * @param contentIn    to see if only non-binary data is present
 	 * @return whether the supplied file name is text based
+	 * @throws IOException If something went wrong while trying to read the magic file header
 	 */
 	public static boolean isPlainText(final String fileName, final long contentBytes, final BufferedOutputStream contentIn) throws IOException {
 		return isType(fileName, contentBytes, contentIn, null, SUFFIXES_TEXT, null);
