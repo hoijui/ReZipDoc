@@ -1,4 +1,10 @@
+# Maven generated
 /target
-/README.html
+/pom.xml.*
+/release.properties
+
+# Markdown generated
+/DEVELOPMENT.html
 /LICENSE.html
+/README.html
 
