@@ -69,13 +69,13 @@ printUsage() {
 	echo "     meaning it is not versioned."
 	echo
 	echo "Usage:"
-	echo "    `basename $0` [OPTIONS]"
+	echo "    `basename $0` [OPTION]"
 	echo
 	echo "Options:"
 	echo "    -h, --help    show this help message"
 	echo "    --install     install the filter into the local repo"
 	echo "    --remove      remove the filter from the local repo"
-	echo "    --update      remove then install the filter again"
+	echo "    --update      first remove, then install the filter again"
 	echo "    --check       check whether the filter is installed (-> return value 0)"
 }
 
