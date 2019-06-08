@@ -61,22 +61,51 @@ you want to [install from sources](#installation-from-sources).
 
 This installs the latest release of ReZipDoc into your local git repo.
 
-In a *nix shell, make sure that CWD is the local git repo you want to install this filter to.
-Then run:
-
 __NOTE__
-This downloads and executes an online script on your machine,
+This downloads and executes an online script onto your machine,
 which is a potential security risk.
-You may first want to check-out the script.
+You may want to check-out the script before running it.
+
+We will install the script to the local user directory,
+so you may use it to easily install the filter to multiple local repos.
+If this is not yet the case, you may want to create the dir `$HOME/bin`
+and put it in your `PATH` env:
 
 ```bash
-sh <(curl -s https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/install-filter.sh) --install
+# Create the users 'bin' directory
+mkdir -p $HOME/bin
+# add it to the PATH in the current shell
+export PATH="$PATH:$HOME/bin"
+# add it to the PATH after boot
+echo "export PATH=\"\$PATH:\$HOME/bin\"" >> ~/.profile
 ```
 
-To uninstall, just append ` remove`:
+Download/Install the filter installer script:
 
 ```bash
-sh <(curl -s https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/install-filter.sh) --remove
+# download the script
+curl -s "https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/install-filter.sh" \
+	-o "$HOME/bin/install-filter.sh"
+# (optional) inspect the script to make sure it is no mal-ware
+#$EDITOR $HOME/bin/install-filter.sh"
+# mark it as executable
+chmo +x "$HOME/bin/install-filter.sh"
+```
+
+Now to actually install the filter in a specific local repo,
+make sure that CWD is the local git repo you want to install this filter to,
+and install it:
+
+```bash
+cd ~/src/myGitRepo/
+install-filter.sh --install
+```
+
+To uninstall, use ` --remove`:
+
+```bash
+cd ~/src/myGitRepo/
+install-filter.sh --remove
 ```
 
 ### Installation from sources (long process)
@@ -163,12 +192,13 @@ Assign attributes to paths:
 ## Filter a project
 
 This downloads the filter script and filters the `master` branch
-of the repo at `pwd` into the new repo "../myRepo_filtered".
+of the repo at `pwd` into the new repo "../myRepo\_filtered".
 
 _NOTE_
 This only filters a single branch.
 
 ```bash
+curl -s https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/filter-repo.sh -o filter-repo.sh
 curl -s https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/filter-repo.sh -o filter-repo.sh
 ./filter-repo.sh \
 	--source . \
