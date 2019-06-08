@@ -191,11 +191,11 @@ Assign attributes to paths:
 
 ## Filter a project
 
-This downloads the filter script and filters the `master` branch
-of the repo at `pwd` into the new repo "../myRepo\_filtered".
-
 _NOTE_
 This only filters a single branch.
+
+This downloads the filter script and filters the `master` branch
+of the repo at `pwd` into the new repo "../myRepo\_filtered".
 
 ```bash
 curl -s https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/filter-repo.sh -o filter-repo.sh
