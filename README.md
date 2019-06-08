@@ -70,13 +70,13 @@ which is a potential security risk.
 You may first want to check-out the script.
 
 ```bash
-sh <(curl -s https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/install-git-filter.sh) --install
+sh <(curl -s https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/install-filter.sh) --install
 ```
 
 To uninstall, just append ` remove`:
 
 ```bash
-sh <(curl -s https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/install-git-filter.sh) --remove
+sh <(curl -s https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/install-filter.sh) --remove
 ```
 
 ### Installation from sources (long process)

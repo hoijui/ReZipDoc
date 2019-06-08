@@ -33,7 +33,7 @@ target_repo=""
 num_commits_max=1000
 use_orig_commit_msg="false"
 branch="master"
-filter_installer_url="https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/install-git-filter.sh"
+filter_installer_url="https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/install-filter.sh"
 
 printUsage() {
 	echo "`basename $0` - Creates a local clone of a repo, and filters"
@@ -119,12 +119,12 @@ git remote add source "$source_repo"
 git fetch source
 
 # Ensure we have a local filter installer script
-if [ -e "$this_script_dir/install-git-filter.sh" ]
+if [ -e "$this_script_dir/install-filter.sh" ]
 then
-	filter_installer="$this_script_dir/install-git-filter.sh"
+	filter_installer="$this_script_dir/install-filter.sh"
 else
 	rnd=$(od -A n -t d -N 1 /dev/urandom | tr -d ' ')
-	filter_installer="/tmp/install-git-filter-${rnd}.sh"
+	filter_installer="/tmp/install-filter-${rnd}.sh"
 	curl -s "$filter_installer_url" -o "$filter_installer"
 fi
 
