@@ -111,8 +111,9 @@ then
 fi
 
 echo "Source repo: '${source_repo}'"
-echo "Branch:      '${branch}'"
-echo "Target repo: '${target_repo}'"
+echo "Branch:       ${branch}"
+echo "Max commits:  ${num_commits_max}"
+echo "Target repo:  '${target_repo}'"
 
 mkdir "$target_repo"
 cd "$target_repo"
@@ -175,7 +176,8 @@ done
 git rebase --root
 
 echo "Source repo: '${source_repo}'"
-echo "Branch:      '${branch}'"
-echo "Target repo: '${target_repo}'"
+echo "Branch:       ${branch}"
+echo "Max commits:  ${num_commits_max}"
+echo "Target repo:  '${target_repo}'"
 
 cd "$pwd_before"

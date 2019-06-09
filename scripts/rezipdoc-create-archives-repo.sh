@@ -130,9 +130,10 @@ then
 	exit 1
 fi
 
-echo "Using source repo:       ${source_repo}"
-echo "Using tmp-checkout repo: ${tmp_repo}"
-echo "Using target repo:       ${target_repo}"
+echo "Source repo:       '${source_repo}'"
+echo "Tmp-checkout repo: '${tmp_repo}'"
+echo "Max commits:       ${num_commits_max}"
+echo "Target repo:       '${target_repo}'"
 
 git clone "$source_repo" "$tmp_repo"
 
@@ -200,7 +201,9 @@ done
 # Make sure a potential global value might be used again
 git config --unset core.excludesfile
 
-echo "Created tmp-checkout repo: ${tmp_repo}"
-echo "Created target repo: ${target_repo}"
+echo "Source repo:       '${source_repo}'"
+echo "Tmp-checkout repo: '${tmp_repo}'"
+echo "Max commits:       ${num_commits_max}"
+echo "Target repo:       '${target_repo}'"
 
 cd "$pwd_before"
