@@ -31,6 +31,7 @@ this_script_dir=$(cd `dirname $0`; pwd)
 add_archive_bin="false"
 add_archive_src="true"
 num_commits_max=1000
+branch=master
 source_repo=$(cd ${this_script_dir}; cd ..; pwd)
 rnd=$(od -A n -t d -N 1 /dev/urandom | tr -d ' ')
 target_repo="/tmp/rezipdoc-archives-repo-${rnd}"
@@ -146,9 +147,9 @@ git config core.excludesfile 'some-file-that-does-not-exist'
 
 cd "$tmp_repo"
 
-num_commits=$(git log -${num_commits_max} --format="%H" --reverse master | wc -l)
+num_commits=$(git log -${num_commits_max} --format="%H" --reverse origin/${branch} | wc -l)
 i=0
-for commit_hash in $(git log -${num_commits_max} --format="%H" --reverse master)
+for commit_hash in $(git log -${num_commits_max} --format="%H" --reverse origin/${branch})
 do
 	i=`expr ${i} + 1`
 	echo
