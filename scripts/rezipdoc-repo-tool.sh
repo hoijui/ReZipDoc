@@ -400,8 +400,6 @@ EOF
 			cat >> "$attributes_file" << EOF
 # This makes git visualize ZIP files as uncompressed text with some meta info
 [attr]zipDoc      diff=zipDoc textual
-# This combines in-history decompression and the uncompressed diff view of ZIP files
-[attr]reZipDoc    reZip zipDoc
 EOF
 		fi
 
