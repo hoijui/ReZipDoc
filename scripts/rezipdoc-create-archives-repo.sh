@@ -198,7 +198,7 @@ do
 done
 
 # Make sure a potential global value might be used again
-git --unset config core.excludesfile
+git config --unset core.excludesfile
 
 echo "Created tmp-checkout repo: ${tmp_repo}"
 echo "Created target repo: ${target_repo}"
