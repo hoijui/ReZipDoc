@@ -178,7 +178,7 @@ check_git_repo_size() {
 
 	rm -Rf "${bare_repo}"
 
-	echo "$repo_size_human\t- $repo_size_raw\t- $repo_size_apparent"
+	echo "$repo_size_human\t$repo_size_raw\t$repo_size_apparent"
 }
 
 size_archive=`check_git_repo_size "${archive_repo}"`
