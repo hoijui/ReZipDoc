@@ -390,7 +390,7 @@ EOF
 			parts="$parts reZip"
 			cat >> "$attributes_file" << EOF
 # This makes git re-zip ZIP files uncompressed on commit
-[attr]reZip       filter=reZip textual
+[attr]reZip       textual filter=reZip
 EOF
 		fi
 
@@ -399,7 +399,7 @@ EOF
 			parts="$parts zipDoc"
 			cat >> "$attributes_file" << EOF
 # This makes git visualize ZIP files as uncompressed text with some meta info
-[attr]zipDoc      diff=zipDoc textual
+[attr]zipDoc      textual diff=zipDoc
 EOF
 		fi
 
