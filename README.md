@@ -199,10 +199,10 @@ Assign attributes to paths:
 [attr]textual     diff merge text
 # This makes git re-zip ZIP files uncompressed on commit
 # NOTE See the ReZipDoc README for how to install the required git filter
-[attr]reZip       filter=reZip textual
+[attr]reZip       textual filter=reZip
 # This makes git visualize ZIP files as uncompressed text with some meta info
 # NOTE See the ReZipDoc README for how to install the required git filter
-[attr]zipDoc      diff=zipDoc textual
+[attr]zipDoc      textual diff=zipDoc
 # This combines in-history decompression and uncompressed view of ZIP files
 [attr]reZipDoc    reZip zipDoc
 
