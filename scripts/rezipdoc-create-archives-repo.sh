@@ -186,7 +186,7 @@ do
 	then
 		# As this probably contains mostly text files,
 		# it should play much nicer with git when uncompressed.
-		(cd "$tmp_repo"; zip -r "$target_repo/src.zip" src)
+		(cd "$tmp_repo"; zip --quiet -r "$target_repo/src.zip" src)
 	fi
 
 	git add --all --force
