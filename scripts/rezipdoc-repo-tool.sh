@@ -343,13 +343,13 @@ then
 	if [ "$action" = "check" ]
 	then
 		echo "$pre_text exist!"
-		if [ "$enable_commit" = "true" -o "$enable_checkout" = "true" ] && grep -v -q -r "[attr]reZip" "$attributes_file"
+		if [ "$enable_commit" = "true" -o "$enable_checkout" = "true" ] && ! grep -q -r "^\[attr\]reZip" "$attributes_file"
 		then
 			# only report failure if checking was explicitly requested
 			>2& echo "$pre_text - '[attr]reZip' does not exist!"
 			exit 1
 		fi
-		if [ "$enable_diff" = "true" ] && grep -v -q -r "[attr]zipDoc" "$attributes_file"
+		if [ "$enable_diff" = "true" ] && ! grep -q -r "^\[attr\]zipDoc" "$attributes_file"
 		then
 			# only report failure if checking was explicitly requested
 			>2& echo "$pre_text - '[attr]zipDoc' does not exist!"
