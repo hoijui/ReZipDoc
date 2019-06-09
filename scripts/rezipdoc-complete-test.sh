@@ -85,15 +85,11 @@ rnd=$(od -A n -t d -N 1 /dev/urandom | tr -d ' ')
 tmp_repo="/tmp/rezipdoc-tmp-repo-${rnd}"
 archive_repo="/tmp/rezipdoc-archives-repo-${rnd}"
 filtered_repo="/tmp/rezipdoc-filtered-repo-${rnd}"
-archive_clone_repo="/tmp/rezipdoc-archives-repo-clone-${rnd}"
-filtered_clone_repo="/tmp/rezipdoc-filtered-repo-clone-${rnd}"
 
 echo "Source repo:            '${source_repo}'"
 echo "Source repo (copy):     '${tmp_repo}'"
 echo "Archives repo:          '${archive_repo}'"
 echo "Filtered repo:          '${filtered_repo}'"
-echo "Archives repo (clone):  '${archive_clone_repo}'"
-echo "Filtered repo (clone):  '${filtered_clone_repo}'"
 
 echo
 echo "Starting in 3 seconds ..."
@@ -101,11 +97,11 @@ sleep 3
 echo
 
 echo
-echo "############################"
-echo "# Create archives repo ... #"
-echo "############################"
+echo "##############################"
+echo "# Creating archives repo ... #"
+echo "##############################"
 echo
-"$this_script_dir/create-archives-repo.sh" \
+"$this_script_dir/rezipdoc-create-archives-repo.sh" \
 	--max-commits ${num_commits_max} \
 	--source "${source_repo}" \
 	--target "${archive_repo}" \
@@ -117,11 +113,11 @@ then
 fi
 
 echo
-echo "############################"
-echo "# Create filtered repo ... #"
-echo "############################"
+echo "##############################"
+echo "# Creating filtered repo ... #"
+echo "##############################"
 echo
-"$this_script_dir/filter-repo.sh" \
+"$this_script_dir/rezipdoc-history-filter.sh" \
 	--max-commits ${num_commits_max} \
 	--source "${archive_repo}" \
 	--target "${filtered_repo}"
@@ -132,23 +128,39 @@ then
 fi
 
 echo
-echo "###############################"
-echo "# Create bare repo clones ... #"
-echo "###############################"
+echo "################################"
+echo "# Checking bare repo sizes ... #"
+echo "################################"
 echo
-git clone --bare "${archive_repo}" "${archive_clone_repo}"
-cd "${archive_clone_repo}"
-git gc
-git prune --expire now
 
-git clone --bare "${filtered_repo}" "${filtered_clone_repo}"
-cd "${filtered_clone_repo}"
-git gc
-git prune --expire now
+create_bare_repo() {
 
-du=/usr/bin/du
-size_archive=`${du} -sh "${archive_clone_repo}"`
-size_filtered=`${du} -sh "${filtered_clone_repo}"`
+	orig_repo="$1"
+	bare_repo="$2"
+
+	git clone --bare "${orig_repo}" "${bare_repo}"
+	cd "${bare_repo}"
+	git gc
+	git prune --expire now
+}
+
+check_git_repo_size() {
+
+	orig_repo="$1"
+	bare_repo="/tmp/rezipdoc-test-`basename \"$orig_repo\"`-bare-$rnd"
+
+	create_bare_repo "${orig_repo}" "${bare_repo}"
+
+	du=/usr/bin/du
+	repo_size=`${du} -sh "${bare_repo}"`
+
+	rm -Rf "${bare_repo}"
+
+	echo "$repo_size"
+}
+
+size_archive=`check_git_repo_size "${archive_repo}"`
+size_filtered=`check_git_repo_size "${filtered_repo}"`
 
 cd "$pwd_before"
 
@@ -161,7 +173,5 @@ echo "Source repo:            '${source_repo}'"
 echo "Source repo (copy):     '${tmp_repo}'"
 echo "Archives repo:          '${archive_repo}'"
 echo "Filtered repo:          '${filtered_repo}'"
-echo "Archives repo (clone):  '${archive_clone_repo}'"
-echo "Filtered repo (clone):  '${filtered_clone_repo}'"
 echo "Archives repo size:     ${size_archive}"
 echo "Filtered repo size:     ${size_filtered}"

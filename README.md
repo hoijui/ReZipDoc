@@ -10,13 +10,17 @@ you probably want to use __ReZipDoc__.
 
 ---
 
-Index:
+## Index
 
 * [Project state](#project-state)
+* [How to use](#how-to-use)
 * [Installation](#installation)
-	* [easy](#installation-from-maven-central-easy)
-	* [long process (more control, more secure)](#installation-from-sources-long-process)
-* [Filter a project](#filter-a-project)
+	* [quick & dirty](#installing-with-one-liner) (*nix only, latest release)
+	* [recommended](#installing-scripts-locally) (*nix only, latest release)
+	* [manual](#installing-manually) (latest sources)
+* [Filter repo history](#filter-repo-history)
+	* [quick & dirty](#filter-with-one-liner)  (*nix only, latest release)
+	* [recommended](#filter-with-local-scripts) (*nix only, latest release)
 * [Culprits](#culprits)
 * [Motivation](#motivation)
 * [How it works](#how-it-works)
@@ -45,19 +49,51 @@ which were not available in the original.
 [![SonarCloud Bugs](https://sonarcloud.io/api/project_badges/measure?project=io.github.hoijui.rezipdoc:rezipdoc&metric=bugs)](https://sonarcloud.io/component_measures/metric/reliability_rating/list?id=io.github.hoijui.rezipdoc:rezipdoc)
 [![SonarCloud Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=io.github.hoijui.rezipdoc:rezipdoc&metric=vulnerabilities)](https://sonarcloud.io/component_measures/metric/security_rating/list?id=io.github.hoijui.rezipdoc:rezipdoc)
 
+## How to use
+
+If your git repo makes heavy use of ZIP based files,
+then you probably want to use ReZipDoc in one of these three ways:
+
+* install __ZipDoc diff viewer__ -
+  This allows you to see changes within you ZIP based files
+  when looking at git history in a human-readable way.
+  It does not change your past nor future git history.
+
+  To use this, [install](#installation) with `--diff` only.
+* install __ReZip filter__ -
+  This will change your future git repos history,
+  storing ZIP based files without compression.
+
+  To use this, [install](#installation) with `--commmit --diff --renormalize`.
+* install __ReZip filter & filter repo__ -
+  This changes both the past (<- ___Caution!___)
+  and future history of your repo.
+
+  To use this, [install](#installation) with `--commmit --diff --renormalize`,
+  and [filter](#filter-repo-history) the history of the project.
+
 ## Installation
 
 This program requires Java JRE 8 or newer.
 
-If you have a Unix/Linux environment on your system,
-which is the case on OSX, Linux, Unix,
-or on Windows with git installed,
-then [installation from Maven Central](#installation-from-maven-central)
-is the easy way to use ReZipDoc.
-Otherwise, or if you want to use the latest development version or your own code,
-you want to [install from sources](#installation-from-sources).
+You may choose between these installation options:
 
-### Installation from Maven Central (easy)
+* [quick & dirty](#installing-with-one-liner) (*nix only, latest release)
+* [recommended](#installing-scripts-locally) (*nix only, latest release)
+* [manual](#installing-manually) (latest sources)
+
+(*nix only) means, that to use this method,
+you need a Unix/Linux environment on your system,
+which is the case on OSX, Linux, Unix and even Windows, if git is installed.
+
+### Installing with one-liner
+
+```bash
+cd ~/src/myRepo/
+sh <(curl -s https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-repo-tool.sh) install --commit --diff --renormalize
+```
+
+### Installing scripts locally
 
 This installs the latest release of ReZipDoc into your local git repo.
 
@@ -84,12 +120,12 @@ Download/Install the filter installer script:
 
 ```bash
 # download the script
-curl -s "https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/install-filter.sh" \
-	-o "$HOME/bin/install-filter.sh"
+curl -s "https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-repo-tool.sh" \
+	-o "$HOME/bin/rezipdoc-repo-tool.sh"
 # (optional) inspect the script to make sure it is no mal-ware
-#$EDITOR $HOME/bin/install-filter.sh"
+#$EDITOR "$HOME/bin/rezipdoc-repo-tool.sh"
 # mark it as executable
-chmo +x "$HOME/bin/install-filter.sh"
+chmo +x "$HOME/bin/rezipdoc-repo-tool.sh"
 ```
 
 Now to actually install the filter in a specific local repo,
@@ -97,18 +133,18 @@ make sure that CWD is the local git repo you want to install this filter to,
 and install it:
 
 ```bash
-cd ~/src/myGitRepo/
-install-filter.sh --install
+cd ~/src/myRepo/
+rezipdoc-repo-tool.sh install --commit --diff --renormalize
 ```
 
-To uninstall, use ` --remove`:
+To uninstall:
 
 ```bash
-cd ~/src/myGitRepo/
-install-filter.sh --remove
+cd ~/src/myRepo/
+rezipdoc-repo-tool.sh remove
 ```
 
-### Installation from sources (long process)
+### Installing manually
 
 #### 1. Build the JAR
 
@@ -189,18 +225,46 @@ Assign attributes to paths:
 *.fcstd  reZipDoc
 ```
 
-## Filter a project
+## Filter repo history
 
 _NOTE_
 This only filters a single branch.
 
+Use either of these methods:
+
+* [quick & dirty](#filter-with-one-liner)  (*nix only, latest release)
+* [recommended](#filter-with-local-scripts) (*nix only, latest release)
+
+### Filter with one-liner
+
+```bash
+cd ~/src/myRepo/
+sh <(curl -s https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-history-filter.sh) \
+	--source . --branch master --target ../myRepo_filtered
+```
+
+### Filter with local scripts
+
 This downloads the filter script and filters the `master` branch
 of the repo at `pwd` into the new repo "../myRepo\_filtered".
 
+Before proceeding, please follow [the recommended installation instructions](#installing-scripts-locally).
+Then install the repo filtering script:
+
 ```bash
-curl -s https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/filter-repo.sh -o filter-repo.sh
-curl -s https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/filter-repo.sh -o filter-repo.sh
-./filter-repo.sh \
+curl -s "https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-history-filter.sh" \
+	-o "$HOME/bin/rezipdoc-history-filter.sh"
+# (optional) inspect the script to make sure it is no mal-ware
+#$EDITOR "$HOME/bin/rezipdoc-history-filter.sh"
+# mark it as executable
+chmo +x "$HOME/bin/rezipdoc-history-filter.sh"
+```
+
+Now you can filter any git repo into a local clone:
+
+```bash
+cd ~/src/myRepo/
+rezipdoc-history-filter.sh \
 	--source . \
 	--branch master \
 	--target ../myRepo_filtered
@@ -209,10 +273,10 @@ curl -s https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/filter-
 It also works with an online source:
 
 ```bash
-./filter-repo.sh \
-	--source "https://github.com/hoijui/ReZipDoc.git" \
+rezipdoc-history-filter.sh \
+	--source "https://github.com/case06/ZACplus.git" \
 	--branch master \
-	--target myRepo_filtered
+	--target ZACplus_filtered
 ```
 
 ## Culprits

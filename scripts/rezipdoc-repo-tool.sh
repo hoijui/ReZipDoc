@@ -36,9 +36,10 @@ target_path_specs='*.docx *.xlsx *.pptx *.odt *.ods *.odp *.mcdx *.slx *.zip *.j
 # To prevent this, Git can be told to run a virtual check-out and check-in of all
 # three stages of a file when resolving a three-way merge.
 # This might slowdown merges
-enable_renormalize="true"
-install_smudge="false"
-install_diff="false"
+enable_renormalize="false"
+enable_commit="false"
+enable_checkout="false"
+enable_diff="false"
 java_pkg="io.github.hoijui.rezipdoc"
 maven_group="$java_pkg"
 maven_artifact="rezipdoc"
@@ -59,7 +60,7 @@ header_note="# NOTE Do not manually edit this section; it was generated with $th
 
 printUsage() {
 	echo "`basename $0` - This installs (or removes) a custom git filter"
-	echo "and (optionally) a diff tool to the local repo, which make using"
+	echo "and a diff tool to the local repo, which make using"
 	echo "ZIP based archives more git-workflow friendly."
 	echo
 	echo "See the ReZipDoc README for further info."
@@ -69,14 +70,21 @@ printUsage() {
 	echo "     meaning it is not versioned."
 	echo
 	echo "Usage:"
-	echo "    `basename $0` [OPTION]"
+	echo "    `basename $0` ACTION [OPTIONS]"
+	echo
+	echo "Actions:"
+	echo "    -h, --help  show this help message"
+	echo "    install     install the specified parts of the filter into the local repo"
+	echo "    remove      remove *everything* regarding the filter from the local repo"
+	echo "    update      first remove, then install the previously installed parts of the filter again"
+	echo "    check       check whether the specified parts of the filter are installed (-> return value 0)"
 	echo
 	echo "Options:"
-	echo "    -h, --help    show this help message"
-	echo "    --install     install the filter into the local repo"
-	echo "    --remove      remove the filter from the local repo"
-	echo "    --update      first remove, then install the filter again"
-	echo "    --check       check whether the filter is installed (-> return value 0)"
+	echo "    -h, --help     show this help message"
+	echo "    --commit       (filter part) re-archives ZIP files without compression on commit"
+	echo "    --checkout     (filter part) re-archives ZIP files wit compression on checkout"
+	echo "    --diff         (filter part) represents ZIP based files uncompressed in diff views"
+	echo "    --renormalize  (filter part) check-out and -in files on merge conflicts"
 }
 
 set_action() {
@@ -93,36 +101,39 @@ set_action() {
 # Handle command line arguments
 while [ ${#} -gt 0 ]
 do
-	opName="$1"
-	case ${opName} in
+	option="$1"
+	case ${option} in
 		-h|--help)
 			printUsage
 			exit 0
 			;;
-		-i|--install)
+		install)
 			set_action "install"
 			;;
-		-r|--remove)
+		remove)
 			set_action "remove"
 			;;
-		-u|--update)
+		update)
 			set_action "update"
 			;;
-		-c|--check)
+		check)
 			set_action "check"
 			;;
-		--no-renormalize)
-			enable_renormalize="false"
+		--renormalize)
+			enable_renormalize="true"
 			;;
-		--smudge)
-			install_smudge="true"
+		--commit)
+			enable_commit="true"
+			;;
+		--checkout)
+			enable_checkout="true"
 			;;
 		--diff)
-			install_diff="true"
+			enable_diff="true"
 			;;
 		*)
 			# unknown option / not an option
-			>&2 echo "Unknown option '${opName}'!"
+			>&2 echo "Unknown option '${option}'!"
 			printUsage
 			exit 1
 			;;
@@ -139,22 +150,56 @@ then
 fi
 if [ "$action" = "update" ]
 then
-	# Call ourselves recursively
-	$0 remove && $0 install
+	parts=""
+	for chkPart in "--commit --checkout --diff --renormalize"
+	do
+		if $0 check ${chkPart} > /dev/null 2>&1
+		then
+			parts="$parts $chkPart"
+		fi
+	done
+	# Call ourselves recursively, re-installing the same parts that already were installed
+	$0 remove \
+		&& $0 install ${parts}
 	exit $?
 fi
 
-git ls-remote ./ > /dev/null 2> /dev/null
+# If we got so far, it means that 'action' is set to 'check|install\remove'
+
+git ls-remote ./ > /dev/null 2>&1
 if [ $? -ne 0 ]
 then
 	>&2 echo "The current working directory is not a valid git repo!"
 	exit 1
 fi
 
+if [ "$action" = "check" ]
+then
+	if [ "$enable_renormalize" != "true" -a "$enable_commit" != "true" -a "$enable_checkout" != "true" -a "$enable_diff" != "true" ]
+	then
+		>&2 echo "Please check for at least one of --commit, --checkout, --diff, --renormalize"
+		exit 2
+	fi
+elif [ "$action" = "install" ]
+then
+	if [ "$enable_commit" != "true" -a "$enable_checkout" != "true" -a "$enable_diff" != "true" ]
+	then
+		>&2 echo "Please install at least one of --commit, --checkout, --diff"
+		exit 2
+	fi
+else
+	if [ "$enable_renormalize" = "true" -o "$enable_commit" = "true" -o "$enable_checkout" = "true" -o "$enable_diff" = "true" ]
+	then
+		>&2 echo "Remove always removes the whole filter installation;"
+		>&2 echo "no need to specify parts with any of --commit, --checkout, --diff, --renormalize"
+		exit 2
+	fi
+fi
+
 echo "`basename $0` action: ${action}ing ..."
 
 # Install our binary (the JAR)
-pre_text="git filter and diff \"binary\" file $binary_file_glob - "
+pre_text="git filter and diff binary -"
 if [ -e ${binary_file_glob} ]
 then
 	if [ "$action" = "check" ]
@@ -194,7 +239,7 @@ else
 
 		source_binary_file=`find -maxdepth 1 -name "rezipdoc-*.jar"`
 
-		echo "Using driver binary '$source_binary_file'"
+		echo -n " using binary '$source_binary_file' ... "
 
 		# Extract the version from the release JAR name
 		version=`echo "$source_binary_file" | xargs basename --suffix='.jar' | sed -e 's/.*rezipdoc-//'`
@@ -209,8 +254,8 @@ else
 	fi
 fi
 
-# Configure the filter and (optionally) diff
-pre_text="git filter and diff config entry in $conf_file - "
+# Configure the filter and diff
+pre_text="git filter and diff config entry in $conf_file -"
 if [ "$action" = "check" ]
 then
 	is_config_present() {
@@ -225,14 +270,17 @@ then
 		fi
 	}
 
-	is_config_present filter.reZip.clean
+	if [ "$enable_commit" = "true" ]
+	then
+		is_config_present filter.reZip.clean
+	fi
 
-	if [ "$install_smudge" = "true" ]
+	if [ "$enable_checkout" = "true" ]
 	then
 		is_config_present filter.reZip.smudge
 	fi
 
-	if [ "$install_diff" = "true" ]
+	if [ "$enable_diff" = "true" ]
 	then
 		is_config_present diff.zipDoc.textconv
 	fi
@@ -246,39 +294,67 @@ then
 	#extra_args="--replace-all"
 
 	# Install the add/commit filter
-	git config ${extra_args} filter.reZip.clean "java -cp '$binary_file' ${java_pkg}.ReZip --uncompressed"
+	if [ "$enable_commit" = "true" ]
+	then
+		git config ${extra_args} filter.reZip.clean "java -cp '$binary_file' ${java_pkg}.ReZip --uncompressed"
+	fi
 
-	# (optionally) Install the checkout filter
-	if [ "$install_smudge" = "true" ]
+	# Install the checkout filter
+	if [ "$enable_checkout" = "true" ]
 	then
 		git config ${extra_args} filter.reZip.smudge "java -cp '$binary_file' ${java_pkg}.ReZip --compressed"
 	fi
 
-	# (optionally) Install the diff filter
-	if [ "$install_diff" = "true" ]
+	# Install the diff filter
+	if [ "$enable_diff" = "true" ]
 	then
 		git config ${extra_args} diff.zipDoc.textconv "java -cp '$binary_file' ${java_pkg}.ZipDoc"
 	fi
 
 	[ $? -eq 0 ] && echo "done" || echo "failed!"
 else
-	echo -n "$pre_text removing ... "
+	git config --local --get-regexp "filter\.reZip\..*" > /dev/null 2>&1
+	if [ $? -eq 0 ]
+	then
+		echo -n "$pre_text filter - removing ... "
+		git config --remove-section filter.reZip
+		[ $? -eq 0 ] && echo "done" || echo "failed!"
+	else
+		echo "$pre_text filter - removing skipped (not present)"
+	fi
 
-	git config --remove-section filter.reZip
-	git config --remove-section diff.zipDoc
-
-	[ $? -eq 0 ] && echo "done" || echo "failed!"
+	git config --local --get-regexp "diff\.zipDoc\..*" > /dev/null 2>&1
+	if [ $? -eq 0 ]
+	then
+		echo -n "$pre_text diff - removing ... "
+		git config --remove-section diff.zipDoc
+		[ $? -eq 0 ] && echo "done" || echo "failed!"
+	else
+		echo "$pre_text diff - removing skipped (not present)"
+	fi
 fi
 
-# Apply the filter and (optionally) diff to matching file(s)
-pre_text="git attributes entries to $attributes_file - "
-grep -q "$marker_begin" "$attributes_file" 2> /dev/null
+# Apply the filter and diff-view to matching file(s)
+pre_text="git attributes entries to $attributes_file -"
+grep -q "$marker_begin" "$attributes_file" > /dev/null 2>&1
 if [ $? -eq 0 ]
 then
 	# Our section does exist in the attributes_file
 	if [ "$action" = "check" ]
 	then
 		echo "$pre_text exist!"
+		if [ "$enable_commit" = "true" -o "$enable_checkout" = "true" ] && grep -v -q -r "[attr]reZip" "$attributes_file"
+		then
+			# only report failure if checking was explicitly requested
+			>2& echo "$pre_text - '[attr]reZip' does not exist!"
+			exit 1
+		fi
+		if [ "$enable_diff" = "true" ] && grep -v -q -r "[attr]zipDoc" "$attributes_file"
+		then
+			# only report failure if checking was explicitly requested
+			>2& echo "$pre_text - '[attr]zipDoc' does not exist!"
+			exit 1
+		fi
 	elif [ "$action" = "install" ]
 	then
 		echo "$pre_text writing skipped (section already exists)"
@@ -292,7 +368,11 @@ else
 	if [ "$action" = "check" ]
 	then
 		>2& echo "$pre_text do not exist!"
-		exit 1
+		if [ "$enable_commit" = "true" -o "$enable_checkout" = "true" -o "$enable_diff" = "true" ]
+		then
+			# only report failure if checking was explicitly requested
+			exit 1
+		fi
 	elif [ "$action" = "install" ]
 	then
 		echo "$pre_text writing ..."
@@ -302,24 +382,33 @@ else
 		cat >> "$attributes_file" << EOF
 # This forces git to treat files as if they were text-based (for example in diffs)
 [attr]textual     diff merge
+EOF
+
+		parts=""
+		if [ "$enable_commit" = "true" -o "$enable_checkout" = "true" ]
+		then
+			parts="$parts reZip"
+			cat >> "$attributes_file" << EOF
 # This makes git re-zip ZIP files uncompressed on commit
 [attr]reZip       filter=reZip textual
 EOF
+		fi
 
-		if [ "$install_diff" = "true" ]
+		if [ "$enable_diff" = "true" ]
 		then
+			parts="$parts zipDoc"
 			cat >> "$attributes_file" << EOF
 # This makes git visualize ZIP files as uncompressed text with some meta info
 [attr]zipDoc      diff=zipDoc textual
 # This combines in-history decompression and the uncompressed diff view of ZIP files
 [attr]reZipDoc    reZip zipDoc
 EOF
-		else
-			cat >> "$attributes_file" << EOF
-[attr]reZipDoc    reZip
-EOF
 		fi
-		echo >> "$attributes_file"
+
+		cat >> "$attributes_file" << EOF
+[attr]reZipDoc   ${parts}
+
+EOF
 
 		# Disable globbing
 		set -o noglob
@@ -347,9 +436,9 @@ fi
 # This might slowdown merges
 
 # Set git merge renormalization
-pre_text="git merge renormalization  - "
-renorm_enabled=`git config --get merge.renormalize`
-if [ "$renorm_enabled" = "true" ]
+pre_text="git merge renormalization -"
+renormalize_enabled=`git config --get merge.renormalize`
+if [ "$renormalize_enabled" = "true" ]
 then
 	# Renormalization is enabled
 	if [ "$action" = "check" ]
@@ -368,7 +457,11 @@ else
 	if [ "$action" = "check" ]
 	then
 		>2& echo "$pre_text not enabled!"
-		exit 1
+		if [ "$enable_renormalize" = "true" ]
+		then
+			# only report failure if checking was explicitly requested
+			exit 1
+		fi
 	elif [ "$action" = "install" ]
 	then
 		echo -n "$pre_text enabling ... "

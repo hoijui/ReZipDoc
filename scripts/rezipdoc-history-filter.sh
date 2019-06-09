@@ -33,7 +33,8 @@ target_repo=""
 num_commits_max=1000
 use_orig_commit_msg="false"
 branch="master"
-filter_installer_url="https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/install-filter.sh"
+repo_tool_url="https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-repo-tool.sh"
+repo_tool_file_name=`basename "$repo_tool_url"`
 
 printUsage() {
 	echo "`basename $0` - Creates a local clone of a repo, and filters"
@@ -119,20 +120,20 @@ git remote add source "$source_repo"
 git fetch source
 
 # Ensure we have a local filter installer script
-if [ -e "$this_script_dir/install-filter.sh" ]
+if [ -e "$this_script_dir/$repo_tool_file_name" ]
 then
-	filter_installer="$this_script_dir/install-filter.sh"
+	repo_tool="$this_script_dir/$repo_tool_file_name"
 else
 	rnd=$(od -A n -t d -N 1 /dev/urandom | tr -d ' ')
-	filter_installer="/tmp/install-filter-${rnd}.sh"
-	curl -s "$filter_installer_url" -o "$filter_installer"
+	repo_tool="/tmp/`basename --suffix='.sh' \"$repo_tool_file_name\"`-${rnd}.sh"
+	curl -s "$repo_tool_url" -o "$repo_tool"
 fi
 
 # Install our filter if not yet installed
-${filter_installer} --check > /dev/null 2> /dev/null
+${repo_tool} --check > /dev/null 2> /dev/null
 if [ $? -ne 0 ]
 then
-	${filter_installer} --install
+	${repo_tool} install --commit --diff --renormalize
 fi
 
 git checkout --orphan ${branch}_filtered
