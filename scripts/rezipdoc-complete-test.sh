@@ -28,7 +28,7 @@ this_script_file=$(basename $0)
 this_script_dir=$(cd `dirname $0`; pwd)
 
 # Settings and default values
-source_repo=""
+source_repo="."
 add_archive_bin="false"
 add_archive_src="true"
 num_commits_max=1000
