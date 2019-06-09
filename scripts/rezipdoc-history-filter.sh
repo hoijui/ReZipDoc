@@ -110,7 +110,12 @@ then
 	exit 1
 fi
 
-echo "Source repo: '${source_repo}'"
+# Check whether the source repo is a local directory or a URL
+source_is_url="true"
+[ -d "$source_repo" ] && source_is_url="false"
+[ "$source_is_url" = "true" ] && source_type="local repo" || source_type="URL"
+
+echo "Source repo:  '${source_repo}' ($source_type)"
 echo "Branch:       ${branch}"
 echo "Max commits:  ${num_commits_max}"
 echo "Target repo:  '${target_repo}'"
@@ -175,7 +180,7 @@ done
 # Merge the first (empty) commit with the second one
 git rebase --root
 
-echo "Source repo: '${source_repo}'"
+echo "Source repo:  '${source_repo}' ($source_type)"
 echo "Branch:       ${branch}"
 echo "Max commits:  ${num_commits_max}"
 echo "Target repo:  '${target_repo}'"
