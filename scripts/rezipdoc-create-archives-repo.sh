@@ -51,7 +51,7 @@ printUsage() {
 	echo "Options:"
 	echo "    -h, --help               show this help message"
 	echo "    --no-src-archive         do not add the sources ZIP to each commit"
-	echo "    --bin-archive            add the binary archive (JAR) to each commit"
+	echo "    --bin-archive            add the binary archive (JAR) to each commit (NOTE this will take a long time)"
 	echo "    -m, --max-commits        maximum number of commits to transcribe into the new repo"
 	echo "    -s, --source [path|URL]  the repo to transcribe from"
 	echo "    -t, --target [path]      the repo to transcribe to"
