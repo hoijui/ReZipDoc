@@ -31,7 +31,7 @@ this_script_dir=$(cd `dirname $0`; pwd)
 source_repo=""
 target_repo=""
 num_commits_max=1000
-use_orig_commit_msg="false"
+use_orig_commit="false"
 branch="master"
 repo_tool_url="https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-repo-tool.sh"
 repo_tool_file_name=`basename "$repo_tool_url"`
@@ -47,7 +47,8 @@ printUsage() {
 	echo "    -h, --help               show this help message"
 	echo "    -b, --branch             git branch to filter"
 	echo "    -m, --max-commits        maximum number of commits to filter into the new repo"
-	echo "    -o, --orig-msg           use the original commit message (default: prefix with \"FILTERED - \")"
+	echo "    -o, --orig               use the original commit message (default: prefix with \"FILTERED - \"),"
+	echo "                             author, email and time"
 	echo "    -s, --source [path|URL]  the repo to read commits from"
 	echo "    -t, --target [path]      the repo to write commits to"
 }
@@ -70,7 +71,7 @@ do
 			shift # past argument
 			;;
 		-o|--orig-msg)
-			use_orig_commit_msg="true"
+			use_orig_commit="true"
 			;;
 		-s|--source)
 			source_repo="$2"
@@ -149,16 +150,21 @@ do
 	echo "Copying & filtering commit ${i}/${num_commits} - ${commit_hash} ..."
 	echo
 
-	if [ "use_orig_commit_msg" = "true" ]
+	commit_args=""
+	if [ "$use_orig_commit" = "true" ]
 	then
-		commit_msg=`git log -1 --format="%s%n%n%b" ${commit_hash}`
+		#commit_msg=`git log -1 --format="%s%n%n%b" ${commit_hash}`
+		commit_args="$commit_args --reuse-message=${commit_hash}"
 	else
 		commit_msg=`git log -1 --format="FILTERED - %s%n%n orig=%h%n%n%b" ${commit_hash}`
+		# We have to give the message through stdin,
+		# because otherwise the quoting somehow gets fucked up (by sh)
+		commit_args="$commit_args --message=-"
 	fi
 	git cherry-pick --strategy-option=theirs -Xpatience --allow-empty --no-commit ${commit_hash} 2> /dev/null \
 		; git add --all --force 2> /dev/null \
 		&& git add --all --force --renormalize 2> /dev/null \
-		&& git commit -m "${commit_msg}" 2> /dev/null \
+		&& echo "$commit_msg" | git commit -v ${commit_args} 2> /dev/null \
 		|| break
 
 	echo "############################################################"
