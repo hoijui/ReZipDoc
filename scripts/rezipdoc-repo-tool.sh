@@ -80,7 +80,6 @@ printUsage() {
 	echo "    check       check whether the specified parts of the filter are installed (-> return value 0)"
 	echo
 	echo "Options:"
-	echo "    -h, --help     show this help message"
 	echo "    --commit       (filter part) re-archives ZIP files without compression on commit"
 	echo "    --checkout     (filter part) re-archives ZIP files wit compression on checkout"
 	echo "    --diff         (filter part) represents ZIP based files uncompressed in diff views"
