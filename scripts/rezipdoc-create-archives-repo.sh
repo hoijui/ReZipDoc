@@ -134,6 +134,8 @@ echo "Using source repo:       ${source_repo}"
 echo "Using tmp-checkout repo: ${tmp_repo}"
 echo "Using target repo:       ${target_repo}"
 
+git clone "$source_repo" "$tmp_repo"
+
 mkdir "$target_repo"
 cd "$target_repo"
 git init
@@ -141,7 +143,6 @@ git init
 # from adding binaries (like archives).
 git config core.excludesfile 'some-file-that-does-not-exist'
 
-git clone "$source_repo" "$tmp_repo"
 cd "$tmp_repo"
 
 num_commits=$(git log -${num_commits_max} --format="%H" --reverse master | wc -l)
