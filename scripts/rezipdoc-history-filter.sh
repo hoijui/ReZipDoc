@@ -168,12 +168,12 @@ do
 		commit_msg=`git log -1 --format="FILTERED - %s%n%n orig=%h%n%n%b" ${commit_hash}`
 		# We have to give the message through stdin,
 		# because otherwise the quoting somehow gets fucked up (by sh)
-		commit_args="$commit_args --message=-"
+		commit_args="$commit_args --file=-"
 	fi
 	git cherry-pick --strategy-option=theirs -Xpatience --allow-empty --no-commit ${commit_hash} 2> /dev/null \
 		; git add --all --force 2> /dev/null \
 		&& git add --all --force --renormalize 2> /dev/null \
-		&& echo "$commit_msg" | git commit -v ${commit_args} 2> /dev/null \
+		&& echo "$commit_msg" | git commit -v ${commit_args} \
 		|| break
 
 	echo "############################################################"
