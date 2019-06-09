@@ -115,6 +115,9 @@ source_is_url="true"
 [ -d "$source_repo" ] && source_is_url="false"
 [ "$source_is_url" = "true" ] && source_type="local repo" || source_type="URL"
 
+# If the source repo is a local directory, make the path to it absolute
+[ "$source_is_url" != "true" ] && source_repo="`cd \"$source_repo\"; pwd`"
+
 echo "Source repo:  '${source_repo}' ($source_type)"
 echo "Branch:       ${branch}"
 echo "Max commits:  ${num_commits_max}"
