@@ -29,6 +29,8 @@ this_script_dir=$(cd `dirname $0`; pwd)
 
 # Settings and default values
 source_repo=""
+add_archive_bin="false"
+add_archive_src="true"
 num_commits_max=1000
 
 printUsage() {
@@ -43,6 +45,8 @@ printUsage() {
 	echo
 	echo "Options:"
 	echo "    -h, --help               show this help message"
+	echo "    --no-src-archive         do not add the sources ZIP to each commit"
+	echo "    --bin-archive            add the binary archive (JAR) to each commit (NOTE this will take a long time)"
 	echo "    -m, --max-commits        maximum number of commits to consider in each pass"
 	echo "    -s, --source [path|URL]  the repo to read commits from"
 }
@@ -55,6 +59,12 @@ do
 		-h|--help)
 			printUsage
 			exit 0
+			;;
+		--no-src-archive)
+			add_archive_src="false"
+			;;
+		--bin-archive)
+			add_archive_bin="true"
 			;;
 		-m|--max-commits)
 			num_commits_max=$2
@@ -101,11 +111,21 @@ echo "##############################"
 echo "# Creating archives repo ... #"
 echo "##############################"
 echo
+archives_extra_args=""
+if [ "$add_archive_src" = "false" ]
+then
+	archives_extra_args="$archives_extra_args --no-src-archive"
+fi
+if [ "$add_archive_bin" = "true" ]
+then
+	archives_extra_args="$archives_extra_args --bin-archive"
+fi
 "$this_script_dir/rezipdoc-create-archives-repo.sh" \
 	--max-commits ${num_commits_max} \
 	--source "${source_repo}" \
 	--target "${archive_repo}" \
-	--tmp "${tmp_repo}"
+	--tmp "${tmp_repo}" \
+	${archives_extra_args}
 if [ $? -ne 0 ]
 then
 	>&2 echo "Failed creating archives repo!"
