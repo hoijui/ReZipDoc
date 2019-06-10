@@ -171,11 +171,37 @@ do
 		# because otherwise the quoting somehow gets fucked up (by sh)
 		commit_args="$commit_args --file=-"
 	fi
-	git cherry-pick --strategy-option=theirs -Xpatience --allow-empty --no-commit ${commit_hash} 2> /dev/null \
-		; git add --all --force 2> /dev/null \
-		&& git add --all --force --renormalize 2> /dev/null \
-		&& echo "$commit_msg" | git commit -v ${commit_args} \
-		|| break
+
+	echo "Cherry-picking ..."
+	git cherry-pick --strategy=recursive --strategy-option=theirs --allow-empty --no-commit ${commit_hash}
+	last_status=$?
+
+	echo "Removing ..."
+	git status | grep 'deleted by them:' | cut -d':' -f2 | xargs -t -I {} git rm "{}"
+	last_status=$?
+
+	echo "Adding the 1st ..."
+	git add --all --force
+	last_status=$?
+
+	if [ ${last_status} -eq 0 ]
+	then
+		echo "Adding the 2nd ..."
+		git add --all --force --renormalize
+		last_status=$?
+	fi
+	if [ ${last_status} -eq 0 ]
+	then
+		echo "Committing ..."
+		echo "$commit_msg" | git commit -v ${commit_args}
+		last_status=$?
+	fi
+	if [ ${last_status} -ne 0 ]
+	then
+		git status
+		echo "Failed!"
+		break
+	fi
 
 	echo "############################################################"
 	echo
