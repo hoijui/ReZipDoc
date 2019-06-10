@@ -222,7 +222,7 @@ then
 		[ ${install_state} -eq 0 ] \
 			&& echo "done" || echo "failed!"
 	fi
-	if [ "$enable_path" = "true" -a -e "$scripts_install_dir" ]
+	if [ "$enable_path" = "true" -a -e "$scripts_install_dir" ] && ! dir_in_path "$scripts_install_dir"
 	then
 		echo    "adding scripts install dir to PATH ..."
 		${dry_prefix} export PATH="$PATH:$scripts_install_dir"
