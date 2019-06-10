@@ -41,7 +41,6 @@ enable_path="false"
 java_pkg="io.github.hoijui.rezipdoc"
 maven_group="$java_pkg"
 maven_artifact="rezipdoc"
-use_local_binary_if_available=true
 fetch_url="https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=${maven_group}&a=${maven_artifact}&v=LATEST"
 
 printUsage() {
