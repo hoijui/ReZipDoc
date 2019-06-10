@@ -181,6 +181,11 @@ do
 	echo
 done
 
+echo
+echo "############################################################"
+echo "############################################################"
+echo
+
 # Merge the first (empty) commit with the second one
 git rebase --root
 
