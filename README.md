@@ -103,17 +103,17 @@ is a short URL created with
 
 To install:
 ```bash
-sh <(curl -s https://git.io/fjgIX) install --path
+sh <(curl -s -L https://git.io/fjgIX) install --path
 ```
 
 To update (to latest development version):
 ```bash
-sh <(curl -s https://git.io/fjgIX) update --dev
+sh <(curl -s -L https://git.io/fjgIX) update --dev
 ```
 
 To remove:
 ```bash
-sh <(curl -s https://git.io/fjgIX) remove
+sh <(curl -s -L https://git.io/fjgIX) remove
 ```
 
 ### Install diff viewer or filter
