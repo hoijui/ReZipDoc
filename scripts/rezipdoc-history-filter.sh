@@ -187,6 +187,7 @@ echo "############################################################"
 echo
 
 # Merge the first (empty) commit with the second one
+echo "removing first (empty) commit ..."
 git rebase --root
 
 echo "Source repo:  '${source_repo}' ($source_type)"
