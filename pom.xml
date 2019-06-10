@@ -17,7 +17,7 @@
 
 	<groupId>io.github.hoijui.rezipdoc</groupId>
 	<artifactId>rezipdoc</artifactId>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.3</version>
 
 	<packaging>bundle</packaging>
 
@@ -34,7 +34,7 @@
 		<connection>scm:git:git@github.com:hoijui/ReZipDoc.git</connection>
 		<developerConnection>scm:git:git@github.com:hoijui/ReZipDoc.git</developerConnection>
 		<url>https://github.com/hoijui/ReZipDoc</url>
-		<tag>HEAD</tag>
+		<tag>rezipdoc-0.3</tag>
 	</scm>
 
 	<licenses>
