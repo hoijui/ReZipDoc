@@ -112,7 +112,7 @@ public final class Utils {
 		}
 		logger.addHandler(stdErr);
 
-		logger.setLevel(Level.INFO);
+		logger.setLevel(Level.FINEST);
 
 		return logger;
 	}
@@ -224,8 +224,8 @@ public final class Utils {
 				LOGGER.info(String.format("Read suffixes from file \"%s\".", suffixesFile));
 			}
 		} catch (IOException exc) {
-			if (LOGGER.isLoggable(Level.FINER)) {
-				LOGGER.finer(String.format("Did not read suffixes from file \"%s\".", suffixesFile));
+			if (LOGGER.isLoggable(Level.INFO)) {
+				LOGGER.info(String.format("Did not read suffixes from file \"%s\".", suffixesFile));
 			}
 			suffixes = defaults;
 		} catch (URISyntaxException exc) {
