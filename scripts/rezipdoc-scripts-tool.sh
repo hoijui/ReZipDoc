@@ -171,8 +171,10 @@ then
 	if [ "$enable_development" = "true" ]
 	then
 		version="master"
+		revision="$version"
 	else
 		version=`curl -s "$metadata_url" | grep '<latest>' | sed 's/.*<latest>//' | sed 's/<\/latest>.*//'`
+		revision="rezipdoc-$version"
 	fi
 	extra_info="$extra_info (version: $version)"
 fi
@@ -254,7 +256,7 @@ do
 			exit_state=1
 		else
 			echo -n "installing (version: $version): $script_name ... "
-			${dry_prefix} curl -s "$scripts_base_url/rezipdoc-$version/scripts/$script_name" -o "$scripts_install_dir/$script_name" \
+			${dry_prefix} curl -s "$scripts_base_url/$revision/scripts/$script_name" -o "$scripts_install_dir/$script_name" \
 				&& ${dry_prefix} chmod +x "$scripts_install_dir/$script_name"
 			install_state=$?
 			exit_state=`expr ${exit_state} + ${install_state}`
