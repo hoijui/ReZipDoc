@@ -57,18 +57,17 @@ then you probably want to use ReZipDoc in one of these three ways:
   when looking at git history in a human-readable way.
   It does not change your past nor future git history.
 
-  To use this, [install](#installation) with `--diff` only.
+  To use this, [install](#install-diff-viewer-or-filter) with `--diff` only.
 * install __ReZip filter__ -
   This will change your future git repos history,
   storing ZIP based files without compression.
 
-  To use this, [install](#installation) with `--commmit --diff --renormalize`.
+  To use this, [install](#install-diff-viewer-or-filter) with `--commit --diff --renormalize`.
 * install __ReZip filter & filter repo__ -
   This changes both the past (<- ___Caution!___)
   and future history of your repo.
 
-  To use this, [install](#installation) with `--commmit --diff --renormalize`,
-  and [filter](#filter-repo-history) the history of the project.
+  To use this, [create a copy of the repo with filtered history](#filter-repo-history).
 
 ## Installation
 
@@ -121,14 +120,17 @@ sh <(curl -s https://git.io/fjgIX) remove
 
 This installs the latest release of ReZipDoc into your local git repo.
 
-Make sure that CWD is the local git repo you want to install this filter to,
+Make sure you already have [installed the helper scripts](#install-helper-scripts)
+on your machine.
+
+Switch to the local git repo you want to install this filter to,
 for example:
 
 ```bash
 cd ~/src/myRepo/
 ```
 
-As explained in  [How to use](#how-to-use),
+As explained in [How to use](#how-to-use),
 you now want to use one of the following:
 
 1. Install the diff viewer
@@ -146,7 +148,7 @@ you now want to use one of the following:
 	If you [filter the repo history](#filter-repo-history),
 	the freshly created, filtered repo will already have the filter installed as above.
 
-To uninstall the diff viewer and/or filter:
+To uninstall the diff viewer and/or filter, run:
 
 ```bash
 rezipdoc-repo-tool.sh remove
