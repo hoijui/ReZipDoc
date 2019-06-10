@@ -143,7 +143,8 @@ fi
 ${repo_tool} --check > /dev/null 2> /dev/null
 if [ $? -ne 0 ]
 then
-	${repo_tool} install --commit --diff --renormalize
+	${repo_tool} install --commit --diff --renormalize \
+		|| ( >&2 echo "Failed installing filter!"; exit 2 )
 fi
 
 git checkout --orphan ${branch}_filtered
