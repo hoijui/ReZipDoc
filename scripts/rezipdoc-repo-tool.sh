@@ -224,9 +224,9 @@ else
 		# Delete previously downloaded versions
 		rm -f "$binary_file_glob"
 
-		target_dir="${this_script_dir}/../target"
+		mvn_target_dir="${this_script_dir}/../target"
 		# Try to get the latest version, in case there are multiple ones
-		local_binary=`find "$target_dir" -maxdepth 1 -type f -name "rezipdoc-*.jar" | grep -v "\-sources" | grep -v "\-javadoc" | sort --version-sort | tail -1`
+		local_binary=`find "$mvn_target_dir" -maxdepth 1 -type f -name "rezipdoc-*.jar" | grep -v "\-sources" | grep -v "\-javadoc" | sort --version-sort | tail -1`
 		if [ "$use_local_binary_if_available" = "true" -a "$local_binary" != "" ]
 		then
 			cp "$local_binary" ./
