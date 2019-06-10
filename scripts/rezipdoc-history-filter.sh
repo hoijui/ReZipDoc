@@ -70,7 +70,7 @@ do
 			num_commits_max=$2
 			shift # past argument
 			;;
-		-o|--orig-msg)
+		-o|--orig)
 			use_orig_commit="true"
 			;;
 		-s|--source)
