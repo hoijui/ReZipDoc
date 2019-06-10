@@ -15,12 +15,10 @@ you probably want to use __ReZipDoc__.
 * [Project state](#project-state)
 * [How to use](#how-to-use)
 * [Installation](#installation)
-	* [quick & dirty](#installing-with-one-liner) (*nix only, latest release)
-	* [recommended](#installing-scripts-locally) (*nix only, latest release)
-	* [manual](#installing-manually) (latest sources)
+	* [helper scripts](#install-helper-scripts) (once per developer machine)
+	* [diff viewer or filter](#install-diff-viewer-or-filter) (once per repo)
+	* [manual](#install-filter-manually) (latest sources)
 * [Filter repo history](#filter-repo-history)
-	* [quick & dirty](#filter-with-one-liner)  (*nix only, latest release)
-	* [recommended](#filter-with-local-scripts) (*nix only, latest release)
 * [Culprits](#culprits)
 * [Motivation](#motivation)
 * [How it works](#how-it-works)
@@ -74,200 +72,188 @@ then you probably want to use ReZipDoc in one of these three ways:
 
 ## Installation
 
-This program requires Java JRE 8 or newer.
+The filter and diff tool require Java 8 or newer.
 
-You may choose between these installation options:
+The helper scripts - which are mostly used for installing the filter -
+require a POSIX (~= Unix) environment.
+This is the case on OSX, Linux, BSD, Unix and even Windows, if git is installed.
 
-* [quick & dirty](#installing-with-one-liner) (*nix only, latest release)
-* [recommended](#installing-scripts-locally) (*nix only, latest release)
-* [manual](#installing-manually) (latest sources)
+The recommended procedure is to
+[install the helper scripts](#install-helper-scripts) once,
+and then use them to comfortably install the filter into local git repos.
 
-(*nix only) means, that to use this method,
-you need a Unix/Linux environment on your system,
-which is the case on OSX, Linux, Unix and even Windows, if git is installed.
-
-### Installing with one-liner
-
-```bash
-cd ~/src/myRepo/
-sh <(curl -s https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-repo-tool.sh) install --commit --diff --renormalize
-```
-
-### Installing scripts locally
-
-This installs the latest release of ReZipDoc into your local git repo.
-
+---
 __NOTE__
 This downloads and executes an online script onto your machine,
 which is a potential security risk.
 You may want to check-out the script before running it.
+---
 
-We will install the script to the local user directory,
-so you may use it to easily install the filter to multiple local repos.
-If this is not yet the case, you may want to create the dir `$HOME/bin`
-and put it in your `PATH` env:
+### Install helper scripts
 
+They get installed into `~/bin/`,
+and if the directory did not exist before,
+it will get added to `PATH`.
+
+<!--
+	https://git.io/fjgIX
+is a short URL created with 
+	https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-scripts-tool.sh
+	curl -s -i https://git.io -F "url=https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-scripts-tool.sh" | grep "Location:" | sed 's/.* //'
+-->
+
+To install:
 ```bash
-# Create the users 'bin' directory
-mkdir -p $HOME/bin
-# add it to the PATH in the current shell
-export PATH="$PATH:$HOME/bin"
-# add it to the PATH after boot
-echo "export PATH=\"\$PATH:\$HOME/bin\"" >> ~/.profile
+sh <(curl -s https://git.io/fjgIX) install --path
 ```
 
-Download/Install the filter installer script:
-
+To update (to latest development version):
 ```bash
-# download the script
-curl -s "https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-repo-tool.sh" \
-	-o "$HOME/bin/rezipdoc-repo-tool.sh"
-# (optional) inspect the script to make sure it is no mal-ware
-#$EDITOR "$HOME/bin/rezipdoc-repo-tool.sh"
-# mark it as executable
-chmo +x "$HOME/bin/rezipdoc-repo-tool.sh"
+sh <(curl -s https://git.io/fjgIX) update --dev
 ```
 
-Now to actually install the filter in a specific local repo,
-make sure that CWD is the local git repo you want to install this filter to,
-and install it:
+To remove:
+```bash
+sh <(curl -s https://git.io/fjgIX) remove
+```
+
+### Install diff viewer or filter
+
+This installs the latest release of ReZipDoc into your local git repo.
+
+Make sure that CWD is the local git repo you want to install this filter to,
+for example:
 
 ```bash
 cd ~/src/myRepo/
-rezipdoc-repo-tool.sh install --commit --diff --renormalize
 ```
 
-To uninstall:
+As explained in  [How to use](#how-to-use),
+you now want to use one of the following:
+
+1. Install the diff viewer
+
+	```bash
+	rezipdoc-repo-tool.sh install --diff
+	```
+2. Install the filter
+
+	```bash
+	rezipdoc-repo-tool.sh install --commit --renormalize
+	```
+3. Filter the history & install the filter
+
+	If you [filter the repo history](#filter-repo-history),
+	the freshly created, filtered repo will already have the filter installed as above.
+
+To uninstall the diff viewer and/or filter:
 
 ```bash
-cd ~/src/myRepo/
 rezipdoc-repo-tool.sh remove
 ```
 
-### Installing manually
+#### Install filter manually
 
-#### 1. Build the JAR
+Only use this if you can not use [the above](#install-diff-viewer-or-filter), for some reason.
 
-Run this in bash:
+1. Build the JAR
+	
+	Run this in bash:
+	
+	```bash
+	cd
+	mkdir -p src
+	cd src
+	git clone git@github.com:hoijui/ReZipDoc.git
+	cd ReZipDoc
+	mvn package
+	echo "Created ReZipDoc binary:"
+	ls -1 $PWD/target/rezipdoc-*.jar
+	```
 
-```bash
-cd
-mkdir -p src
-cd src
-git clone git@github.com:hoijui/ReZipDoc.git
-cd ReZipDoc
-mvn package
-echo "Created ReZipDoc binary:"
-ls -1 $PWD/target/rezipdoc-*.jar
-```
+2. Install the JAR
 
-#### 2. Install the JAR
+	Store _rezipdoc-\*.jar_ somewhere locally, either:
+	
+	 * (global) in your home directory, for example under _~/bin/_
+	 * (repo - tracked) in your repository, tracked, for example under _<repo-root>/tools/_
+	 * (repo - local) __recommended__ in your repository, locally only, under _<repo-root>/.git/_
 
-Store _rezipdoc-\*.jar_ somewhere locally, either:
+3. Install the Filter(s)
 
- * (global) in your home directory, for example under _~/bin/_
- * (repo - tracked) in your repository, tracked, for example under _<repo-root>/tools/_
- * (repo - local) __recommended__ in your repository, locally only, under _<repo-root>/.git/_
+	execute these lines:
+	
+	```bash
+	# Install the add/commit filter
+	git config --replace-all filter.reZip.clean "java -cp .git/rezipdoc-*.jar io.github.hoijui.rezipdoc.ReZip --uncompressed"
+	
+	# (optionally) Install the checkout filter
+	git config --replace-all filter.reZip.smudge "java -cp .git/rezipdoc-*.jar io.github.hoijui.rezipdoc.ReZip --compressed"
+	
+	# (optionally) Install the diff filter
+	git config --replace-all diff.zipDoc.textconv "java -cp .git/rezipdoc-*.jar io.github.hoijui.rezipdoc.ZipDoc"
+	```
 
-#### 3. Install the Filter(s)
+4. Enable the filters
 
-execute these lines:
-
-```bash
-# Install the add/commit filter
-git config --replace-all filter.reZip.clean "java -cp .git/rezipdoc-*.jar io.github.hoijui.rezipdoc.ReZip --uncompressed"
-
-# (optionally) Install the checkout filter
-git config --replace-all filter.reZip.smudge "java -cp .git/rezipdoc-*.jar io.github.hoijui.rezipdoc.ReZip --compressed"
-
-# (optionally) Install the diff filter
-git config --replace-all diff.zipDoc.textconv "java -cp .git/rezipdoc-*.jar io.github.hoijui.rezipdoc.ZipDoc"
-```
-
-#### 4. Enable the filters
-
-In one of these files:
-
-* (global) _${HOME}/.gitattributes_
-* (repo - tracked) _<repo-root>/.gitattributes_
-* (repo - local) __recommended__ _<repo-root>/.git/info/attributes_
-
-Assign attributes to paths:
-
-```bash
-# This forces git to treat files as if they were text-based (for example in diffs)
-[attr]textual     diff merge text
-# This makes git re-zip ZIP files uncompressed on commit
-# NOTE See the ReZipDoc README for how to install the required git filter
-[attr]reZip       textual filter=reZip
-# This makes git visualize ZIP files as uncompressed text with some meta info
-# NOTE See the ReZipDoc README for how to install the required git filter
-[attr]zipDoc      textual diff=zipDoc
-# This combines in-history decompression and uncompressed view of ZIP files
-[attr]reZipDoc    reZip zipDoc
-
-# MS Office
-*.docx   reZipDoc
-*.xlsx   reZipDoc
-*.pptx   reZipDoc
-# OpenOffice
-*.odt    reZipDoc
-*.ods    reZipDoc
-*.odp    reZipDoc
-# Misc
-*.mcdx   reZipDoc
-*.slx    reZipDoc
-# Archives
-*.zip    reZipDoc
-# Java archives
-*.jar    reZipDoc
-# FreeCAD files
-*.fcstd  reZipDoc
-```
+	In one of these files:
+	
+	* (global) _${HOME}/.gitattributes_
+	* (repo - tracked) _<repo-root>/.gitattributes_
+	* (repo - local) __recommended__ _<repo-root>/.git/info/attributes_
+	
+	Assign attributes to paths:
+	
+	```bash
+	# This forces git to treat files as if they were text-based (for example in diffs)
+	[attr]textual     diff merge text
+	# This makes git re-zip ZIP files uncompressed on commit
+	# NOTE See the ReZipDoc README for how to install the required git filter
+	[attr]reZip       textual filter=reZip
+	# This makes git visualize ZIP files as uncompressed text with some meta info
+	# NOTE See the ReZipDoc README for how to install the required git filter
+	[attr]zipDoc      textual diff=zipDoc
+	# This combines in-history decompression and uncompressed view of ZIP files
+	[attr]reZipDoc    reZip zipDoc
+	
+	# MS Office
+	*.docx   reZipDoc
+	*.xlsx   reZipDoc
+	*.pptx   reZipDoc
+	# OpenOffice
+	*.odt    reZipDoc
+	*.ods    reZipDoc
+	*.odp    reZipDoc
+	# Misc
+	*.mcdx   reZipDoc
+	*.slx    reZipDoc
+	# Archives
+	*.zip    reZipDoc
+	# Java archives
+	*.jar    reZipDoc
+	# FreeCAD files
+	*.fcstd  reZipDoc
+	```
 
 ## Filter repo history
 
-_NOTE_
+This always creates a new copy of the repository.
+
+__NOTE__
 This only filters a single branch.
 
-Use either of these methods:
+Make sure you have the [helper scripts installed](#install-helper-scripts) and in your `PATH`.
 
-* [quick & dirty](#filter-with-one-liner)  (*nix only, latest release)
-* [recommended](#filter-with-local-scripts) (*nix only, latest release)
-
-### Filter with one-liner
-
-```bash
-cd ~/src/myRepo/
-sh <(curl -s https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-history-filter.sh) \
-	--source . --branch master --target ../myRepo_filtered
-```
-
-### Filter with local scripts
-
-This downloads the filter script and filters the `master` branch
-of the repo at `pwd` into the new repo "../myRepo\_filtered".
-
-Before proceeding, please follow [the recommended installation instructions](#installing-scripts-locally).
-Then install the repo filtering script:
+This filters the `master` branch of the repo at `~/src/myRepo`
+into a new local repo `~/src/myRepo_filtered`,
+using the original commit messages, authors and dates:
 
 ```bash
-curl -s "https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-history-filter.sh" \
-	-o "$HOME/bin/rezipdoc-history-filter.sh"
-# (optional) inspect the script to make sure it is no mal-ware
-#$EDITOR "$HOME/bin/rezipdoc-history-filter.sh"
-# mark it as executable
-chmo +x "$HOME/bin/rezipdoc-history-filter.sh"
-```
-
-Now you can filter any git repo into a local clone:
-
-```bash
-cd ~/src/myRepo/
 rezipdoc-history-filter.sh \
-	--source . \
+	--source ~/src/myRepo \
 	--branch master \
-	--target ../myRepo_filtered
+	--orig \
+	--target ~/src/myRepo_filtered
 ```
 
 It also works with an online source:
@@ -276,8 +262,12 @@ It also works with an online source:
 rezipdoc-history-filter.sh \
 	--source "https://github.com/case06/ZACplus.git" \
 	--branch master \
-	--target ZACplus_filtered
+	--orig \
+	--target /tmp/ZACplus_filtered
 ```
+
+After doing this, the new, filtered repo will already have the filter installed,
+so future commits will be filtered.
 
 ## Culprits
 

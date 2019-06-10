@@ -37,6 +37,7 @@ scripts_install_dir="$HOME/bin"
 script_names='rezipdoc-repo-tool.sh rezipdoc-history-filter.sh'
 # Whether to use latest development scripts, or the stable (last release) versions
 enable_development="false"
+enable_path="false"
 java_pkg="io.github.hoijui.rezipdoc"
 maven_group="$java_pkg"
 maven_artifact="rezipdoc"
@@ -63,9 +64,10 @@ printUsage() {
 	echo "    check       check whether the scripts are installed"
 	echo
 	echo "Options:"
-	echo "    --dev       when installing or updating, install the latest dev scripts,"
+	echo "    --dev       (install|update) when installing or updating, install the latest dev scripts,"
 	echo "                instead of stable"
-	echo "    --dry       show what would be done, instead of actually doing anything"
+	echo "    --dry       (install|remove|update) show what would be done, instead of actually doing anything"
+	echo "    --path      (install) add the install directory to PATH in the current shell and after reboot"
 }
 
 set_action() {
@@ -101,10 +103,28 @@ do
 			set_action "check"
 			;;
 		--dev)
+			if [ "$action" = "remove" -o "$action" = "check" ]
+			then
+				>&2 echo "Action '$action' does not support '--dev'."
+				exit 2
+			fi
 			enable_development="true"
 			;;
 		--dry)
+			if [ "$action" = "check" ]
+			then
+				>&2 echo "Action '$action' does not support '--dry'"
+				exit 2
+			fi
 			dry_prefix="echo"
+			;;
+		--path)
+			if [ "$action" = "remove" -o "$action" = "update" ]
+			then
+				>&2 echo "Action '$action' does not support '--path'"
+				exit 2
+			fi
+			enable_path="true"
 			;;
 		*)
 			# unknown option / not an option
@@ -125,33 +145,28 @@ then
 fi
 if [ "$action" = "update" ]
 then
+	update_args=""
+	if [ "$dry_prefix" != "" ]
+	then
+		update_args="$update_args --dry"
+	fi
+
 	install_args=""
 	if [ "$enable_development" = "true" ]
 	then
-		install_args="install_args --dev"
+		install_args="$install_args --dev"
 	fi
+
 	# Call ourselves recursively
-	$0 remove \
-		&& $0 install ${install_args}
+	$0 remove ${update_args} \
+		&& $0 install ${update_args} ${install_args}
 	exit $?
 fi
 
 # If we got so far, it means that 'action' is set to 'check|install\remove'
 
 extra_info=""
-if [ "$action" = "check" ]
-then
-	if [ "$enable_development" = "true" ]
-	then
-		>&2 echo "Version checking is not implemented, you may not use --dev"
-		exit 2
-	fi
-	if [ "$dry_prefix" != "" ]
-	then
-		>&2 echo "Checking does not modify anything; no need to specify --dry"
-		exit 2
-	fi
-elif [ "$action" = "install" ]
+if [ "$action" = "install" ]
 then
 	if [ "$enable_development" = "true" ]
 	then
@@ -160,20 +175,42 @@ then
 		version=`curl -s "$metadata_url" | grep '<latest>' | sed 's/.*<latest>//' | sed 's/<\/latest>.*//'`
 	fi
 	extra_info="$extra_info (version: $version)"
-elif [ "$action" = "remove" ]
-then
-	if [ "$enable_development" = "true" ]
-	then
-		>&2 echo "This always removes the whole filter installation;"
-		>&2 echo "no need to specify --dev."
-		exit 2
-	fi
 fi
 
 echo "`basename $0` action: ${action}ing$extra_info ..."
 
 exit_state=0
 
+dir_in_path() {
+
+	dir="$1"
+	ret=1
+	case :$PATH:
+		in *:${dir}:*) ret=0
+	esac
+	return ${ret}
+}
+
+# global checks
+if [ "$action" = "check" -a "$enable_path" = "true" ]
+then
+	if [ -e "$scripts_install_dir" ]
+	then
+		echo "install directory exists:         '$scripts_install_dir'"
+	else
+		echo "install directory does not exist: '$scripts_install_dir'"
+		exit_state=1
+	fi
+	if dir_in_path "$scripts_install_dir"
+	then
+		echo "install directory is in PATH:     '$scripts_install_dir'"
+	else
+		echo "install directory is not in PATH: '$scripts_install_dir'"
+		exit_state=1
+	fi
+fi
+
+# per script-file checks
 for script_name in ${script_names}
 do
 	if [ "$action" = "check" ]
@@ -187,7 +224,7 @@ do
 		fi
 	elif [ "$action" = "install" ]
 	then
-		if [ ! -f "$scripts_install_dir" ]
+		if [ ! -e "$scripts_install_dir" ]
 		then
 			echo    "creating scripts install dir: '$scripts_install_dir' ..."
 			${dry_prefix} mkdir -p "$scripts_install_dir"
@@ -195,6 +232,9 @@ do
 			exit_state=`expr ${exit_state} + ${install_state}`
 			[ ${install_state} -eq 0 ] \
 				&& echo "done" || echo "failed!"
+		fi
+		if [ "$enable_path" = "true" -a -e "$scripts_install_dir" ]
+		then
 			echo    "adding scripts install dir to PATH ..."
 			${dry_prefix} export PATH="$PATH:$scripts_install_dir"
 			profile_file="$HOME/.profile"
