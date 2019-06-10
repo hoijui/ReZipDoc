@@ -209,6 +209,30 @@ then
 		exit_state=1
 	fi
 fi
+if [ "$action" = "install" -a "$enable_path" = "true" ]
+then
+	if [ ! -e "$scripts_install_dir" ]
+	then
+		echo    "creating scripts install dir: '$scripts_install_dir' ..."
+		${dry_prefix} mkdir -p "$scripts_install_dir"
+		install_state=$?
+		exit_state=`expr ${exit_state} + ${install_state}`
+		[ ${install_state} -eq 0 ] \
+			&& echo "done" || echo "failed!"
+	fi
+	if [ "$enable_path" = "true" -a -e "$scripts_install_dir" ]
+	then
+		echo    "adding scripts install dir to PATH ..."
+		${dry_prefix} export PATH="$PATH:$scripts_install_dir"
+		profile_file="$HOME/.profile"
+		[ "${dry_prefix}" != "" ] && profile_file="/dev/stdout"
+		echo 'export $PATH="$PATH:'${scripts_install_dir}'"' >> ${profile_file}
+		install_state=$?
+		exit_state=`expr ${exit_state} + ${install_state}`
+		[ ${install_state} -eq 0 ] \
+			&& echo "done" || echo "failed!"
+	fi
+fi
 
 # per script-file checks
 for script_name in ${script_names}
@@ -224,27 +248,6 @@ do
 		fi
 	elif [ "$action" = "install" ]
 	then
-		if [ ! -e "$scripts_install_dir" ]
-		then
-			echo    "creating scripts install dir: '$scripts_install_dir' ..."
-			${dry_prefix} mkdir -p "$scripts_install_dir"
-			install_state=$?
-			exit_state=`expr ${exit_state} + ${install_state}`
-			[ ${install_state} -eq 0 ] \
-				&& echo "done" || echo "failed!"
-		fi
-		if [ "$enable_path" = "true" -a -e "$scripts_install_dir" ]
-		then
-			echo    "adding scripts install dir to PATH ..."
-			${dry_prefix} export PATH="$PATH:$scripts_install_dir"
-			profile_file="$HOME/.profile"
-			[ "${dry_prefix}" != "" ] && profile_file="/dev/stdout"
-			echo 'export $PATH="$PATH:'${scripts_install_dir}'"' >> ${profile_file}
-			install_state=$?
-			exit_state=`expr ${exit_state} + ${install_state}`
-			[ ${install_state} -eq 0 ] \
-				&& echo "done" || echo "failed!"
-		fi
 		if [ -f "$scripts_install_dir/$script_name" ]
 		then
 			echo    "was already installed:          $script_name"
