@@ -227,7 +227,7 @@ then
 		${dry_prefix} export PATH="$PATH:$scripts_install_dir"
 		profile_file="$HOME/.profile"
 		[ "${dry_prefix}" != "" ] && profile_file="/dev/stdout"
-		echo 'export $PATH="$PATH:'${scripts_install_dir}'"' >> ${profile_file}
+		echo 'export PATH="$PATH:'${scripts_install_dir}'"' >> ${profile_file}
 		install_state=$?
 		exit_state=`expr ${exit_state} + ${install_state}`
 		[ ${install_state} -eq 0 ] \
