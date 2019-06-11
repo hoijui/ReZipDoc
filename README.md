@@ -96,7 +96,7 @@ it will get added to `PATH`.
 
 <!--
 	https://git.io/fjgIX
-is a short URL created with 
+is a short URL created with
 	https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-scripts-tool.sh
 	curl -s -i https://git.io -F "url=https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-scripts-tool.sh" | grep "Location:" | sed 's/.* //'
 -->
@@ -159,9 +159,9 @@ rezipdoc-repo-tool.sh remove
 Only use this if you can not use [the above](#install-diff-viewer-or-filter), for some reason.
 
 1. Build the JAR
-	
+
 	Run this in bash:
-	
+
 	```bash
 	cd
 	mkdir -p src
@@ -176,7 +176,7 @@ Only use this if you can not use [the above](#install-diff-viewer-or-filter), fo
 2. Install the JAR
 
 	Store _rezipdoc-\*.jar_ somewhere locally, either:
-	
+
 	 * (global) in your home directory, for example under _~/bin/_
 	 * (repo - tracked) in your repository, tracked, for example under _<repo-root>/tools/_
 	 * (repo - local) __recommended__ in your repository, locally only, under _<repo-root>/.git/_
@@ -184,14 +184,14 @@ Only use this if you can not use [the above](#install-diff-viewer-or-filter), fo
 3. Install the Filter(s)
 
 	execute these lines:
-	
+
 	```bash
 	# Install the add/commit filter
 	git config --replace-all filter.reZip.clean "java -cp .git/rezipdoc-*.jar io.github.hoijui.rezipdoc.ReZip --uncompressed"
-	
+
 	# (optionally) Install the checkout filter
 	git config --replace-all filter.reZip.smudge "java -cp .git/rezipdoc-*.jar io.github.hoijui.rezipdoc.ReZip --compressed"
-	
+
 	# (optionally) Install the diff filter
 	git config --replace-all diff.zipDoc.textconv "java -cp .git/rezipdoc-*.jar io.github.hoijui.rezipdoc.ZipDoc"
 	```
@@ -199,13 +199,13 @@ Only use this if you can not use [the above](#install-diff-viewer-or-filter), fo
 4. Enable the filters
 
 	In one of these files:
-	
+
 	* (global) _${HOME}/.gitattributes_
 	* (repo - tracked) _<repo-root>/.gitattributes_
 	* (repo - local) __recommended__ _<repo-root>/.git/info/attributes_
-	
+
 	Assign attributes to paths:
-	
+
 	```bash
 	# This forces git to treat files as if they were text-based (for example in diffs)
 	[attr]textual     diff merge text
@@ -217,7 +217,7 @@ Only use this if you can not use [the above](#install-diff-viewer-or-filter), fo
 	[attr]zipDoc      textual diff=zipDoc
 	# This combines in-history decompression and uncompressed view of ZIP files
 	[attr]reZipDoc    reZip zipDoc
-	
+
 	# MS Office
 	*.docx   reZipDoc
 	*.xlsx   reZipDoc
