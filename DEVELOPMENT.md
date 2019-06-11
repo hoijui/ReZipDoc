@@ -129,7 +129,7 @@ Make sure to set `release_tag` to the actual tag.
 release_tag="rezipdoc-0.2"
 git push origin master "$release_tag"
 mvn release:perform
-mvn deploy -P release
+mvn deploy
 ```
 
 This does the following:
@@ -139,6 +139,7 @@ This does the following:
 * builds
 * deploy into Sonatype staging repository
 * promote it on Maven Central repository
+* release a SNAPSHOT with the new version
 
 This last step should take no more then 4h.
 
