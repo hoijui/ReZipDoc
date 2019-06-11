@@ -19,6 +19,7 @@ you probably want to use __ReZipDoc__.
 	* [diff viewer or filter](#install-diff-viewer-or-filter) (once per repo)
 	* [manual](#install-filter-manually) (latest sources)
 * [Filter repo history](#filter-repo-history)
+* [Filtering example](#filtering-example-zacplus)
 * [Culprits](#culprits)
 * [Motivation](#motivation)
 * [How it works](#how-it-works)
@@ -270,6 +271,31 @@ rezipdoc-history-filter.sh \
 
 After doing this, the new, filtered repo will already have the filter installed,
 so future commits will be filtered.
+
+### Filtering example (ZACplus)
+
+We are going to run
+[a script that filters the Zinc-Oxide Open Hardware battery project repo](
+https://github.com/hoijui/ReZipDoc/blob/master/scripts/rezipdoc-sample-session-ZACplus.sh),
+which has a header comment explaining what it does in detail.
+
+In short, it downloads ReZipDoc helper scripts to `~/bin`,
+adds that dir to `PATH` if it is not there yet,
+creates temporary git repos in `/tmp/`,
+and generates some command-line output.
+
+Run it like this:
+
+<!--
+	https://git.io/fjgR5
+is a short URL created with
+	https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-sample-session-ZACplus.sh
+	curl -s -i https://git.io -F "url=https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-sample-session-ZACplus.sh" | grep "Location:" | sed 's/.* //'
+-->
+
+```bash
+curl -s -L https://git.io/fjgR5 | sh -s
+```
 
 ## Culprits
 
