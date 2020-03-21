@@ -1,6 +1,30 @@
 # ReZipDoc
 
-If you are storing ZIP based files in your `git` repo,
+A _repack uncompressed_ & _diff visualizer_ for ZIP based files stored in git repos.
+
+Most
+[<img alt="git" src="https://upload.wikimedia.org/wikipedia/commons/e/e0/Git-logo.svg" height="20" align="center" />](
+https://git-scm.com/)
+repos hosting
+[<img alt="Open Source Hardware" src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Open-source-hardware-logo.svg" height="80" align="center" />](
+https://en.wikipedia.org/wiki/Open-source_hardware)
+should use [__ReZipDoc__](https://github.com/hoijui/ReZipDoc).
+
+## What is this?
+
+[git](https://git-scm.com/) does not like binary files.
+They makes the repo grow fast in size in MB (see [delta compression](https://en.wikipedia.org/wiki/Delta_encoding)),
+and when you try to see what changed in them in a commit, you only get this:
+
+> Binary files _A_ and _B_ differ!
+
+... not very useful!
+
+__ReZipDoc__ solves both of these issues, though only for ZIP based files --
+like for example FreeCAD and LibreOffice files --
+not all binary ones.
+
+So if you are storing ZIP based files in your `git` repo,
 you probably want to use __ReZipDoc__.
 
 ---
