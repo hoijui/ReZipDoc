@@ -52,7 +52,7 @@ printUsage() {
 }
 
 # Handle command line arguments
-while [ ${#} -gt 0 ]
+while [ $# -gt 0 ]
 do
 	opName="$1"
 	case ${opName} in

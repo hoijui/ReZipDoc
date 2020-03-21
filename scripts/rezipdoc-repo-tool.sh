@@ -98,7 +98,7 @@ set_action() {
 }
 
 # Handle command line arguments
-while [ ${#} -gt 0 ]
+while [ $# -gt 0 ]
 do
 	option="$1"
 	case ${option} in
