@@ -5,7 +5,7 @@ addons:
   sonarcloud:
     organization: "hoijui-github"
     token:
-      secure: "6b0921904f3f9b1a695f964b912e9c93594c36a7"
+      secure: ${SONAR_TOKEN}
 
 jdk:
 # Only test one JDK to save energy
