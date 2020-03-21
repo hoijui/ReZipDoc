@@ -108,6 +108,9 @@ You may want to check-out the script before running it.
 
 ### Install helper scripts
 
+> __NOTE__\
+This has to be done once per developer machine.
+
 They get installed into `~/bin/`,
 and if the directory did not exist before,
 it will get added to `PATH`.
@@ -135,6 +138,9 @@ curl -s -L https://git.io/fjgIX | sh -s remove
 ```
 
 ### Install diff viewer or filter
+
+> __NOTE__\
+This has to be done once per repo.
 
 This installs the latest release of ReZipDoc into your local git repo.
 
