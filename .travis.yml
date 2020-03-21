@@ -4,8 +4,7 @@ sudo: false # faster builds
 addons:
   sonarcloud:
     organization: "hoijui-github"
-    token:
-      secure: ${SONAR_TOKEN}
+    token: ${SONAR_TOKEN}
 
 jdk:
 # Only test one JDK to save energy
