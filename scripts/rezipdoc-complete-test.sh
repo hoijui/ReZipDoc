@@ -25,7 +25,7 @@
 
 pwd_before=$(pwd)
 this_script_file=$(basename $0)
-this_script_dir=$(cd `dirname $0`; pwd)
+this_script_dir=$(cd $(dirname $0); pwd)
 
 # Settings and default values
 source_repo="."
@@ -34,14 +34,14 @@ add_archive_src="true"
 num_commits_max=1000
 
 printUsage() {
-	echo "`basename $0` - This script does:"
+	echo "$(basename $0) - This script does:"
 	echo "* create one or multiple repositories including archives"
 	echo "* filters all of them with ReZip(Doc)"
 	echo "* creates a report about the original and filtered repository sizes"
 	echo "Think of it as a performance demo."
 	echo
 	echo "Usage:"
-	echo "    `basename $0` [OPTIONS]"
+	echo "    $(basename $0) [OPTIONS]"
 	echo
 	echo "Options:"
 	echo "    -h, --help               show this help message"
@@ -168,22 +168,22 @@ create_bare_repo() {
 check_git_repo_size() {
 
 	orig_repo="$1"
-	bare_repo="/tmp/rezipdoc-test-`basename \"$orig_repo\"`-bare-$rnd"
+	bare_repo="/tmp/rezipdoc-test-$(basename \"$orig_repo\")-bare-$rnd"
 
 	create_bare_repo "${orig_repo}" "${bare_repo}"
 
 	du=/usr/bin/du
-	repo_size_human=`${du} -sh "${bare_repo}" | sed 's/[ \t].*//'`
-	repo_size_apparent=`${du} -sb "${bare_repo}" | sed 's/[ \t].*//'`
-	repo_size_raw=`${du} -s "${bare_repo}" | sed 's/[ \t].*//'`
+	repo_size_human=$(${du} -sh "${bare_repo}" | sed 's/[ \t].*//')
+	repo_size_apparent=$(${du} -sb "${bare_repo}" | sed 's/[ \t].*//')
+	repo_size_raw=$(${du} -s "${bare_repo}" | sed 's/[ \t].*//')
 
 	rm -Rf "${bare_repo}"
 
 	echo "$repo_size_human\t$repo_size_raw\t$repo_size_apparent"
 }
 
-size_archive=`check_git_repo_size "${archive_repo}"`
-size_filtered=`check_git_repo_size "${filtered_repo}"`
+size_archive=$(check_git_repo_size "${archive_repo}")
+size_filtered=$(check_git_repo_size "${filtered_repo}")
 
 cd "$pwd_before"
 

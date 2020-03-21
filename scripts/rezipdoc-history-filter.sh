@@ -25,7 +25,7 @@
 
 pwd_before=$(pwd)
 this_script_file=$(basename $0)
-this_script_dir=$(cd `dirname $0`; pwd)
+this_script_dir=$(cd $(dirname $0); pwd)
 
 # Settings and default values
 source_repo=""
@@ -34,14 +34,14 @@ num_commits_max=1000
 use_orig_commit="false"
 branch="master"
 repo_tool_url="https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-repo-tool.sh"
-repo_tool_file_name=`basename "$repo_tool_url"`
+repo_tool_file_name=$(basename "$repo_tool_url")
 
 printUsage() {
-	echo "`basename $0` - Creates a local clone of a repo, and filters"
+	echo "$(basename $0) - Creates a local clone of a repo, and filters"
 	echo "the main branch with ReZip(Doc)."
 	echo
 	echo "Usage:"
-	echo "    `basename $0` [OPTIONS]"
+	echo "    $(basename $0) [OPTIONS]"
 	echo
 	echo "Options:"
 	echo "    -h, --help               show this help message"
@@ -116,7 +116,7 @@ source_is_url="true"
 [ "$source_is_url" = "true" ] && source_type="local repo" || source_type="URL"
 
 # If the source repo is a local directory, make the path to it absolute
-[ "$source_is_url" != "true" ] && source_repo="`cd \"$source_repo\"; pwd`"
+[ "$source_is_url" != "true" ] && source_repo="$(cd \"$source_repo\"; pwd)"
 
 echo "Source repo:  '${source_repo}' ($source_type)"
 echo "Branch:       ${branch}"
@@ -135,7 +135,7 @@ then
 	repo_tool="$this_script_dir/$repo_tool_file_name"
 else
 	rnd=$(od -A n -t d -N 1 /dev/urandom | tr -d ' ')
-	repo_tool="/tmp/`basename --suffix='.sh' \"$repo_tool_file_name\"`-${rnd}.sh"
+	repo_tool="/tmp/$(basename --suffix='.sh' \"$repo_tool_file_name\")-${rnd}.sh"
 	curl -s "$repo_tool_url" -o "$repo_tool"
 fi
 
@@ -154,7 +154,7 @@ num_commits=$(git log -${num_commits_max} --format="%H" --reverse source/${branc
 i=0
 for commit_hash in $(git log -${num_commits_max} --format="%H" --reverse source/${branch})
 do
-	i=`expr ${i} + 1`
+	i=$(expr ${i} + 1)
 	echo
 	echo "############################################################"
 	echo "Copying & filtering commit ${i}/${num_commits} - ${commit_hash} ..."
@@ -163,10 +163,10 @@ do
 	commit_args=""
 	if [ "$use_orig_commit" = "true" ]
 	then
-		#commit_msg=`git log -1 --format="%s%n%n%b" ${commit_hash}`
+		#commit_msg=$(git log -1 --format="%s%n%n%b" ${commit_hash})
 		commit_args="$commit_args --reuse-message=${commit_hash}"
 	else
-		commit_msg=`git log -1 --format="FILTERED - %s%n%n orig=%h%n%n%b" ${commit_hash}`
+		commit_msg=$(git log -1 --format="FILTERED - %s%n%n orig=%h%n%n%b" ${commit_hash})
 		# We have to give the message through stdin,
 		# because otherwise the quoting somehow gets fucked up (by sh)
 		commit_args="$commit_args --file=-"

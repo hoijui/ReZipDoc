@@ -25,7 +25,7 @@
 
 pwd_before=$(pwd)
 this_script_file=$(basename $0)
-this_script_dir=$(cd `dirname $0`; pwd)
+this_script_dir=$(cd $(dirname $0); pwd)
 
 # Settings and default values
 action=""
@@ -59,7 +59,7 @@ marker_end="# END $gen_token"
 header_note="# NOTE Do not manually edit this section; it was generated with $this_script_file"
 
 printUsage() {
-	echo "`basename $0` - This installs (or removes) a custom git filter"
+	echo "$(basename $0) - This installs (or removes) a custom git filter"
 	echo "and a diff tool to the local repo, which make using"
 	echo "ZIP based archives more git-workflow friendly."
 	echo
@@ -70,7 +70,7 @@ printUsage() {
 	echo "     meaning it is not versioned."
 	echo
 	echo "Usage:"
-	echo "    `basename $0` ACTION [OPTIONS]"
+	echo "    $(basename $0) ACTION [OPTIONS]"
 	echo
 	echo "Actions:"
 	echo "    -h, --help  show this help message"
@@ -195,7 +195,7 @@ else
 	fi
 fi
 
-echo "`basename $0` action: ${action}ing ..."
+echo "$(basename $0) action: ${action}ing ..."
 
 # Install our binary (the JAR)
 pre_text="git filter and diff binary -"
@@ -226,7 +226,7 @@ else
 
 		mvn_target_dir="${this_script_dir}/../target"
 		# Try to get the latest version, in case there are multiple ones
-		local_binary=`find "$mvn_target_dir" -maxdepth 1 -type f -name "rezipdoc-*.jar" | grep -v "\-sources" | grep -v "\-javadoc" | sort --version-sort | tail -1`
+		local_binary=$(find "$mvn_target_dir" -maxdepth 1 -type f -name "rezipdoc-*.jar" | grep -v "\-sources" | grep -v "\-javadoc" | sort --version-sort | tail -1)
 		if [ "$use_local_binary_if_available" = "true" -a "$local_binary" != "" ]
 		then
 			cp "$local_binary" ./
@@ -236,14 +236,14 @@ else
 			# this results in a file like "rezipdoc-0.1.jar" in the CWD
 		fi
 
-		source_binary_file=`find -maxdepth 1 -name "rezipdoc-*.jar"`
+		source_binary_file=$(find -maxdepth 1 -name "rezipdoc-*.jar")
 
 		echo -n " using binary '$source_binary_file' ... "
 
 		# Extract the version from the release JAR name
-		version=`echo "$source_binary_file" | xargs basename --suffix='.jar' | sed -e 's/.*rezipdoc-//'`
+		version=$(echo "$source_binary_file" | xargs basename --suffix='.jar' | sed -e 's/.*rezipdoc-//')
 
-		binary_file=".git/`basename $source_binary_file`"
+		binary_file=".git/$(basename $source_binary_file)"
 
 		mv "$source_binary_file" "$binary_file"
 		[ $? -eq 0 ] \
@@ -434,7 +434,7 @@ fi
 
 # Set git merge renormalization
 pre_text="git merge renormalization -"
-renormalize_enabled=`git config --get merge.renormalize`
+renormalize_enabled=$(git config --get merge.renormalize)
 if [ "$renormalize_enabled" = "true" ]
 then
 	# Renormalization is enabled

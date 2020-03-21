@@ -25,7 +25,7 @@
 
 pwd_before=$(pwd)
 this_script_file=$(basename $0)
-this_script_dir=$(cd `dirname $0`; pwd)
+this_script_dir=$(cd $(dirname $0); pwd)
 
 # Settings and default values
 add_archive_bin="false"
@@ -39,7 +39,7 @@ target_repo="/tmp/rezipdoc-archives-repo-${rnd}"
 tmp_repo="/tmp/rezipdoc-tmp-repo-${rnd}"
 
 printUsage() {
-	echo "`basename $0` - This creates a git repository with a lot of archives as content,"
+	echo "$(basename $0) - This creates a git repository with a lot of archives as content,"
 	echo "focusing on archives that contain mostly plain-text content that changes"
 	echo "non-radically over time."
 	echo
@@ -47,7 +47,7 @@ printUsage() {
 	echo "of this repo, plus some text files, and commit each change, if there was one."
 	echo
 	echo "Usage:"
-	echo "    `basename $0` [OPTIONS]"
+	echo "    $(basename $0) [OPTIONS]"
 	echo
 	echo "Options:"
 	echo "    -h, --help               show this help message"
@@ -151,7 +151,7 @@ num_commits=$(git log -${num_commits_max} --format="%H" --reverse origin/${branc
 i=0
 for commit_hash in $(git log -${num_commits_max} --format="%H" --reverse origin/${branch})
 do
-	i=`expr ${i} + 1`
+	i=$(expr ${i} + 1)
 	echo
 	echo "############################################################"
 	echo "Building commit ${i}/${num_commits} - ${commit_hash} ..."
@@ -164,7 +164,7 @@ do
 		rm -f target/*.jar
 		mvn package -DskipTests
 	fi
-	commit_msg=`git log -1 --format="ARCH - %s%n%n orig=%h%n%n%b" ${commit_hash}`
+	commit_msg=$(git log -1 --format="ARCH - %s%n%n orig=%h%n%n%b" ${commit_hash})
 
 	cd "$target_repo"
 	find -type f | grep -v "\.git" | xargs rm -Rf

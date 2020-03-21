@@ -58,14 +58,14 @@ create_bare_repo() {
 check_git_repo_size() {
 
 	repo_orig="$1"
-	bare_repo="/tmp/rezipdoc-test-`basename \"$repo_orig\"`-bare-$rnd"
+	bare_repo="/tmp/rezipdoc-test-$(basename \"$repo_orig\")-bare-$rnd"
 
 	create_bare_repo "${repo_orig}" "${bare_repo}"
 
 	du=/usr/bin/du
-	repo_size_human=`${du} -sh "${bare_repo}" | sed 's/[ \t].*//'`
-	repo_size_apparent=`${du} -sb "${bare_repo}" | sed 's/[ \t].*//'`
-	repo_size_raw=`${du} -s "${bare_repo}" | sed 's/[ \t].*//'`
+	repo_size_human=$(${du} -sh "${bare_repo}" | sed 's/[ \t].*//')
+	repo_size_apparent=$(${du} -sb "${bare_repo}" | sed 's/[ \t].*//')
+	repo_size_raw=$(${du} -s "${bare_repo}" | sed 's/[ \t].*//')
 
 	rm -Rf "${bare_repo}"
 
@@ -92,8 +92,8 @@ rezipdoc-history-filter.sh \
 	--target "$repo_filtered"
 
 # Evaluate and print bare repo sizes
-size_orig=`check_git_repo_size "$repo_orig"`
-size_filtered=`check_git_repo_size "$repo_filtered"`
+size_orig=$(check_git_repo_size "$repo_orig")
+size_filtered=$(check_git_repo_size "$repo_filtered")
 echo -e "Bare repo size '$repo_orig':     $size_orig"
 echo -e "Bare repo size '$repo_filtered': $size_filtered"
 
