@@ -36,7 +36,7 @@ you probably want to use __ReZipDoc__.
 	* [Install diff viewer or filter]
 	* [Install filter manually]
 * [Filter repo history]
-	* [Filtering example (ZACplus)]
+	* [Filtering example]
 * [Culprits]
 * [Motivation]
 * [How it works]
@@ -292,10 +292,10 @@ rezipdoc-history-filter.sh \
 After doing this, the new, filtered repo will already have the filter installed,
 so future commits will be filtered.
 
-### Filtering example (ZACplus)
+### Filtering example
 
 We are going to run
-[a script that filters the Zinc-Oxide Open Hardware battery project repo](
+[a script that filters the Zinc-Oxide Open Hardware battery (ZAC+) project repo](
 https://github.com/hoijui/ReZipDoc/blob/master/scripts/rezipdoc-sample-session-ZACplus.sh),
 which has a header comment explaining what it does in detail.
 
