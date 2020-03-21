@@ -216,6 +216,20 @@ echo
 echo "removing first (empty) commit ..."
 git rebase --root
 
+if [ 1 -eq 0 ]; then
+git branch ${branch}_empty
+git reset source/${branch} --hard
+git rebase --root ${branch}_empty
+git reset --hard
+fi
+
+if [ 1 -eq 0 ]; then
+git reset source/${branch} --hard
+#git filter-branch -f --index-filter 'git update-index --again'
+#git filter-branch --tree-filter 'git add --renormalize .' -- --all
+git filter-branch --tree-filter 'git commit --amend --no-edit' -- --all
+fi
+
 echo "Source repo:  '${source_repo}' ($source_type)"
 echo "Branch:       ${branch}"
 echo "Max commits:  ${num_commits_max}"
