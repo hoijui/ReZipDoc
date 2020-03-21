@@ -101,12 +101,10 @@ The recommended procedure is to
 [install the helper scripts](#install-helper-scripts) once,
 and then use them to comfortably install the filter into local git repos.
 
----
-__NOTE__
+> __NOTE__\
 This downloads and executes an online script onto your machine,
 which is a potential security risk.
 You may want to check-out the script before running it.
----
 
 ### Install helper scripts
 
@@ -261,7 +259,7 @@ Only use this if you can not use [the above](#install-diff-viewer-or-filter), fo
 
 This always creates a new copy of the repository.
 
-__NOTE__
+>__NOTE__\
 This only filters a single branch.
 
 Make sure you have the [helper scripts installed](#install-helper-scripts) and in your `PATH`.
