@@ -3,11 +3,6 @@
 If you are storing ZIP based files in your `git` repo,
 you probably want to use __ReZipDoc__.
 
-* [__ReZip__](https://github.com/costerwi/rezip)
-  For more efficient Git packing of ZIP based files
-* [__ZipDoc__](https://github.com/costerwi/zipdoc)
-  A Git `textconv` program to show text-based diffs of ZIP files
-
 ---
 
 ## Index
@@ -382,3 +377,10 @@ storing compressed zips.
 I think this unremarkable efficiency improvement is due to a large number of
 _\*.png_ files in the presentation which were already stored without compression
 in the original _\*.pptx_.
+
+## Based on
+
+* [__ReZip__](https://github.com/costerwi/rezip)
+  For more efficient Git packing of ZIP based files
+* [__ZipDoc__](https://github.com/costerwi/zipdoc)
+  A Git `textconv` program to show text-based diffs of ZIP files
