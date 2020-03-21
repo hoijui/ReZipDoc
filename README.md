@@ -1,4 +1,4 @@
-# ReZipDoc = ReZip & ZipDoc
+# ReZipDoc
 
 If you are storing ZIP based files in your `git` repo,
 you probably want to use __ReZipDoc__.
