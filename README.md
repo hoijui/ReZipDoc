@@ -27,25 +27,22 @@ not all binary ones.
 So if you are storing ZIP based files in your `git` repo,
 you probably want to use __ReZipDoc__.
 
----
-
 ## Index
 
-* [Project state](#project-state)
-* [How to use](#how-to-use)
-* [Installation](#installation)
-	* [helper scripts](#install-helper-scripts) (once per developer machine)
-	* [diff viewer or filter](#install-diff-viewer-or-filter) (once per repo)
-	* [manual](#install-filter-manually) (latest sources)
-* [Filter repo history](#filter-repo-history)
-* [Filtering example](#filtering-example-zacplus)
-* [Culprits](#culprits)
-* [Motivation](#motivation)
-* [How it works](#how-it-works)
-* [Benefits](#benefits)
-* [Observations](#observations)
-
----
+* [Project state]
+* [How to use]
+* [Installation]
+	* [Install helper scripts]
+	* [Install diff viewer or filter]
+	* [Install filter manually]
+* [Filter repo history]
+	* [Filtering example (ZACplus)]
+* [Culprits]
+* [Motivation]
+* [How it works]
+* [Benefits]
+* [Observations]
+* [Based on]
 
 ## Project state
 
