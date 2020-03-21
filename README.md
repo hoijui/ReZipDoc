@@ -29,20 +29,20 @@ you probably want to use __ReZipDoc__.
 
 ## Index
 
-* [Project state]
-* [How to use]
-* [Installation]
-	* [Install helper scripts]
-	* [Install diff viewer or filter]
-	* [Install filter manually]
-* [Filter repo history]
-	* [Filtering example]
-* [Culprits]
-* [Motivation]
-* [How it works]
-* [Benefits]
-* [Observations]
-* [Based on]
+* [Project state](#project-state)
+* [How to use](#how-to-use)
+* [Installation](#installation)
+	* [Install helper scripts](#install-helper-scripts)
+	* [Install diff viewer or filter](#install-diff-viewer-or-filter)
+	* [Install filter manually](#install-filter-manually)
+* [Filter repo history](#filter-repo-history)
+	* [Filtering example](#filtering-example)
+* [Culprits](#culprits)
+* [Motivation](#motivation)
+* [How it works](#how-it-works)
+* [Benefits](#benefits)
+* [Observations](#observations)
+* [Based on](#based-on)
 
 ## Project state
 
