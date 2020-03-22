@@ -134,9 +134,9 @@ public final class BinaryUtil {
 			final String value = (String) manifestEntry.getValue();
 			info
 					.append(String.format("%32s", key))
-					.append(" -> ")
+					.append(" -> \"")
 					.append(value)
-					.append('\n');
+					.append("\"\n");
 		}
 
 		return info.toString();
