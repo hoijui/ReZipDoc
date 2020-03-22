@@ -208,16 +208,4 @@ public final class BinaryUtil {
 
 		return summary.toString();
 	}
-
-	public static void main(final String[] args) throws IOException {
-
-		final Logger logger = Utils.getLogger(BinaryUtil.class.getName());
-		if (logger.isLoggable(Level.INFO)) {
-			final BinaryUtil binaryUtil = new BinaryUtil();
-			logger.info(binaryUtil.createLibrarySummary());
-			if (logger.isLoggable(Level.FINE)) {
-				logger.fine(binaryUtil.createManifestPropertiesString());
-			}
-		}
-	}
 }
