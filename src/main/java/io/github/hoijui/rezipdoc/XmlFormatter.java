@@ -195,7 +195,7 @@ public class XmlFormatter {
 					bufferSize = Integer.valueOf(argsIt.next());
 				} else {
 					if (LOGGER.isLoggable(Level.SEVERE)) {
-						LOGGER.log(Level.SEVERE, "Unknown argument '" + arg + "'");
+						LOGGER.log(Level.SEVERE, "Unknown argument '{0}'", arg);
 						printUsage(Level.SEVERE);
 					}
 					System.exit(1);
@@ -323,8 +323,8 @@ public class XmlFormatter {
 
 			// split all the content we have at the moment into rows (think: lines)
 			final String[] rows = inBuffer.toString()
-					.replaceAll(">", ">\n")
-					.replaceAll("<", "\n<")
+					.replace(">", ">\n")
+					.replace("<", "\n<")
 					.split("\n");
 
 			// handle all except the last row,
