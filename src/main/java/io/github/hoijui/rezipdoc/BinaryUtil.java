@@ -22,10 +22,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 /**
  * A global hub, providing general information about this software.
@@ -50,44 +53,94 @@ public final class BinaryUtil {
 
 	private static Properties parseManifestFile(final InputStream manifestIn) throws IOException {
 
+		try (final BufferedReader manifestBufferedIn = new BufferedReader(
+				new InputStreamReader(manifestIn, StandardCharsets.UTF_8))) {
+			final Stream<String> manifestLines = manifestBufferedIn.lines();
+			return parseManifestLines(manifestLines);
+		}
+	}
+
+	/**
+	 * Filters out empty lines and comments.
+	 * NOTE Is there really a comment syntax defined for manifest files?
+	 */
+	private static boolean isContentManifestLine(final String manifestLine) {
+		return !manifestLine.trim().isEmpty() && !manifestLine.startsWith("[#%]");
+	}
+
+	/**
+	 * Figures out whether a manifest line is continuation of a previous one.
+	 * @param manifestLine to be checked
+	 * @return <code>true</code> if the suppleid line is a continuation line, <code>false</code> otherwise
+	 */
+	private static boolean isContinuationManifestLine(final String manifestLine) {
+		return manifestLine.charAt(0) == MANIFEST_CONTINUATION_LINE_INDICATOR;
+	}
+
+	/**
+	 * Collects a list of Strings, each a single, complete manifest key+value pair.
+	 * @param manifestLines the raw manifest lines, including comments, empty lines and continuation lines
+	 * @return a list of Strings, each one (supposedly) containing a single, complete key+value pair.
+	 */
+	private static List<String> collectKeyValueStrings(final Stream<String> manifestLines) {
+
+		final List<String> manifestProps = new LinkedList<>();
+
+		final StringBuilder currentProp = new StringBuilder(80);
+		// NOTE one property can be specified on multiple lines.
+		//   This is done by prepending all but the first line with white-space, for example:
+		//   "My-Key: hello, this is my very long property value, which is sp"
+		//   " lit over multiple lines, and because we also want to show the "
+		//   " third line, we write a little more."
+		//for (final String manifestLine : manifestLines.collect(Collectors.toList())) {
+		manifestLines.forEach( manifestLine -> {
+			if (isContentManifestLine(manifestLine)) {
+				if (isContinuationManifestLine(manifestLine)) {
+					// remove the initial MANIFEST_CONTINUATION_LINE_INDICATOR
+					// and add the remainder to the already read value
+					currentProp.append(manifestLine.substring(1));
+				} else {
+					// store the previous key+value, if there was one
+					if (currentProp.length() > 0) {
+						manifestProps.add(currentProp.toString());
+					}
+					currentProp.setLength(0);
+					currentProp.append(manifestLine);
+				}
+			}
+		});
+		if (currentProp.length() > 0) {
+			manifestProps.add(currentProp.toString());
+		}
+
+		return manifestProps;
+	}
+
+	/**
+	 * Parses a list of manifest files into a set of properties.
+	 * The manifest lines might be directly read from a file,
+	 * like MANIFEST_FILE.
+	 * @param manifestLines to be parsed into properties
+	 * @return the parsed properties
+	 */
+	private static Properties parseManifestLines(final Stream<String> manifestLines) {
+
 		final Properties manifestProps = new Properties();
 
-		try (final BufferedReader manifestBufferedIn = new BufferedReader(new InputStreamReader(manifestIn,
-				StandardCharsets.UTF_8)))
-		{
-			String manifestLine = manifestBufferedIn.readLine();
-			String currentKey = null;
-			final StringBuilder currentValue = new StringBuilder(80);
-			// NOTE one property can be specified on multiple lines.
-			//   This is done by prepending all but the first line with white-space, for example:
-			//   "My-Key: hello, this is my very long property value, which is sp"
-			//   " lit over multiple lines, and because we also want to show the "
-			//   " third line, we write a little more."
-			while (manifestLine != null) {
-				// filter out empty lines and comments
-				// NOTE Is there really a comment syntax defined for manifest files?
-				if (!manifestLine.trim().isEmpty() && !manifestLine.startsWith("[#%]")) {
-					if (manifestLine.charAt(0) == MANIFEST_CONTINUATION_LINE_INDICATOR) {
-						// remove the initial space and add it to the already read value
-						currentValue.append(manifestLine.substring(1));
-					} else {
-						if (currentKey != null) {
-							manifestProps.setProperty(currentKey, currentValue.toString());
-						}
-						final String[] keyAndValue = manifestLine.split(": ", KEY_PLUS_VALUE_COUNT);
-						if (keyAndValue.length < KEY_PLUS_VALUE_COUNT) {
-							throw new IOException("Invalid manifest line: \"" + manifestLine + '"');
-						}
-						currentKey = keyAndValue[0];
-						currentValue.setLength(0);
-						currentValue.append(keyAndValue[1]);
-					}
-				}
-				manifestLine = manifestBufferedIn.readLine();
+		String currentKey = null;
+		final StringBuilder currentValue = new StringBuilder(80);
+		for (final String manifestProp : collectKeyValueStrings(manifestLines)) {
+			// then (start to) parse the next one
+			final String[] keyAndValue = manifestProp.split(": ", KEY_PLUS_VALUE_COUNT);
+			if (keyAndValue.length < KEY_PLUS_VALUE_COUNT) {
+				throw new IllegalArgumentException("Invalid manifest entry: \"" + manifestProp + '"');
 			}
-			if (currentKey != null) {
-				manifestProps.setProperty(currentKey, currentValue.toString());
-			}
+			currentKey = keyAndValue[0];
+			currentValue.setLength(0);
+			currentValue.append(keyAndValue[1]);
+		}
+		if (currentKey != null) {
+			manifestProps.setProperty(currentKey, currentValue.toString());
 		}
 
 		return manifestProps;
