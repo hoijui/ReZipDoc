@@ -49,6 +49,12 @@ public final class BinaryUtil {
 		this.manifestProperties = readJarManifest();
 	}
 
+	@SuppressWarnings("WeakerAccess")
+	public BinaryUtil(final InputStream manifestIn) throws IOException {
+
+		this.manifestProperties = parseManifestFile(manifestIn);
+	}
+
 	private static Properties parseManifestFile(final InputStream manifestIn) throws IOException {
 
 		try (final BufferedReader manifestBufferedIn = new BufferedReader(
