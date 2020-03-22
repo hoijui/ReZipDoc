@@ -125,20 +125,13 @@ public final class BinaryUtil {
 
 		final Properties manifestProps = new Properties();
 
-		String currentKey = null;
-		final StringBuilder currentValue = new StringBuilder(80);
 		for (final String manifestProp : collectKeyValueStrings(manifestLines)) {
 			// then (start to) parse the next one
 			final String[] keyAndValue = manifestProp.split(": ", KEY_PLUS_VALUE_COUNT);
 			if (keyAndValue.length < KEY_PLUS_VALUE_COUNT) {
 				throw new IllegalArgumentException("Invalid manifest entry: \"" + manifestProp + '"');
 			}
-			currentKey = keyAndValue[0];
-			currentValue.setLength(0);
-			currentValue.append(keyAndValue[1]);
-		}
-		if (currentKey != null) {
-			manifestProps.setProperty(currentKey, currentValue.toString());
+			manifestProps.setProperty(keyAndValue[0], keyAndValue[1]);
 		}
 
 		return manifestProps;
