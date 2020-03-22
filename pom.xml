@@ -469,6 +469,12 @@ which works better with gits delta-compression and diffs
 						<artifactId>maven-changelog-plugin</artifactId>
 						<version>2.3</version>
 					</plugin>
+
+					<plugin>
+						<groupId>org.sonarsource.scanner.maven</groupId>
+						<artifactId>sonar-maven-plugin</artifactId>
+						<version>3.6.0.1398</version>
+					</plugin>
 				</plugins>
 			</reporting>
 		</profile>
