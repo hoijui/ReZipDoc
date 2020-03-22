@@ -91,7 +91,7 @@ public class BinaryUtilTest {
 	@Test
 	public void testLibrarySummaryEmpty() throws IOException {
 
-		final BinaryUtil binaryUtil = new BinaryUtil();
+		final BinaryUtil binaryUtil = new BinaryUtil(new ByteArrayInputStream("".getBytes()));
 
 		final String expectedLibrarySummary = "\nName:        <unknown>\nDescription: <unknown>\nVersion:     <unknown>\nLicense:     <unknown>";
 		final String actualLibrarySummary = binaryUtil.createLibrarySummary();
@@ -111,9 +111,9 @@ public class BinaryUtilTest {
 	@Test
 	public void testManifestPropertiesEmpty() throws IOException {
 
-		final BinaryUtil binaryUtil = new BinaryUtil();
+		final BinaryUtil binaryUtil = new BinaryUtil(new ByteArrayInputStream("".getBytes()));
 
-		final String expectedManifestProperties = "                      Class-Path -> \"../../../../../../.m2/repository/org/apache/maven/surefire/surefire-booter/3.0.0-M3/surefire-booter-3.0.0-M3.jar ../../../../../../.m2/repository/org/apache/maven/surefire/surefire-api/3.0.0-M3/surefire-api-3.0.0-M3.jar ../../../../../../.m2/repository/org/apache/maven/surefire/surefire-logger-api/3.0.0-M3/surefire-logger-api-3.0.0-M3.jar ../test-classes/ ../classes/ ../../../../../../.m2/repository/junit/junit/4.13-beta-3/junit-4.13-beta-3.jar ../../../../../../.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar ../../../../../../.m2/repository/com/github/stefanbirkner/system-rules/1.19.0/system-rules-1.19.0.jar ../../../../../../.m2/repository/org/apache/maven/surefire/surefire-junit4/3.0.0-M3/surefire-junit4-3.0.0-M3.jar ../../../../../../.m2/repository/org/apache/maven/surefire/common-java5/3.0.0-M3/common-java5-3.0.0-M3.jar ../../../../../../.m2/repository/org/apache/maven/surefire/common-junit3/3.0.0-M3/common-junit3-3.0.0-M3.jar ../../../../../../.m2/repository/org/apache/maven/surefire/common-junit4/3.0.0-M3/common-junit4-3.0.0-M3.jar\"\n                      Main-Class -> \"org.apache.maven.surefire.booter.ForkedBooter\"\n                Manifest-Version -> \"1.0\"\n";
+		final String expectedManifestProperties = "";
 		final String actualManifestProperties = binaryUtil.createManifestPropertiesString();
 		assertEquals(expectedManifestProperties, actualManifestProperties);
 	}
