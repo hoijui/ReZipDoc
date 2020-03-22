@@ -110,7 +110,7 @@ public class XmlFormatterTest {
 
 	private void testPrettyPrintStreams(final String input, final String expected) {
 
-		systemInMock.provideText(input);
+		systemInMock.provideLines(input);
 		systemOutRule.clearLog();
 		XmlFormatter.main(new String[] {});
 		final String actual = systemOutRule.getLog();
