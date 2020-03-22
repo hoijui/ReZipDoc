@@ -23,9 +23,9 @@
 
 	<name>ReZipDoc</name>
 	<description>
-		A Git filter and textconv for converting ZIP based binary files
-		to an uncompressed version of themselves,
-		which works better with gits delta-compression and diffs
+A Git filter and textconv for converting ZIP based binary files
+to an uncompressed version of themselves,
+which works better with gits delta-compression and diffs
 	</description>
 	<url>https://github.com/hoijui/ReZipDoc/</url>
 	<inceptionYear>2019</inceptionYear>
