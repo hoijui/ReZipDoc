@@ -195,7 +195,7 @@ public class XmlFormatter {
 					bufferSize = Integer.valueOf(argsIt.next());
 				} else {
 					if (LOGGER.isLoggable(Level.SEVERE)) {
-						LOGGER.log(Level.SEVERE, "Unknown argument '{0}'", arg);
+						LOGGER.log(Level.SEVERE, "Unknown argument {0}'", arg);
 						printUsage(Level.SEVERE);
 					}
 					System.exit(1);
