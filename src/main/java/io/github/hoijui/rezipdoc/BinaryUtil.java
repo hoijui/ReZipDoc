@@ -162,7 +162,9 @@ public final class BinaryUtil {
 		if (logger.isLoggable(Level.INFO)) {
 			final BinaryUtil binaryUtil = new BinaryUtil();
 			logger.info(binaryUtil.createLibrarySummary());
-//			log.info(binaryUtil.createManifestPropertiesString());
+			if (logger.isLoggable(Level.FINE)) {
+				logger.fine(binaryUtil.createManifestPropertiesString());
+			}
 		}
 	}
 }
