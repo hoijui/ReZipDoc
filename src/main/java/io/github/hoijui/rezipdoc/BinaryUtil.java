@@ -96,7 +96,6 @@ public final class BinaryUtil {
 		//   "My-Key: hello, this is my very long property value, which is sp"
 		//   " lit over multiple lines, and because we also want to show the "
 		//   " third line, we write a little more."
-		//for (final String manifestLine : manifestLines.collect(Collectors.toList())) {
 		manifestLines.forEach( manifestLine -> {
 			if (isContentManifestLine(manifestLine)) {
 				if (isContinuationManifestLine(manifestLine)) {

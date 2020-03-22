@@ -330,7 +330,6 @@ which works better with gits delta-compression and diffs
 							<Export-Package>
 								${project.packageName}
 							</Export-Package>
-							<!--<Random-other-Option>Whatever value we please</Random-other-Option>-->
 						</instructions>
 					</configuration>
 				</plugin>
