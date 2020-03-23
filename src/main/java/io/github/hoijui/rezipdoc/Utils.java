@@ -106,9 +106,10 @@ public final class Utils {
 		final Formatter basicFmt = new BasicLogFormatter();
 
 		if (stdErr == null) {
-			stdErr = new ReroutableConsoleHandler();
-			stdErr.setLevel(Level.FINEST);
-			stdErr.setFormatter(basicFmt);
+			final ReroutableConsoleHandler tmpStdErr = new ReroutableConsoleHandler();
+			tmpStdErr.setLevel(Level.FINEST);
+			tmpStdErr.setFormatter(basicFmt);
+			stdErr = tmpStdErr;
 		}
 		logger.addHandler(stdErr);
 
