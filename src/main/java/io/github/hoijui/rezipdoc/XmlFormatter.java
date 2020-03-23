@@ -105,15 +105,7 @@ public class XmlFormatter {
 
 		final String name = XmlFormatter.class.getSimpleName();
 		if (LOGGER.isLoggable(logLevel)) {
-			try {
-				final BinaryUtil binaryUtil = new BinaryUtil();
-				LOGGER.log(logLevel, String.format("%s %s",
-						name, binaryUtil.getVersion()));
-				LOGGER.log(logLevel, String.format("License: %s%n",
-						binaryUtil.getLicense()));
-			} catch (final IOException exc) {
-				LOGGER.log(logLevel, "Failed to get version and license info", exc);
-			}
+			Utils.printUsageHeader(LOGGER, logLevel, name);
 			LOGGER.log(logLevel, "Usage:");
 			LOGGER.log(logLevel, String.format(
 					"\t%s [XML-input-file] [XML-output-file]  # both input and output from files",

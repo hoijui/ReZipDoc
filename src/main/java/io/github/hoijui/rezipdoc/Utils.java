@@ -117,6 +117,21 @@ public final class Utils {
 		return logger;
 	}
 
+	public static void printUsageHeader(final Logger logger, final Level logLevel, final String name) {
+
+		if (logger.isLoggable(logLevel)) {
+			try {
+				final BinaryUtil binaryUtil = new BinaryUtil();
+				logger.log(logLevel, String.format("%s %s",
+						name, binaryUtil.getVersion()));
+				logger.log(logLevel, String.format("License: %s%n",
+						binaryUtil.getLicense()));
+			} catch (final IOException exc) {
+				logger.log(logLevel, "Failed to get version and license info", exc);
+			}
+		}
+	}
+
 	public static ReroutableConsoleHandler getLogHandler() {
 		return stdErr;
 	}
