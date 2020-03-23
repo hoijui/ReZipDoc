@@ -125,11 +125,12 @@ public class ReZip {
 
 	private static void printUsage(final Level logLevel) {
 
+		final String name = ReZip.class.getSimpleName();
 		if (LOGGER.isLoggable(logLevel)) {
 			try {
 				final BinaryUtil binaryUtil = new BinaryUtil();
 				LOGGER.log(logLevel, String.format("%s %s",
-						ReZip.class.getSimpleName(), binaryUtil.getVersion()));
+						name, binaryUtil.getVersion()));
 				LOGGER.log(logLevel, String.format("License: %s%n",
 						binaryUtil.getLicense()));
 			} catch (final IOException exc) {
@@ -137,8 +138,8 @@ public class ReZip {
 			}
 			LOGGER.log(logLevel, "Usage:");
 			LOGGER.log(logLevel, String.format("\t%s [--compressed|--uncompressed] [--nullify-times] [--non-recursive] <in.zip >out.zip",
-					ReZip.class.getSimpleName()));
-			LOGGER.log(logLevel, String.format("\t%s --write-suffixes", ReZip.class.getSimpleName()));
+					name));
+			LOGGER.log(logLevel, String.format("\t%s --write-suffixes", name));
 			LOGGER.log(logLevel, "Options:");
 			LOGGER.log(logLevel, "\t--compressed       re-zip compressed");
 			LOGGER.log(logLevel, "\t--uncompressed     (noop) re-zip uncompressed (this is the default, but we may want to explicitly state it on hte command line");
