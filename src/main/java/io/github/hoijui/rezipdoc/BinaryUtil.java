@@ -58,7 +58,8 @@ public final class BinaryUtil {
 	private static Properties parseManifestFile(final InputStream manifestIn) throws IOException {
 
 		try (final BufferedReader manifestBufferedIn = new BufferedReader(
-				new InputStreamReader(manifestIn, StandardCharsets.UTF_8))) {
+				new InputStreamReader(manifestIn, StandardCharsets.UTF_8)))
+		{
 			final Stream<String> manifestLines = manifestBufferedIn.lines();
 			return parseManifestLines(manifestLines);
 		}
@@ -96,7 +97,7 @@ public final class BinaryUtil {
 		//   "My-Key: hello, this is my very long property value, which is sp"
 		//   " lit over multiple lines, and because we also want to show the "
 		//   " third line, we write a little more."
-		manifestLines.forEach( manifestLine -> {
+		manifestLines.forEach(manifestLine -> {
 			if (isContentManifestLine(manifestLine)) {
 				if (isContinuationManifestLine(manifestLine)) {
 					// remove the initial MANIFEST_CONTINUATION_LINE_INDICATOR
