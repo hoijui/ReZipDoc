@@ -70,7 +70,7 @@ public final class BinaryUtil {
 	 * NOTE Is there really a comment syntax defined for manifest files?
 	 */
 	private static boolean isContentManifestLine(final String manifestLine) {
-		return !manifestLine.trim().isEmpty() && !manifestLine.startsWith("[#%]");
+		return !Utils.isBlank(manifestLine) && !manifestLine.startsWith("[#%]");
 	}
 
 	/**

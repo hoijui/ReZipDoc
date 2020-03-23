@@ -390,4 +390,19 @@ public final class Utils {
 
 		return contentMimeType;
 	}
+
+	/**
+	 * Checks whether a String consists of only white-space (or is empty).
+	 *
+	 * NOTE Starting from Java 11, one might use
+	 * <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html#isBlank()" target="_top">isBlank()</a>
+	 * instead.
+	 *
+	 * @param str to be checked for blankness
+	 * @return whether the supplied string is empty or consists of only white-space
+	 * @see <a href="https://stackoverflow.com/a/50188398/586229" target="_top">the solution on StackOverflow</a>
+	 */
+	public static boolean isBlank(final String str) {
+		return str.chars().allMatch(Character::isWhitespace);
+	}
 }
