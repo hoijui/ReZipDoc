@@ -57,7 +57,7 @@ public final class BinaryUtil {
 
 	private static Properties parseManifestFile(final InputStream manifestIn) throws IOException {
 
-		try (final BufferedReader manifestBufferedIn = new BufferedReader(
+		try (BufferedReader manifestBufferedIn = new BufferedReader(
 				new InputStreamReader(manifestIn, StandardCharsets.UTF_8)))
 		{
 			final Stream<String> manifestLines = manifestBufferedIn.lines();
@@ -147,7 +147,7 @@ public final class BinaryUtil {
 
 		Properties mavenProps;
 
-		try (final InputStream manifestFileIn = BinaryUtil.class.getResourceAsStream(MANIFEST_FILE)) {
+		try (InputStream manifestFileIn = BinaryUtil.class.getResourceAsStream(MANIFEST_FILE)) {
 			if (manifestFileIn == null) {
 				throw new IOException("Failed locating resource in the classpath: " + MANIFEST_FILE);
 			}
