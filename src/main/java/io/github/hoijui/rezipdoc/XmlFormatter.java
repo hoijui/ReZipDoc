@@ -177,7 +177,7 @@ public class XmlFormatter {
 				if ("-r".equals(arg) || "--rough".equals(arg)) {
 					correct = false;
 				} else if ("--indent-spaces".equals(arg)) {
-					indentSpaces = Integer.valueOf(argsIt.next());
+					indentSpaces = Integer.parseInt(argsIt.next());
 				} else if ("--indent".equals(arg)) {
 					indent = argsIt.next();
 				} else if ("-i".equals(arg) || "--input".equals(arg)) {
@@ -185,7 +185,7 @@ public class XmlFormatter {
 				} else if ("-o".equals(arg) || "--output".equals(arg)) {
 					outFile = Paths.get(argsIt.next());
 				} else if ("-b".equals(arg) || "--buffer-size".equals(arg)) {
-					bufferSize = Integer.valueOf(argsIt.next());
+					bufferSize = Integer.parseInt(argsIt.next());
 				} else {
 					if (LOGGER.isLoggable(Level.SEVERE)) {
 						LOGGER.log(Level.SEVERE, "Unknown argument {0}'", arg);
