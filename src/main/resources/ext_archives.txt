@@ -1,0 +1,11 @@
+docx
+xlsx
+pptx
+odt
+ods
+odp
+mcdx
+slx
+zip
+jar
+fcstd

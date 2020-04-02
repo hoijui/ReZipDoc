@@ -17,9 +17,11 @@
 
 package io.github.hoijui.rezipdoc;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
@@ -55,34 +57,9 @@ public final class Utils {
 			= RESOURCE_FILE_SUFFIXES_PREFIX + "suffixes-xml.csv";
 	public static final String RESOURCE_FILE_SUFFIXES_ARCHIVE
 			= RESOURCE_FILE_SUFFIXES_PREFIX + "suffixes-archive.csv";
-	public static final Set<String> DEFAULT_SUFFIXES_XML = setOf(
-			"xml",
-			"svg");
-	public static final Set<String> DEFAULT_SUFFIXES_TEXT = setOf(
-			"txt",
-			"md",
-			"markdown",
-			"properties",
-			"java",
-			"kt",
-			"c",
-			"cxx",
-			"cpp",
-			"h",
-			"hxx",
-			"hpp",
-			"js",
-			"html");
-	public static final Set<String> DEFAULT_SUFFIXES_ARCHIVE = setOf(
-			"zip",
-			"jar",
-			"docx",
-			"xlsx",
-			"pptx",
-			"odt",
-			"ods",
-			"odp",
-			"fcstd");
+	public static final Set<String> DEFAULT_SUFFIXES_XML = immutableSetFromResource("/ext_xml.txt");
+	public static final Set<String> DEFAULT_SUFFIXES_TEXT = immutableSetFromResource("/ext_text.txt");
+	public static final Set<String> DEFAULT_SUFFIXES_ARCHIVE = immutableSetFromResource("/ext_archives.txt");
 	private static final Set<String> SUFFIXES_XML;
 	private static final Set<String> SUFFIXES_TEXT;
 	private static final Set<String> SUFFIXES_ARCHIVE;
@@ -223,12 +200,34 @@ public final class Utils {
 		Files.deleteIfExists(suffixesFile);
 	}
 
-	@SafeVarargs
-	public static <T> Set<T> setOf(final T... defaults) {
+	/**
+	 * Reads a set of strings from a resource text file, nad makes it immutable.
+	 * Each line ends up being one string.
+	 * If any string appears two times, an {@link IllegalArgumentException} is thrown.
+	 */
+	public static Set<String> immutableSetFromResource(final String resourceFile) {
 
-		final Set<T> strings = new HashSet<>();
-		Collections.addAll(strings, defaults);
-		return Collections.unmodifiableSet(strings);
+		final List<String> list = listFromResource(resourceFile);
+		final HashSet<String> set = new HashSet<>(list);
+		if (set.size() != list.size()) {
+			throw new IllegalArgumentException("Resource-file contains duplicate lines: " + resourceFile);
+		}
+		return Collections.unmodifiableSet(set);
+	}
+
+	/**
+	 * Reads a list of strings from a resource text file.
+	 * Each line ends up being one string.
+	 */
+	public static List<String> listFromResource(final String resourceFile) {
+
+		try (final BufferedReader reader = new BufferedReader(new InputStreamReader(
+				Utils.class.getResourceAsStream(resourceFile))))
+		{
+			return reader.lines().collect(Collectors.toList());
+		} catch (IOException exc) {
+			throw new IllegalArgumentException("Failed to read list from resource file: " + resourceFile, exc);
+		}
 	}
 
 	public static Set<String> collectFileOrDefaults(final String localResourceFilePath, final Set<String> defaults) {

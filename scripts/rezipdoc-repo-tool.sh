@@ -29,7 +29,11 @@ this_script_dir=$(cd $(dirname $0); pwd)
 
 # Settings and default values
 action=""
-target_path_specs='*.docx *.xlsx *.pptx *.odt *.ods *.odp *.mcdx *.slx *.zip *.jar *.fcstd'
+target_path_specs=''
+for ext in $(cat "$this_script_dir/../src/main/resources/ext_archives.txt")
+do
+	target_path_specs="$target_path_specs *.$ext"
+done
 # As described in [gitattributes](http://git-scm.com/docs/gitattributes),
 # you may see unnecessary merge conflicts when you add attributes to a file that
 # causes the repository format for that file to change.

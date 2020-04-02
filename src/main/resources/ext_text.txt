@@ -1,0 +1,14 @@
+txt
+md
+markdown
+properties
+java
+kt
+c
+cxx
+cpp
+h
+hxx
+hpp
+js
+html
