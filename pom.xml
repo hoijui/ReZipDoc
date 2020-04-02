@@ -355,7 +355,6 @@ which works better with gits delta-compression and diffs
 					<version>3.0.5</version>
 				</plugin>
 
-
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
