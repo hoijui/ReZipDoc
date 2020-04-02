@@ -176,8 +176,10 @@ public final class Utils {
 
 	public static String readStreamToString(final InputStream inputStream) {
 
-		final Scanner inScr = new Scanner(inputStream).useDelimiter("\\A");
-		return inScr.hasNext() ? inScr.next() : "";
+		try (Scanner inScr = new Scanner(inputStream)) {
+			inScr.useDelimiter("\\A");
+			return inScr.hasNext() ? inScr.next() : "";
+		}
 	}
 
 	public static void writeLines(final Path textFile, final Collection<String> lines) throws IOException {
