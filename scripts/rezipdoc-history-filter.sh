@@ -21,6 +21,11 @@
 
 # For info about this script, please refer to the `printUsage()` function below.
 
+# Exit immediately on each error and unset variable;
+# see: https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
+#set -Eeuo pipefail
+set -Eeu
+
 pwd_before=$(pwd)
 this_script_file=$(basename $0)
 this_script_dir=$(cd $(dirname $0); pwd)
@@ -170,6 +175,8 @@ do
 		commit_args="$commit_args --file=-"
 	fi
 
+	set +e
+
 	echo "Cherry-picking ..."
 	git cherry-pick --strategy=recursive --strategy-option=theirs --allow-empty --no-commit ${commit_hash}
 	last_status=$?
@@ -194,6 +201,9 @@ do
 		echo "$commit_msg" | git commit -v ${commit_args}
 		last_status=$?
 	fi
+
+	set -e
+
 	if [ ${last_status} -ne 0 ]
 	then
 		git status

@@ -29,6 +29,11 @@
 #    which is a simple "binary files differ" in the original,
 #    vs a textual diff of the contained plain-text files.
 
+# Exit immediately on each error and unset variable;
+# see: https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
+#set -Eeuo pipefail
+set -Eeu
+
 # We use this repo, because it has a lot of FreeCAD files,
 # which are essentially ZIP files.
 git_url="https://github.com/case06/ZACplus.git"
