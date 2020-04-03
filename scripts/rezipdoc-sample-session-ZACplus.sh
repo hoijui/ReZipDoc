@@ -80,7 +80,7 @@ check_git_repo_size() {
 # Install helper scripts
 # NOTE Potential security risk!
 curl -s -L https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-scripts-tool.sh \
-	| sh -s install --path --dev
+	| sh -s install --path --dev || true
 
 repo_orig="/tmp/${project_name}-orig-$rnd"
 repo_filtered="/tmp/${project_name}-filtered-$rnd"
