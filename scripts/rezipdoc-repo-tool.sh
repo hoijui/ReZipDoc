@@ -19,9 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-
 # For info about this script, please refer to the `printUsage()` function below.
-
 
 pwd_before=$(pwd)
 this_script_file=$(basename $0)

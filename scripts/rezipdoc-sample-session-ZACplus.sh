@@ -19,7 +19,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-
 # This does the following:
 # 1. install the helper scripts locally
 # 2. clone the ZACplus (Zinc-Oxygen battery) project into a local repo
