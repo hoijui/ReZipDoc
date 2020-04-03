@@ -23,7 +23,7 @@
 # This does the following:
 # 1. install the helper scripts locally
 # 2. clone the ZACplus (Zinc-Oxygen battery) project into a local repo
-# 3. creates a ReZip filtered clone of ZACplus
+# 3. creates a ReZip filtered clone of that project
 # 4. print the bare size of these two repos for comparison
 # 5. opens a GUI history browser for each of these repos,
 #    as to compare the difference in changes in FreeCAD file (.fcstd),
