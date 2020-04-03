@@ -116,7 +116,7 @@ source_is_url="true"
 [ "$source_is_url" = "true" ] && source_type="URL" || source_type="local repo"
 
 # If the source repo is a local directory, make the path to it absolute
-[ "$source_is_url" != "true" ] && source_repo="$(cd \"$source_repo\"; pwd)"
+[ "$source_is_url" != "true" ] && source_repo="$(cd "$source_repo"; pwd)"
 
 echo "Source repo:  '${source_repo}' ($source_type)"
 echo "Branch:       ${branch}"
