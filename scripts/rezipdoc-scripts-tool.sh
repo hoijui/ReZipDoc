@@ -79,7 +79,7 @@ set_action() {
 }
 
 # Handle command line arguments
-while [ ${#} -gt 0 ]
+while [ $# -gt 0 ]
 do
 	option="$1"
 	case ${option} in
@@ -181,11 +181,10 @@ echo "`basename $0` action: ${action}ing$extra_info ..."
 exit_state=0
 
 dir_in_path() {
-
 	dir="$1"
-	ret=1
-	case :$PATH:
-		in *:${dir}:*) ret=0
+	ret=1:was
+	case :$PATH: in
+		*:${dir}:*) ret=0
 	esac
 	return ${ret}
 }
