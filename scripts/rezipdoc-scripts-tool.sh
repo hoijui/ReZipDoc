@@ -165,7 +165,7 @@ then
 	exit $?
 fi
 
-# If we got so far, it means that 'action' is set to 'check|install\remove'
+# If we got this far, it means that 'action' is set to 'check|install|remove'
 
 extra_info=""
 if [ "$action" = "install" ]
