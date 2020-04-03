@@ -57,28 +57,29 @@ printUsage() {
 while [ $# -gt 0 ]
 do
 	opName="$1"
+	shift # skip argument
 	case ${opName} in
 		-h|--help)
 			printUsage
 			exit 0
 			;;
 		-b|--branch)
-			branch="$2"
+			branch="$1"
 			shift # past argument
 			;;
 		-m|--max-commits)
-			num_commits_max=$2
+			num_commits_max=$1
 			shift # past argument
 			;;
 		-o|--orig)
 			use_orig_commit="true"
 			;;
 		-s|--source)
-			source_repo="$2"
+			source_repo="$1"
 			shift # past argument
 			;;
 		-t|--target)
-			target_repo="$2"
+			target_repo="$1"
 			shift # past argument
 			;;
 		*)
@@ -88,7 +89,6 @@ do
 			exit 1
 			;;
 	esac
-	shift # next argument or value
 done
 
 git ls-remote "$source_repo" > /dev/null 2> /dev/null
