@@ -213,9 +213,23 @@ do
 	fi
 	if [ ${last_status} -eq 0 ]
 	then
-		echo "Committing ..."
-		echo "$commit_msg" | git commit -v ${commit_args}
-		last_status=$?
+		if output=$(git status --porcelain) && [ -z "${output}" ]
+		then
+			# Working directory clean (completely)
+			if [ ${last_status} -ne 0 ]
+			then
+				>&2 echo -e "WARNING: Nothing to commit for ${commit_hash} -> skipping"
+			fi
+			last_status=0
+		else
+			echo "Committing ..."
+			echo "$commit_msg" | git commit -v ${commit_args}
+			last_status=$?
+			if [ ${last_status} -ne 0 ]
+			then
+				>&2 echo -e "\tfailed! (Committing for ${commit_hash})"
+			fi
+		fi
 	fi
 
 	set -e
