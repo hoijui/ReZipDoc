@@ -228,4 +228,17 @@ echo "Branch:       ${branch}"
 echo "Max commits:  ${num_commits_max}"
 echo "Target repo:  '${target_repo}'"
 
+# Check if the original and the filtered versions have the same final content
+cd "${target_repo}"
+set +e
+git diff --exit-code --stat --color --color-moved "${branch}_filtered" "source/${branch}"
+last_status=$?
+set -e
+
+if [ ${last_status} -ne 0 ]
+then
+	>&2 echo "ERROR: Original and filtered repos final content differ!"
+	exit ${last_status}
+fi
+
 cd "$pwd_before"
