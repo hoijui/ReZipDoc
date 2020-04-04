@@ -166,6 +166,7 @@ do
 	if [ "$use_orig_commit" = "true" ]
 	then
 		#commit_msg=$(git log -1 --format="%s%n%n%b" ${commit_hash})
+		commit_msg=""
 		commit_args="$commit_args --reuse-message=${commit_hash}"
 	else
 		commit_msg=$(git log -1 --format="FILTERED - %s%n%n orig=%h%n%n%b" ${commit_hash})
