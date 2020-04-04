@@ -265,7 +265,6 @@ set +e
 git diff --exit-code --stat --color --color-moved "${branch}_filtered" "source/${branch}"
 last_status=$?
 set -e
-
 if [ ${last_status} -ne 0 ]
 then
 	>&2 echo "ERROR: Original and filtered repos final content differ!"
