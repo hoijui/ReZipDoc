@@ -238,7 +238,7 @@ do
 	then
 		git status
 		echo "Failed!"
-		break
+		exit ${last_status}
 	fi
 
 	echo "############################################################"
