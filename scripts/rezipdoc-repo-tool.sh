@@ -170,7 +170,7 @@ then
 	exit $?
 fi
 
-# If we got so far, it means that 'action' is set to 'check|install\remove'
+# If we got so far, it means that 'action' is set to 'check|install|remove'
 
 git ls-remote ./ > /dev/null 2>&1
 if [ $? -ne 0 ]
