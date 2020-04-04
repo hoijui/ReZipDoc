@@ -167,13 +167,11 @@ then
 	# Call ourselves recursively, re-installing the same parts that already were installed
 	$0 remove \
 		&& $0 install ${parts}
-	exit $?
 fi
 
 # If we got so far, it means that 'action' is set to 'check|install|remove'
 
-git ls-remote ./ > /dev/null 2>&1
-if [ $? -ne 0 ]
+if ! git ls-remote ./ > /dev/null 2>&1
 then
 	>&2 echo "The current working directory is not a valid git repo!"
 	exit 1
@@ -252,8 +250,7 @@ else
 
 		binary_file=".git/$(basename $source_binary_file)"
 
-		mv "$source_binary_file" "$binary_file"
-		[ $? -eq 0 ] \
+		mv "$source_binary_file" "$binary_file" \
 			&& echo "done" || echo "failed!"
 	else
 		echo "$pre_text removing skipped (file does not exist)"
@@ -266,8 +263,7 @@ if [ "$action" = "check" ]
 then
 	is_config_present() {
 		filter_name="$1"
-		git config ${filter_name} > /dev/null
-		if [ $? -eq 0 ]
+		if git config ${filter_name} > /dev/null
 		then
 			echo "$pre_text ${filter_name} is present!"
 		else
@@ -298,6 +294,7 @@ then
 
 	extra_args=""
 	#extra_args="--replace-all"
+	set +e
 
 	# Install the add/commit filter
 	if [ "$enable_commit" = "true" ]
@@ -318,23 +315,22 @@ then
 	fi
 
 	[ $? -eq 0 ] && echo "done" || echo "failed!"
+	set -e
 else
-	git config --local --get-regexp "filter\.reZip\..*" > /dev/null 2>&1
-	if [ $? -eq 0 ]
+	if git config --local --get-regexp "filter\.reZip\..*" > /dev/null 2>&1
 	then
 		echo -n "$pre_text filter - removing ... "
-		git config --remove-section filter.reZip
-		[ $? -eq 0 ] && echo "done" || echo "failed!"
+		git config --remove-section filter.reZip \
+			&& echo "done" || echo "failed!"
 	else
 		echo "$pre_text filter - removing skipped (not present)"
 	fi
 
-	git config --local --get-regexp "diff\.zipDoc\..*" > /dev/null 2>&1
-	if [ $? -eq 0 ]
+	if git config --local --get-regexp "diff\.zipDoc\..*" > /dev/null 2>&1
 	then
 		echo -n "$pre_text diff - removing ... "
-		git config --remove-section diff.zipDoc
-		[ $? -eq 0 ] && echo "done" || echo "failed!"
+		git config --remove-section diff.zipDoc \
+			&& echo "done" || echo "failed!"
 	else
 		echo "$pre_text diff - removing skipped (not present)"
 	fi
@@ -342,8 +338,7 @@ fi
 
 # Apply the filter and diff-view to matching file(s)
 pre_text="git attributes entries to $attributes_file -"
-grep -q "$marker_begin" "$attributes_file" > /dev/null 2>&1
-if [ $? -eq 0 ]
+if grep -q "$marker_begin" "$attributes_file" > /dev/null 2>&1
 then
 	# Our section does exist in the attributes_file
 	if [ "$action" = "check" ]
@@ -441,7 +436,7 @@ fi
 
 # Set git merge renormalization
 pre_text="git merge renormalization -"
-renormalize_enabled=$(git config --get merge.renormalize)
+renormalize_enabled=$(git config --get merge.renormalize || true)
 if [ "$renormalize_enabled" = "true" ]
 then
 	# Renormalization is enabled
@@ -469,8 +464,7 @@ else
 	elif [ "$action" = "install" ]
 	then
 		echo -n "$pre_text enabling ... "
-		git config --add --bool merge.renormalize true
-		[ $? -eq 0 ] \
+		git config --add --bool merge.renormalize true \
 			&& echo "done" || echo "failed!"
 	else
 		echo "$pre_text disabling skipped (is already disabled)"
