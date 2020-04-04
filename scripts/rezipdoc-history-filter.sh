@@ -154,7 +154,7 @@ git commit --allow-empty --allow-empty-message -m ""
 
 num_commits=$(git log -${num_commits_max} --format="%H" --reverse source/${branch} | wc -l)
 i=0
-for commit_hash in $(git log -${num_commits_max} --format="%H" --reverse source/${branch})
+for commit_hash in $(git log -${num_commits_max} --topo-order --format="%H" --reverse source/${branch})
 do
 	i=$(expr ${i} + 1)
 	echo
