@@ -178,7 +178,7 @@ do
 	set +e
 
 	echo "Cherry-picking ..."
-	git cherry-pick --strategy=recursive --strategy-option=theirs --allow-empty --no-commit ${commit_hash}
+	git cherry-pick --strategy=recursive --strategy-option=theirs --allow-empty --mainline 1 --no-commit ${commit_hash}
 	last_status=$?
 	if [ ${last_status} -ne 0 ]
 	then
