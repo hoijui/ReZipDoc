@@ -143,7 +143,7 @@ else
 fi
 
 # Install our filter if not yet installed
-if ${repo_tool} check --commit --diff --renormalize > /dev/null 2> /dev/null
+if ! ${repo_tool} check --commit --diff --renormalize > /dev/null 2> /dev/null
 then
 	${repo_tool} install --commit --diff --renormalize \
 		|| ( >&2 echo "Failed installing filter!"; exit 2 )
