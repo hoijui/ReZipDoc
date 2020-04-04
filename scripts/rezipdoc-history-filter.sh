@@ -179,20 +179,36 @@ do
 	echo "Cherry-picking ..."
 	git cherry-pick --strategy=recursive --strategy-option=theirs --allow-empty --no-commit ${commit_hash}
 	last_status=$?
+	if [ ${last_status} -ne 0 ]
+	then
+		>&2 echo -e "\tfailed! (Cherry-picking for ${commit_hash})"
+	fi
 
 	echo "Removing ..."
 	git status | grep 'deleted by them:' | cut -d':' -f2 | xargs -t -I {} git rm "{}"
 	last_status=$?
+	if [ ${last_status} -ne 0 ]
+	then
+		>&2 echo -e "\tfailed! (Removing for ${commit_hash})"
+	fi
 
 	echo "Adding the 1st ..."
 	git add --all --force
 	last_status=$?
+	if [ ${last_status} -ne 0 ]
+	then
+		>&2 echo -e "\tfailed! (Adding the 1st for ${commit_hash})"
+	fi
 
 	if [ ${last_status} -eq 0 ]
 	then
 		echo "Adding the 2nd ..."
 		git add --all --force --renormalize
 		last_status=$?
+		if [ ${last_status} -ne 0 ]
+		then
+			>&2 echo -e "\tfailed! (Adding the 2nd for ${commit_hash})"
+		fi
 	fi
 	if [ ${last_status} -eq 0 ]
 	then
