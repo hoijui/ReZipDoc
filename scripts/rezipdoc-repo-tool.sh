@@ -35,7 +35,21 @@ action=""
 target_path_specs=''
 for ext in $(cat "$this_script_dir/../src/main/resources/ext_archives.txt")
 do
-	target_path_specs="$target_path_specs *.$ext"
+	# Build a case insensitive regex matching the extension
+	ext_ci=""
+	for (( i=0; i < ${#ext}; i++ ))
+	do
+		cur_char="${ext:$i:1}"
+		if [[ "$cur_char" =~ [a-zA-Z] ]]
+		then
+			cur_char="[${cur_char,}${cur_char^}]"
+		elif [[ "$cur_char" = "." ]]
+		then
+			cur_char="\."
+		fi
+		ext_ci="${ext_ci}${cur_char}"
+	done
+	target_path_specs="$target_path_specs .*.$ext_ci"
 done
 # As described in [gitattributes](http://git-scm.com/docs/gitattributes),
 # you may see unnecessary merge conflicts when you add attributes to a file that
