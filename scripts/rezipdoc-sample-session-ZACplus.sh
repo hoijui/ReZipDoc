@@ -25,9 +25,9 @@
 # 3. creates a ReZip filtered clone of that project
 # 4. print the bare size of these two repos for comparison
 # 5. opens a GUI history browser for each of these repos,
-#    as to compare the difference in changes in FreeCAD file (.fcstd),
-#    which is a simple "binary files differ" in the original,
-#    vs a textual diff of the contained plain-text files.
+#    as to compare the difference in changes in FreeCAD files (.fcstd),
+#    which show as a simple "binary files differ" in the original,
+#    vs a textual diff of the contained plain-text files in the fitlered version.
 
 # Exit immediately on each error and unset variable;
 # see: https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
@@ -75,7 +75,6 @@ check_git_repo_size() {
 
 	echo "$repo_size_human\t$repo_size_raw\t$repo_size_apparent"
 }
-
 
 repo_orig="/tmp/${project_name}-orig-$rnd"
 repo_filtered="/tmp/${project_name}-filtered-$rnd"
