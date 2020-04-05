@@ -77,13 +77,13 @@ check_git_repo_size() {
 }
 
 
+repo_orig="/tmp/${project_name}-orig-$rnd"
+repo_filtered="/tmp/${project_name}-filtered-$rnd"
+
 # Install helper scripts
 # NOTE Potential security risk!
 curl -s -L https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-scripts-tool.sh \
 	| sh -s install --path --dev || true
-
-repo_orig="/tmp/${project_name}-orig-$rnd"
-repo_filtered="/tmp/${project_name}-filtered-$rnd"
 
 # Create local clone of the project.
 git clone "$git_url" "$repo_orig"
