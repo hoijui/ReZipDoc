@@ -36,7 +36,12 @@ set -Eeu
 
 # We use this repo, because it has a lot of FreeCAD files,
 # which are essentially ZIP files.
-git_url="${1:-"https://github.com/case06/ZACplus.git"}"
+git_url="${1:-}"
+if [ -z "$git_url" ]
+then
+	>&2 echo "ERROR: Please supply a git URL as first parameter!"
+	exit 1
+fi
 project_name="$(echo "$git_url" | sed -e 's|.*/||' -e 's|.git$||')"
 bfg_version="1.13.0"
 
