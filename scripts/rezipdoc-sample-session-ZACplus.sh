@@ -40,6 +40,11 @@ git_url="${1:-"https://github.com/case06/ZACplus.git"}"
 project_name="$(echo "$git_url" | sed -e 's|.*/||' -e 's|.git$||')"
 bfg_version="1.13.0"
 
+echo "Filtering project '$project_name' from '$git_url' ..."
+echo "(press ^C to abort)"
+sleep 5
+echo
+
 # Create a random number between 0 and 255
 rnd=$(od -A n -t d -N 1 /dev/urandom | tr -d ' ')
 
