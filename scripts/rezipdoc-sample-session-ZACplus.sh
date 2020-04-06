@@ -95,6 +95,7 @@ rezipdoc-history-filter.sh \
 	--orig \
 	--target "$repo_filtered"
 
+(cd "$repo_filtered"; git remote rm source)
 size_filtered=$(check_git_repo_size "$repo_filtered")
 
 # Print bare repo sizes
