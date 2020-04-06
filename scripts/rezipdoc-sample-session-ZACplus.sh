@@ -38,6 +38,7 @@ set -Eeu
 # which are essentially ZIP files.
 git_url="https://github.com/case06/ZACplus.git"
 project_name="ZACplus"
+bfg_version="1.13.0"
 
 # Create a random number between 0 and 255
 rnd=$(od -A n -t d -N 1 /dev/urandom | tr -d ' ')
@@ -87,6 +88,15 @@ curl -s -L https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezi
 # Create local clone of the project.
 git clone "$git_url" "$repo_orig"
 size_orig=$(check_git_repo_size "$repo_orig")
+
+# Remove from history:
+# * FreeCAD backup files (*.fcstd1)
+# * 3D-printing instructions (*.gcode)
+prev_dir=$(pwd)
+cd "$repo_orig"
+curl https://repo1.maven.org/maven2/com/madgag/bfg/${bfg_version}/bfg-1${bfg_version}.jar -o bfg-${bfg_version}.jar
+java -jar ./bfg-${bfg_version}.jar --no-blob-protection --delete-files '*.{fcstd1,FCStd1,gcode}' ./
+cd "$prev_dir"
 
 # Create a ReZip filtered clone of the above project
 rezipdoc-history-filter.sh \
