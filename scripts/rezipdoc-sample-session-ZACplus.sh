@@ -21,7 +21,7 @@
 
 # This does the following:
 # 1. install the helper scripts locally
-# 2. clone the ZACplus (Zinc-Oxygen battery) project into a local repo
+# 2. clone the project from the supplied git URL into a local repo
 # 3. creates a ReZip filtered clone of that project
 # 4. print the bare size of these two repos for comparison
 # 5. opens a GUI history browser for each of these repos,
@@ -36,8 +36,8 @@ set -Eeu
 
 # We use this repo, because it has a lot of FreeCAD files,
 # which are essentially ZIP files.
-git_url="https://github.com/case06/ZACplus.git"
-project_name="ZACplus"
+git_url="${1:-"https://github.com/case06/ZACplus.git"}"
+project_name="$(echo "$git_url" | sed -e 's|.*/||' -e 's|.git$||')"
 bfg_version="1.13.0"
 
 # Create a random number between 0 and 255
