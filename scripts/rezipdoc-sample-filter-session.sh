@@ -73,7 +73,7 @@ create_bare_repo() {
 check_git_repo_size() {
 
 	repo_orig="$1"
-	bare_repo="/tmp/rezipdoc-test-$(basename \"$repo_orig\")-bare-$rnd"
+	bare_repo="/tmp/rezipdoc-test-$(basename "$repo_orig")-bare-$rnd"
 
 	create_bare_repo "${repo_orig}" "${bare_repo}"
 
