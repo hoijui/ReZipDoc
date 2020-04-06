@@ -86,6 +86,7 @@ curl -s -L https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezi
 
 # Create local clone of the project.
 git clone "$git_url" "$repo_orig"
+size_orig=$(check_git_repo_size "$repo_orig")
 
 # Create a ReZip filtered clone of the above project
 rezipdoc-history-filter.sh \
@@ -94,9 +95,9 @@ rezipdoc-history-filter.sh \
 	--orig \
 	--target "$repo_filtered"
 
-# Evaluate and print bare repo sizes
-size_orig=$(check_git_repo_size "$repo_orig")
 size_filtered=$(check_git_repo_size "$repo_filtered")
+
+# Print bare repo sizes
 echo -e "Bare repo size '$repo_orig':     $size_orig"
 echo -e "Bare repo size '$repo_filtered': $size_filtered"
 
