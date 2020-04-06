@@ -240,22 +240,22 @@ Only use this if you can not use [the above](#install-diff-viewer-or-filter), fo
 	[attr]reZipDoc    reZip zipDoc
 
 	# MS Office
-	*.[dD][oO][cC][xX]      reZipDoc
-	*.[xX][lL][sS][xX]      reZipDoc
-	*.[pP][pP][tT][xX]      reZipDoc
+	*.docx   reZipDoc
+	*.xlsx   reZipDoc
+	*.pptx   reZipDoc
 	# OpenOffice
-	*.[oO][dD][tT]          reZipDoc
-	*.[oO][dD][sS]          reZipDoc
-	*.[oO][dD][pP]          reZipDoc
+	*.odt    reZipDoc
+	*.ods    reZipDoc
+	*.odp    reZipDoc
 	# Misc
-	*.[mM][cC][dD][xX]      reZipDoc
-	*.[sS][lL][xX]          reZipDoc
+	*.mcdx   reZipDoc
+	*.slx    reZipDoc
 	# Archives
-	*.[zZ][iI][pP]          reZipDoc
+	*.zip    reZipDoc
 	# Java archives
-	*.[jJ][aA][rR]          reZipDoc
+	*.jar    reZipDoc
 	# FreeCAD files
-	*.[fF][cC][sS][tT][dD]  reZipDoc
+	*.fcstd  reZipDoc
 	```
 
 ## Filter repo history
