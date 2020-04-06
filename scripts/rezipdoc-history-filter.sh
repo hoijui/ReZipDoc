@@ -261,10 +261,20 @@ echo "Target repo:  '${target_repo}'"
 
 # Check if the original and the filtered versions have the same final content
 cd "${target_repo}"
+# We add a new commit on top of the orig branch,
+# that just clean-filters all the final content (with re-zip),
+# and we use that one only for comparing final contents for equality,
+# to be sure we messed nothing (serious) up, during filtering.
+git checkout -b "filter-commit-on-orig" "source/${branch}"
+# This applies the clean filter(s) on all the files in the repo,
+# and thus re-zips everything, in our case.
+git commit --all -m "Re-zipped binaries"
 set +e
-git diff --exit-code --stat --color --color-moved "${branch}_filtered" "source/${branch}"
+git diff --exit-code --stat --color --color-moved "${branch}_filtered" "filter-commit-on-orig"
 last_status=$?
 set -e
+git checkout "${branch}_filtered"
+git branch -D "filter-commit-on-orig"
 if [ ${last_status} -ne 0 ]
 then
 	>&2 echo "ERROR: Original and filtered repos final content differ!"
