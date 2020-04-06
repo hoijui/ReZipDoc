@@ -9,3 +9,6 @@ slx
 zip
 jar
 fcstd
+Fcstd
+FCStd
+FCSTD
