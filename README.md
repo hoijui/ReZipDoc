@@ -13,7 +13,7 @@ should use [__ReZipDoc__](https://github.com/hoijui/ReZipDoc).
 ## What is this?
 
 [git](https://git-scm.com/) does not like binary files.
-They makes the repo grow fast in size in MB (see [delta compression](https://en.wikipedia.org/wiki/Delta_encoding)),
+They make the repo grow fast in size in MB (see [delta compression](https://en.wikipedia.org/wiki/Delta_encoding)),
 and when you try to see what changed in them in a commit, you only get this:
 
 > Binary files _A_ and _B_ differ!
