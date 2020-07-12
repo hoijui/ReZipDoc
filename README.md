@@ -414,3 +414,9 @@ in the original _\*.pptx_.
   For more efficient Git packing of ZIP based files
 * [__ZipDoc__](https://github.com/costerwi/zipdoc)
   A Git `textconv` program to show text-based diffs of ZIP files
+
+
+## Similar Projects
+
+* [__png-inflate__](https://github.com/rayrobdod/png-inflate)
+  Does the same uncompressed repack for PNG image files
