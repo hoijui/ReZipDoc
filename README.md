@@ -59,10 +59,10 @@ which were not available in the original.
 [![Build Status](https://travis-ci.org/hoijui/ReZipDoc.svg?branch=master)](https://travis-ci.org/hoijui/ReZipDoc)
 [![Open Hub project report](https://www.openhub.net/p/ReZipDoc/widgets/project_thin_badge.gif)](https://www.openhub.net/p/ReZipDoc?ref=sample)
 
-[![SonarCloud Status](https://sonarcloud.io/api/project_badges/measure?project=io.github.hoijui.rezipdoc:rezipdoc&metric=alert_status)](https://sonarcloud.io/dashboard?id=io.github.hoijui.rezipdoc:rezipdoc) 
-[![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=io.github.hoijui.rezipdoc:rezipdoc&metric=coverage)](https://sonarcloud.io/component_measures/metric/coverage/list?id=io.github.hoijui.rezipdoc:rezipdoc)
-[![SonarCloud Bugs](https://sonarcloud.io/api/project_badges/measure?project=io.github.hoijui.rezipdoc:rezipdoc&metric=bugs)](https://sonarcloud.io/component_measures/metric/reliability_rating/list?id=io.github.hoijui.rezipdoc:rezipdoc)
-[![SonarCloud Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=io.github.hoijui.rezipdoc:rezipdoc&metric=vulnerabilities)](https://sonarcloud.io/component_measures/metric/security_rating/list?id=io.github.hoijui.rezipdoc:rezipdoc)
+[![SonarCloud Status](https://sonarcloud.io/api/project_badges/measure?project=hoijui_ReZipDoc&metric=alert_status)](https://sonarcloud.io/dashboard?id=hoijui_ReZipDoc)
+[![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=hoijui_ReZipDoc&metric=coverage)](https://sonarcloud.io/component_measures/metric/coverage/list?id=hoijui_ReZipDoc)
+[![SonarCloud Bugs](https://sonarcloud.io/api/project_badges/measure?project=hoijui_ReZipDoc&metric=bugs)](https://sonarcloud.io/component_measures/metric/reliability_rating/list?id=hoijui_ReZipDoc)
+[![SonarCloud Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=hoijui_ReZipDoc&metric=vulnerabilities)](https://sonarcloud.io/component_measures/metric/security_rating/list?id=hoijui_ReZipDoc)
 
 ## How to use
 
