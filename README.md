@@ -14,15 +14,20 @@ should use [__ReZipDoc__](https://github.com/hoijui/ReZipDoc).
 
 [git](https://git-scm.com/) does not like binary files.
 They make the repo grow fast in size in MB (see [delta compression](https://en.wikipedia.org/wiki/Delta_encoding)),
-and when you try to see what changed in them in a commit, you only get this:
+and when you try to see what changed in a commit, you only get this:
 
 > Binary files _A_ and _B_ differ!
 
 ... not very useful!
 
-__ReZipDoc__ solves both of these issues, though only for ZIP based files --
-like for example FreeCAD and LibreOffice files --
-not all binary ones.
+__ReZipDoc__ solves both of these issues, though only for ZIP based files,
+which includes for example FreeCAD and LibreOffice files.
+
+> **NOTE** It does not work for all binary files!
+
+> **HINT** If you are unsure whether a file format is ZIP based,
+> just try to look at it with a software that can peak into ZIP files.\
+>  On Linux or OSX: `unzip -l someFile.xyz`
 
 So if you are storing ZIP based files in your `git` repo,
 you probably want to use __ReZipDoc__.
