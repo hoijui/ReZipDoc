@@ -117,26 +117,25 @@ They get installed into `~/bin/`,
 and if the directory did not exist before,
 it will get added to `PATH`.
 
-<!--
-	https://git.io/fjgIX
-is a short URL created with
-	https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-scripts-tool.sh
-	curl -s -i https://git.io -F "url=https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-scripts-tool.sh" | grep "Location:" | sed 's/.* //'
--->
-
 To install:
 ```bash
-curl -s -L https://git.io/fjgIX | sh -s install --path
+curl --silent --location \
+  https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-scripts-tool.sh \
+  | sh -s install --path
 ```
 
 To update (to latest development version):
 ```bash
-curl -s -L https://git.io/fjgIX | sh -s update --dev
+curl --silent --location \
+  https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-scripts-tool.sh \
+  | sh -s update --dev
 ```
 
 To remove:
 ```bash
-curl -s -L https://git.io/fjgIX | sh -s remove
+curl --silent --location \
+  https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-scripts-tool.sh \
+  | sh -s remove
 ```
 
 ### Install diff viewer or filter
@@ -311,15 +310,10 @@ and generates some command-line output.
 
 Run it like this:
 
-<!--
-	https://git.io/fjgR5
-is a short URL created with
-	https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-sample-session-ZACplus.sh
-	curl -s -i https://git.io -F "url=https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-sample-session-ZACplus.sh" | grep "Location:" | sed 's/.* //'
--->
-
 ```bash
-curl -s -L https://git.io/JJOYO | sh -s
+curl --silent --location \
+  https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/rezipdoc-sample-filter-session.sh \
+  | sh
 ```
 
 ## Culprits
