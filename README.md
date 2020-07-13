@@ -319,7 +319,7 @@ is a short URL created with
 -->
 
 ```bash
-curl -s -L https://git.io/fjgR5 | sh -s
+curl -s -L https://git.io/JJOYO | sh -s
 ```
 
 ## Culprits
