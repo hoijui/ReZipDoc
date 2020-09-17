@@ -26,9 +26,10 @@
 #set -Eeuo pipefail
 set -Eeu
 
-pwd_before=$(pwd)
-this_script_file=$(basename $0)
-this_script_dir=$(cd `dirname $0`; pwd)
+pwd_before="$(pwd)"
+this_script_file=$(basename "$0")
+script_name="$this_script_file"
+this_script_dir=$(cd "$(dirname "$0")"; pwd)
 
 # Settings and default values
 action=""
@@ -47,7 +48,7 @@ maven_artifact="rezipdoc"
 fetch_url="https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=${maven_group}&a=${maven_artifact}&v=LATEST"
 
 printUsage() {
-	echo "`basename $0` - This installs (or removes) the ReZipDoc helper shell scripts"
+	echo "$script_name - This installs (or removes) the ReZipDoc helper shell scripts"
 	echo "to the local directory ~/bin/."
 	echo
 	echo "See the ReZipDoc README for further info."
@@ -55,7 +56,7 @@ printUsage() {
 	echo "NOTE This is really only required for developers, hacking on this code-base."
 	echo
 	echo "Usage:"
-	echo "    `basename $0` ACTION [OPTIONS]"
+	echo "    $script_name ACTION [OPTIONS]"
 	echo
 	echo "Actions:"
 	echo "    -h, --help  show this help message"
@@ -105,7 +106,7 @@ do
 			set_action "check"
 			;;
 		--dev)
-			if [ "$action" = "remove" -o "$action" = "check" ]
+			if [ "$action" = "remove" ] || [ "$action" = "check" ]
 			then
 				>&2 echo "Action '$action' does not support '--dev'."
 				exit 2
@@ -121,7 +122,7 @@ do
 			dry_prefix="echo"
 			;;
 		--path)
-			if [ "$action" = "remove" -o "$action" = "update" ]
+			if [ "$action" = "remove" ] || [ "$action" = "update" ]
 			then
 				>&2 echo "Action '$action' does not support '--path'"
 				exit 2
@@ -175,13 +176,13 @@ then
 		version="master"
 		revision="$version"
 	else
-		version=`curl -s "$metadata_url" | grep '<latest>' | sed 's/.*<latest>//' | sed 's/<\/latest>.*//'`
+		version=$(curl -s "$metadata_url" | grep '<latest>' | sed 's/.*<latest>//' | sed 's/<\/latest>.*//')
 		revision="rezipdoc-$version"
 	fi
 	extra_info="$extra_info (version: $version)"
 fi
 
-echo "`basename $0` action: ${action}ing$extra_info ..."
+echo "$script_name action: ${action}ing$extra_info ..."
 
 exit_state=0
 
@@ -195,7 +196,7 @@ dir_in_path() {
 }
 
 # global checks
-if [ "$action" = "check" -a "$enable_path" = "true" ]
+if [ "$action" = "check" ] && [ "$enable_path" = "true" ]
 then
 	if [ -e "$scripts_install_dir" ]
 	then
@@ -212,26 +213,26 @@ then
 		exit_state=1
 	fi
 fi
-if [ "$action" = "install" -a "$enable_path" = "true" ]
+if [ "$action" = "install" ] && [ "$enable_path" = "true" ]
 then
 	if [ ! -e "$scripts_install_dir" ]
 	then
 		echo    "creating scripts install dir: '$scripts_install_dir' ..."
 		${dry_prefix} mkdir -p "$scripts_install_dir"
 		install_state=$?
-		exit_state=`expr ${exit_state} + ${install_state}`
+		exit_state=$((exit_state + install_state))
 		[ ${install_state} -eq 0 ] \
 			&& echo "done" || echo "failed!"
 	fi
-	if [ "$enable_path" = "true" -a -e "$scripts_install_dir" ] && ! dir_in_path "$scripts_install_dir"
+	if [ "$enable_path" = "true" ] && [ -e "$scripts_install_dir" ] && ! dir_in_path "$scripts_install_dir"
 	then
 		echo    "adding scripts install dir to PATH ..."
 		${dry_prefix} export PATH="$PATH:$scripts_install_dir"
 		profile_file="$HOME/.profile"
 		[ "${dry_prefix}" != "" ] && profile_file="/dev/stdout"
-		echo 'export PATH="$PATH:'${scripts_install_dir}'"' >> ${profile_file}
+		echo "export PATH=\"\$PATH:${scripts_install_dir}\"" >> ${profile_file}
 		install_state=$?
-		exit_state=`expr ${exit_state} + ${install_state}`
+		exit_state=$((exit_state + install_state))
 		[ ${install_state} -eq 0 ] \
 			&& echo "done" || echo "failed!"
 	fi
@@ -260,7 +261,7 @@ do
 			${dry_prefix} curl -s "$scripts_base_url/$revision/scripts/$script_name" -o "$scripts_install_dir/$script_name" \
 				&& ${dry_prefix} chmod +x "$scripts_install_dir/$script_name"
 			install_state=$?
-			exit_state=`expr ${exit_state} + ${install_state}`
+			exit_state=$((exit_state + install_state))
 			[ ${install_state} -eq 0 ] \
 				&& echo "done" || echo "failed!"
 		fi
@@ -271,7 +272,7 @@ do
 			echo -n "removing:        $script_name ... "
 			${dry_prefix} rm -f "$scripts_install_dir/$script_name"
 			remove_state=$?
-			exit_state=`expr ${exit_state} + ${remove_state}`
+			exit_state=$((exit_state + remove_state))
 			[ ${remove_state} -eq 0 ] \
 				&& echo "done" || echo "failed!"
 		else

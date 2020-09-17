@@ -27,8 +27,9 @@
 set -Eeu
 
 pwd_before=$(pwd)
-this_script_file=$(basename $0)
-this_script_dir=$(cd $(dirname $0); pwd)
+this_script_file=$(basename "$0")
+script_name="$this_script_file"
+this_script_dir=$(cd "$(dirname "$0")"; pwd)
 
 # Settings and default values
 source_repo="."
@@ -37,14 +38,14 @@ add_archive_src="true"
 num_commits_max=1000
 
 printUsage() {
-	echo "$(basename $0) - This script does:"
+	echo "$script_name - This script does:"
 	echo "* create one or multiple repositories including archives"
 	echo "* filters all of them with ReZip(Doc)"
 	echo "* creates a report about the original and filtered repository sizes"
 	echo "Think of it as a performance demo."
 	echo
 	echo "Usage:"
-	echo "    $(basename $0) [OPTIONS]"
+	echo "    $script_name [OPTIONS]"
 	echo
 	echo "Options:"
 	echo "    -h, --help               show this help message"
@@ -58,6 +59,7 @@ printUsage() {
 while [ $# -gt 0 ]
 do
 	opName="$1"
+	shift # skip argument
 	case ${opName} in
 		-h|--help)
 			printUsage
@@ -70,11 +72,11 @@ do
 			add_archive_bin="true"
 			;;
 		-m|--max-commits)
-			num_commits_max=$2
+			num_commits_max="$1"
 			shift # past argument
 			;;
 		-s|--source)
-			source_repo="$2"
+			source_repo="$1"
 			shift # past argument
 			;;
 		*)
@@ -84,11 +86,9 @@ do
 			exit 1
 			;;
 	esac
-	shift # next argument or value
 done
 
-git ls-remote "$source_repo" > /dev/null 2> /dev/null
-if [ $? -ne 0 ]
+if ! git ls-remote "$source_repo" > /dev/null 2> /dev/null
 then
 	>&2 echo "Source repo is not a valid git repository: '$source_repo'!"
 	exit 1
@@ -124,13 +124,12 @@ if [ "$add_archive_bin" = "true" ]
 then
 	archives_extra_args="$archives_extra_args --bin-archive"
 fi
-"$this_script_dir/rezipdoc-create-archives-repo.sh" \
-	--max-commits ${num_commits_max} \
+if ! "$this_script_dir/rezipdoc-create-archives-repo.sh" \
+	--max-commits "${num_commits_max}" \
 	--source "${source_repo}" \
 	--target "${archive_repo}" \
 	--tmp "${tmp_repo}" \
 	${archives_extra_args}
-if [ $? -ne 0 ]
 then
 	>&2 echo "Failed creating archives repo!"
 	exit 1
@@ -141,11 +140,10 @@ echo "##############################"
 echo "# Creating filtered repo ... #"
 echo "##############################"
 echo
-"$this_script_dir/rezipdoc-history-filter.sh" \
-	--max-commits ${num_commits_max} \
+if ! "$this_script_dir/rezipdoc-history-filter.sh" \
+	--max-commits "${num_commits_max}" \
 	--source "${archive_repo}" \
 	--target "${filtered_repo}"
-if [ $? -ne 0 ]
 then
 	>&2 echo "Failed creating filtered repo!"
 	exit 1
@@ -171,7 +169,7 @@ create_bare_repo() {
 check_git_repo_size() {
 
 	orig_repo="$1"
-	bare_repo="/tmp/rezipdoc-test-$(basename \"$orig_repo\")-bare-$rnd"
+	bare_repo="/tmp/rezipdoc-test-$(basename "$orig_repo")-bare-$rnd"
 
 	create_bare_repo "${orig_repo}" "${bare_repo}"
 
@@ -182,7 +180,7 @@ check_git_repo_size() {
 
 	rm -Rf "${bare_repo}"
 
-	echo "$repo_size_human\t$repo_size_raw\t$repo_size_apparent"
+	printf "%s\t%s\t%s\n" "$repo_size_human" "$repo_size_raw" "$repo_size_apparent"
 }
 
 size_archive=$(check_git_repo_size "${archive_repo}")

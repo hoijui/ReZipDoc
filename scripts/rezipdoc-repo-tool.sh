@@ -27,8 +27,9 @@
 set -Eeu
 
 pwd_before=$(pwd)
-this_script_file=$(basename $0)
-this_script_dir=$(cd $(dirname $0); pwd)
+this_script_file=$(basename "$0")
+script_name="$this_script_file"
+this_script_dir=$(cd "$(dirname "$0")"; pwd)
 
 # Settings and default values
 action=""
@@ -66,7 +67,7 @@ marker_end="# END $gen_token"
 header_note="# NOTE Do not manually edit this section; it was generated with $this_script_file"
 
 printUsage() {
-	echo "$(basename $0) - This installs (or removes) a custom git filter"
+	echo "$script_name - This installs (or removes) a custom git filter"
 	echo "and a diff tool to the local repo, which make using"
 	echo "ZIP based archives more git-workflow friendly."
 	echo
@@ -77,7 +78,7 @@ printUsage() {
 	echo "     meaning it is not versioned."
 	echo
 	echo "Usage:"
-	echo "    $(basename $0) ACTION [OPTIONS]"
+	echo "    $script_name ACTION [OPTIONS]"
 	echo
 	echo "Actions:"
 	echo "    -h, --help  show this help message"
@@ -157,11 +158,11 @@ fi
 if [ "$action" = "update" ]
 then
 	parts=""
-	for chkPart in "--commit --checkout --diff --renormalize"
+	for chk_part in --commit --checkout --diff --renormalize
 	do
-		if $0 check ${chkPart} > /dev/null 2>&1
+		if $0 check ${chk_part} > /dev/null 2>&1
 		then
-			parts="$parts $chkPart"
+			parts="$parts $chk_part"
 		fi
 	done
 	# Call ourselves recursively, re-installing the same parts that already were installed
@@ -179,20 +180,20 @@ fi
 
 if [ "$action" = "check" ]
 then
-	if [ "$enable_renormalize" != "true" -a "$enable_commit" != "true" -a "$enable_checkout" != "true" -a "$enable_diff" != "true" ]
+	if [ "$enable_renormalize" != "true" ] && [ "$enable_commit" != "true" ] && [ "$enable_checkout" != "true" ] && [ "$enable_diff" != "true" ]
 	then
 		>&2 echo "Please check for at least one of --commit, --checkout, --diff, --renormalize"
 		exit 2
 	fi
 elif [ "$action" = "install" ]
 then
-	if [ "$enable_commit" != "true" -a "$enable_checkout" != "true" -a "$enable_diff" != "true" ]
+	if [ "$enable_commit" != "true" ] && [ "$enable_checkout" != "true" ] && [ "$enable_diff" != "true" ]
 	then
 		>&2 echo "Please install at least one of --commit, --checkout, --diff"
 		exit 2
 	fi
 else
-	if [ "$enable_renormalize" = "true" -o "$enable_commit" = "true" -o "$enable_checkout" = "true" -o "$enable_diff" = "true" ]
+	if [ "$enable_renormalize" = "true" ] || [ "$enable_commit" = "true" ] || [ "$enable_checkout" = "true" ] || [ "$enable_diff" = "true" ]
 	then
 		>&2 echo "Remove always removes the whole filter installation;"
 		>&2 echo "no need to specify parts with any of --commit, --checkout, --diff, --renormalize"
@@ -200,7 +201,7 @@ else
 	fi
 fi
 
-echo "$(basename $0) action: ${action}ing ..."
+echo "$script_name action: ${action}ing ..."
 
 # Install our binary (the JAR)
 pre_text="git filter and diff binary -"
@@ -232,7 +233,7 @@ else
 		mvn_target_dir="${this_script_dir}/../target"
 		# Try to get the latest version, in case there are multiple ones
 		local_binary=$(find "$mvn_target_dir" -maxdepth 1 -type f -name "rezipdoc-*.jar" | grep -v "\-sources" | grep -v "\-javadoc" | sort --version-sort | tail -1)
-		if [ "$use_local_binary_if_available" = "true" -a "$local_binary" != "" ]
+		if [ "$use_local_binary_if_available" = "true" ] && [ "$local_binary" != "" ]
 		then
 			cp "$local_binary" ./
 		else
@@ -241,14 +242,14 @@ else
 			# this results in a file like "rezipdoc-0.1.jar" in the CWD
 		fi
 
-		source_binary_file=$(find -maxdepth 1 -name "rezipdoc-*.jar")
+		source_binary_file=$(find . -maxdepth 1 -name "rezipdoc-*.jar")
 
 		echo -n " using binary '$source_binary_file' ... "
 
 		# Extract the version from the release JAR name
 		version=$(echo "$source_binary_file" | xargs basename --suffix='.jar' | sed -e 's/.*rezipdoc-//')
 
-		binary_file=".git/$(basename $source_binary_file)"
+		binary_file=".git/$(basename "$source_binary_file")"
 
 		mv "$source_binary_file" "$binary_file" \
 			&& echo "done" || echo "failed!"
@@ -344,7 +345,7 @@ then
 	if [ "$action" = "check" ]
 	then
 		echo "$pre_text exist!"
-		if [ "$enable_commit" = "true" -o "$enable_checkout" = "true" ] && ! grep -q -r "^\[attr\]reZip" "$attributes_file"
+		if [ "$enable_commit" = "true" ] || [ "$enable_checkout" = "true" ] && ! grep -q -r "^\[attr\]reZip" "$attributes_file"
 		then
 			# only report failure if checking was explicitly requested
 			>&2 echo "$pre_text - '[attr]reZip' does not exist!"
@@ -369,7 +370,7 @@ else
 	if [ "$action" = "check" ]
 	then
 		>&2 echo "$pre_text do not exist!"
-		if [ "$enable_commit" = "true" -o "$enable_checkout" = "true" -o "$enable_diff" = "true" ]
+		if [ "$enable_commit" = "true" ] || [ "$enable_checkout" = "true" ] || [ "$enable_diff" = "true" ]
 		then
 			# only report failure if checking was explicitly requested
 			exit 1
@@ -377,16 +378,17 @@ else
 	elif [ "$action" = "install" ]
 	then
 		echo "$pre_text writing ..."
-		echo "$marker_begin" >> "$attributes_file"
-		echo "$header_note" >> "$attributes_file"
-
-		cat >> "$attributes_file" << EOF
+		{
+			echo "$marker_begin"
+			echo "$header_note"
+			cat << EOF
 # This forces git to treat files as if they were text-based (for example in diffs)
 [attr]textual     diff merge
 EOF
+		} >> "$attributes_file"
 
 		parts=""
-		if [ "$enable_commit" = "true" -o "$enable_checkout" = "true" ]
+		if [ "$enable_commit" = "true" ] || [ "$enable_checkout" = "true" ]
 		then
 			parts="$parts reZip"
 			cat >> "$attributes_file" << EOF

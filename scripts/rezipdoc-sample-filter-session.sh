@@ -84,7 +84,7 @@ check_git_repo_size() {
 
 	rm -Rf "${bare_repo}"
 
-	echo "$repo_size_human\t$repo_size_raw\t$repo_size_apparent"
+	printf "%s\t%s\t%s\n" "$repo_size_human" "$repo_size_raw" "$repo_size_apparent"
 }
 
 repo_orig="/tmp/${project_name}-orig-$rnd"

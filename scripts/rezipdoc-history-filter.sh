@@ -27,8 +27,9 @@
 set -Eeu
 
 pwd_before=$(pwd)
-this_script_file=$(basename $0)
-this_script_dir=$(cd $(dirname $0); pwd)
+this_script_file=$(basename "$0")
+script_name="$this_script_file"
+this_script_dir=$(cd "$(dirname "$0")"; pwd)
 
 # Settings and default values
 source_repo=""
@@ -40,11 +41,11 @@ repo_tool_url="https://raw.githubusercontent.com/hoijui/ReZipDoc/master/scripts/
 repo_tool_file_name=$(basename "$repo_tool_url")
 
 printUsage() {
-	echo "$(basename $0) - Creates a local clone of a repo, and filters"
+	echo "$script_name - Creates a local clone of a repo, and filters"
 	echo "the main branch with ReZip(Doc)."
 	echo
 	echo "Usage:"
-	echo "    $(basename $0) [OPTIONS]"
+	echo "    $script_name [OPTIONS]"
 	echo
 	echo "Options:"
 	echo "    -h, --help               show this help message"
@@ -94,8 +95,7 @@ do
 	esac
 done
 
-git ls-remote "$source_repo" > /dev/null 2> /dev/null
-if [ $? -ne 0 ]
+if ! git ls-remote "$source_repo" > /dev/null 2> /dev/null
 then
 	>&2 echo "Source repo is not a valid git repository: '$source_repo'!"
 	exit 1

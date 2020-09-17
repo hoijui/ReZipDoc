@@ -27,22 +27,23 @@
 set -Eeu
 
 pwd_before=$(pwd)
-this_script_file=$(basename $0)
-this_script_dir=$(cd $(dirname $0); pwd)
+this_script_file=$(basename "$0")
+script_name="$this_script_file"
+this_script_dir=$(cd "$(dirname "$0")"; pwd)
 
 # Settings and default values
 add_archive_bin="false"
 add_archive_src="true"
 num_commits_max=1000
 branch=master
-source_repo=$(cd ${this_script_dir}; cd ..; pwd)
+source_repo=$(cd "${this_script_dir}"; cd ..; pwd)
 rnd=$(od -A n -t d -N 1 /dev/urandom | tr -d ' ')
 target_repo="/tmp/rezipdoc-archives-repo-${rnd}"
 # We use this one for building the binaries
 tmp_repo="/tmp/rezipdoc-tmp-repo-${rnd}"
 
 printUsage() {
-	echo "$(basename $0) - This creates a git repository with a lot of archives as content,"
+	echo "$script_name - This creates a git repository with a lot of archives as content,"
 	echo "focusing on archives that contain mostly plain-text content that changes"
 	echo "non-radically over time."
 	echo
@@ -50,7 +51,7 @@ printUsage() {
 	echo "of this repo, plus some text files, and commit each change, if there was one."
 	echo
 	echo "Usage:"
-	echo "    $(basename $0) [OPTIONS]"
+	echo "    $script_name [OPTIONS]"
 	echo
 	echo "Options:"
 	echo "    -h, --help               show this help message"
@@ -103,14 +104,13 @@ do
 	shift # next argument or value
 done
 
-if [ "$add_archive_bin" != "true" -a "$add_archive_src" != "true" ]
+if [ "$add_archive_bin" != "true" ] && [ "$add_archive_src" != "true" ]
 then
 	>&2 echo "Please include at least one of binary and source archive!"
 	exit 1
 fi
 
-git ls-remote "$source_repo" > /dev/null 2> /dev/null
-if [ $? -ne 0 ]
+if ! git ls-remote "$source_repo" > /dev/null 2> /dev/null
 then
 	>&2 echo "Source repo is not a valid git repository: '$source_repo'!"
 	exit 1
@@ -154,23 +154,23 @@ num_commits=$(git log -${num_commits_max} --format="%H" --reverse origin/${branc
 i=0
 for commit_hash in $(git log -${num_commits_max} --format="%H" --reverse origin/${branch})
 do
-	i=$(expr ${i} + 1)
+	i=$((i + 1))
 	echo
 	echo "############################################################"
 	echo "Building commit ${i}/${num_commits} - ${commit_hash} ..."
 	echo
 
 	cd "$tmp_repo"
-	git checkout ${commit_hash}
+	git checkout "$commit_hash"
 	if [ "${add_archive_bin}" = "true" ]
 	then
 		rm -f target/*.jar
 		mvn package -DskipTests
 	fi
-	commit_msg=$(git log -1 --format="ARCH - %s%n%n orig=%h%n%n%b" ${commit_hash})
+	commit_msg=$(git log -1 --format="ARCH - %s%n%n orig=%h%n%n%b" "$commit_hash")
 
 	cd "$target_repo"
-	find -type f | grep -v "\.git" | xargs rm -Rf
+	find . -type f | grep -v "\.git" | xargs rm -Rf
 
 	# Add some Project-global text files/sources
 	cp "$tmp_repo/README"*  ./ 2> /dev/null
