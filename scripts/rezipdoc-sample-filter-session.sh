@@ -53,6 +53,13 @@ echo
 # Create a random number between 0 and 255
 rnd=$(od -A n -t d -N 1 /dev/urandom | tr -d ' ')
 
+_git_compact() {
+
+	rm -rf .git/refs/original/
+	git reflog expire --expire=now --all
+	git gc --prune=now --aggressive
+}
+
 # Helper function that creates a bar git repo clone.
 # This is useful to evaluate the real size of a git repo,
 # as this is the size transferred over the network when cloning,
@@ -64,8 +71,7 @@ create_bare_repo() {
 
 	git clone --bare "${repo_orig}" "${bare_repo}"
 	cd "${bare_repo}"
-	git gc
-	git prune --expire now
+	_git_compact
 }
 
 # Helper function that evaluates the size of a git repo,

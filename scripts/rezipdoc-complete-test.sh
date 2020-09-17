@@ -155,6 +155,13 @@ echo "# Checking bare repo sizes ... #"
 echo "################################"
 echo
 
+_git_compact() {
+
+	rm -rf .git/refs/original/
+	git reflog expire --expire=now --all
+	git gc --prune=now --aggressive
+}
+
 create_bare_repo() {
 
 	orig_repo="$1"
@@ -162,8 +169,7 @@ create_bare_repo() {
 
 	git clone --bare "${orig_repo}" "${bare_repo}"
 	cd "${bare_repo}"
-	git gc
-	git prune --expire now
+	_git_compact
 }
 
 check_git_repo_size() {
