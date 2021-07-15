@@ -300,7 +300,7 @@ so future commits will be filtered.
 
 We are going to run
 [a script that filters the Zinc-Oxide Open Hardware battery (ZAC+) project repo](
-https://github.com/hoijui/ReZipDoc/blob/master/scripts/rezipdoc-sample-session-ZACplus.sh),
+https://github.com/hoijui/ReZipDoc/blob/master/scripts/rezipdoc-filter-ZACplus.sh),
 which has a header comment explaining what it does in detail.
 
 In short, it downloads ReZipDoc helper scripts to `~/bin`,
