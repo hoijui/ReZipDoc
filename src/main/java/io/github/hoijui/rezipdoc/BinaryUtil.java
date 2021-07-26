@@ -26,6 +26,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 /**
@@ -175,11 +178,17 @@ public final class BinaryUtil {
 	}
 
 	@SuppressWarnings("unused")
-	public String createManifestPropertiesString() {
+	public String createManifestPropertiesString(final boolean sorted) {
 
 		final StringBuilder info = new StringBuilder(1024);
 
-		for (final Map.Entry<Object, Object> manifestEntry : getManifestProperties().entrySet()) {
+		final Set<Entry<Object, Object>> propertiesSet;
+		if (sorted) {
+			propertiesSet = new TreeMap<>(getManifestProperties()).entrySet();
+		} else {
+			propertiesSet = getManifestProperties().entrySet();
+		}
+		for (final Map.Entry<Object, Object> manifestEntry : propertiesSet) {
 			final String key = (String) manifestEntry.getKey();
 			final String value = (String) manifestEntry.getValue();
 			info
