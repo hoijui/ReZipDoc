@@ -36,7 +36,7 @@ action=""
 dry_prefix=""
 scripts_base_url="https://raw.githubusercontent.com/hoijui/ReZipDoc"
 # We can parse the latest released version from this
-metadata_url="http://repo2.maven.org/maven2/io/github/hoijui/rezipdoc/rezipdoc/maven-metadata.xml"
+metadata_url="https://repo1.maven.org/maven2/io/github/hoijui/rezipdoc/rezipdoc/maven-metadata.xml"
 scripts_install_dir="$HOME/bin"
 script_names='rezipdoc-repo-tool.sh rezipdoc-history-filter.sh'
 # Whether to use latest development scripts, or the stable (last release) versions
