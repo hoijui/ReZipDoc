@@ -89,7 +89,7 @@ printUsage() {
 	echo
 	echo "Options:"
 	echo "    --commit       (filter part) re-archives ZIP files without compression on commit"
-	echo "    --checkout     (filter part) re-archives ZIP files wit compression on checkout"
+	echo "    --checkout     (filter part) re-archives ZIP files with compression on checkout"
 	echo "    --diff         (filter part) represents ZIP based files uncompressed in diff views"
 	echo "    --renormalize  (filter part) check-out and -in files on merge conflicts"
 }
