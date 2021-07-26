@@ -23,10 +23,10 @@
 
 # Exit immediately on each error and unset variable;
 # see: https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
-#set -Eeuo pipefail
-set -Eeu
+set -Eeuo pipefail
+#set -Eeu
 
-pwd_before=$(pwd)
+pwd_before="$(pwd)"
 this_script_file=$(basename "$0")
 script_name="$this_script_file"
 this_script_dir=$(cd "$(dirname "$0")"; pwd)

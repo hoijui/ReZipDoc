@@ -31,8 +31,8 @@
 
 # Exit immediately on each error and unset variable;
 # see: https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
-#set -Eeuo pipefail
-set -Eeu
+set -Eeuo pipefail
+#set -Eeu
 
 # We use this repo, because it has a lot of FreeCAD files,
 # which are essentially ZIP files.
