@@ -353,7 +353,7 @@ but without compression.
 ##### cons
 
 - slower `git add`/`git commit` process
-- slower checkout process, if the smudge filter s used
+- slower checkout process, if the smudge filter is used
 
 ## How it works
 
